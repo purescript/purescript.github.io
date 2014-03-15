@@ -1,8 +1,9 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-import           Data.Monoid (mappend)
-import           Hakyll
-import           GHC.IO.Encoding
+import Data.Monoid (mappend)
+import GHC.IO.Encoding
+import Hakyll
+import System.FilePath
 
 
 --------------------------------------------------------------------------------
@@ -21,6 +22,7 @@ main = do
     setFileSystemEncoding utf8
     setForeignEncoding utf8
     hakyll $ do
+
     match "images/*" $ do
         route   idRoute
         compile copyFileCompiler
@@ -29,12 +31,19 @@ main = do
         route   idRoute
         compile compressCssCompiler
 
+    create ["css/style.css"] $ do
+        route idRoute
+        compile $ do
+            items <- loadAll "css/_*"
+            makeItem $ concatMap (compressCss . itemBody) (items :: [Item String])
+
     match "posts/*" $ do
-        route $ setExtension "html"
+        route indexRoute
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
+            >>= slashUrlsCompiler
         
     create ["rss.xml"] $ do
         route idRoute
@@ -56,8 +65,32 @@ main = do
                 >>= applyAsTemplate indexCtx
                 >>= loadAndApplyTemplate "templates/default.html" indexCtx
                 >>= relativizeUrls
+                >>= slashUrlsCompiler
 
     match "templates/*" $ compile templateCompiler
+
+--------------------------------------------------------------------------------
+
+indexRoute :: Routes
+indexRoute = customRoute removeDatePrefix 
+  `composeRoutes` gsubRoute ".markdown" (const "/index.html")
+  
+removeDatePrefix :: Identifier -> FilePath
+removeDatePrefix ident = replaceFileName file (drop 11 $ takeFileName file)
+  where file = toFilePath ident 
+
+slashUrlsCompiler :: Item String -> Compiler (Item String)
+slashUrlsCompiler item = do
+    route <- getRoute $ itemIdentifier item
+    return $ case route of
+        Nothing -> item
+        Just r -> fmap slashUrls item
+
+slashUrls :: String -> String 
+slashUrls = fileLinks . withUrls convert
+  where
+    convert = replaceAll "/index.html" (const "/")
+    fileLinks = replaceAll "/files/" (const "/files/")
 
 --------------------------------------------------------------------------------
 postCtx :: Context String
