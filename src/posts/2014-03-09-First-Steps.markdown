@@ -5,20 +5,20 @@ author: Phil Freeman
 
 Welcome to the PureScript community blog! In this first post, I\'m going to walk through the basics of getting set up to use the PureScript compiler `psc`, and its interactive mode `psci`.
 
-I\'ll start with the installation of the compiler, go through the basic commands of `psc` and `psci`, working towards a solution of problem 1 from Project Euler.
+I\'ll start with the installation of the compiler, go through the basic commands of `psc` and `psci`, working towards a solution of problem 1 from [Project Euler](http://projecteuler.net/problem=1).
 
-## Installing the Compiler
+### Installing the Compiler
 
-PureScript can be installed from Hackage. After installing the Haskell Platform, you can use the following to build the compiler from source:
+PureScript can be installed from [Hackage](http://hackage.haskell.org/package/purescript). After installing the [Haskell Platform](http://www.haskell.org/platform), you can use the following to build the compiler from source:
 
     cabal update
     cabal install purescript
 
-## Working in PSCI
+### Working in PSCI
 
 `psci` is the interactive mode of PureScript. It is useful for working with pure computations, and for testing ideas.
 
-`psci` uses `nodejs` to execute compiled Javascript, so if you do not have that installed already, you will need to install it now.
+`psci` uses `nodejs` to execute compiled Javascript, so if you do not have that installed already, you will need to [install it now](http://nodejs.org).
 
 Open `psci` by typing `psci` at the command line.
 
@@ -62,12 +62,12 @@ We will be using some of the functions from the `Data.Array` module, so import t
 
 Note that using `Tab` to autocomplete names can be a useful time-saving device in `psci`.
 
-## Solving Project Euler #1
+### Solving Project Euler #1
 
 The following problem is taken from [Project Euler](http://projecteuler.net/problem=1):
  
 > If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.
-
+>
 > Find the sum of all the multiples of 3 or 5 below 1000.
 
 We can solve this problem neatly using functions and function composition, directly in `psci`.
@@ -119,7 +119,7 @@ When you have finished using `psci`, type `:q` to quit:
     > :q
     See ya!
 
-## Compiling a Solution
+### Compiling a Solution
 
 Now that we've seen how to use `psci` to reach the answer, let's move our solution into a source file, and compile it using `psc`.
 
@@ -189,7 +189,7 @@ When the compiler finishes generating `Main.js`, simply run it on the command li
     node Main.js
     The answer is 233168
 
-## Conclusion
+### Conclusion
 
 That\'s all for this post. We\'ve seen how to use enough of the basics of `psc` and `psci` to compile and execute simple PureScript programs. If you would like more information, the [PureScript documentation](http://docs.purescript.org) lists all of the options for both `psc` and `psci`.
 
