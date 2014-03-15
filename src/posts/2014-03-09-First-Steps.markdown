@@ -3,9 +3,9 @@ title: First Steps With PureScript - Solving Project Euler #1
 author: Phil Freeman
 ---
 
-Welcome to the PureScript community blog! In this first post, I\'m going to walk through the basics of getting set up to use the PureScript compiler `psc`, and its interactive mode `psci`.
+Welcome to the PureScript community blog! In this first post, I'm going to walk through the basics of getting set up to use the PureScript compiler `psc`, and its interactive mode `psci`.
 
-I\'ll start with the installation of the compiler, go through the basic commands of `psc` and `psci`, working towards a solution of problem 1 from [Project Euler](http://projecteuler.net/problem=1).
+I'll start with the installation of the compiler, go through the basic commands of `psc` and `psci`, working towards a solution of problem 1 from [Project Euler](http://projecteuler.net/problem=1).
 
 ### Installing the Compiler
 
@@ -72,7 +72,7 @@ The following problem is taken from [Project Euler](http://projecteuler.net/prob
 
 We can solve this problem neatly using functions and function composition, directly in `psci`.
 
-Let\'s start by listing all of the natural numbers below 1000 as an array. We can do this using the `range` function from `Data.Array`:
+Let's start by listing all of the natural numbers below 1000 as an array. We can do this using the `range` function from `Data.Array`:
 
     > range 0 999
     [0,1,2,3,4,...
@@ -83,7 +83,7 @@ This value can be given a name, using a `let` binding:
 
     > let ns = range 0 999
 
-Now let\'s filter out all of those elements which do not meet the criterion. We can use the `filter` function from `Data.Array`, by providing a predicate function as its first argument:
+Now let's filter out all of those elements which do not meet the criterion. We can use the `filter` function from `Data.Array`, by providing a predicate function as its first argument:
 
     > let multiples = filter (\n -> n % 3 == 0 || n % 5 == 0) ns
 
@@ -109,7 +109,7 @@ We can try our new function on a few small arrays:
     > sum [1,2,3]  
     6
 
-Finally, let\'s use the `sum` function to find the sum of the `multiples` array:
+Finally, let's use the `sum` function to find the sum of the `multiples` array:
 
     > sum multiples
     233168
@@ -167,7 +167,7 @@ If you load this file in `node`, you will be able to evaluate its expressions th
     > euler1.Euler1.answer
     233168
 
-This time, let\'s define a `Main` module, so that we can create an executable Javascript file, which will print the answer to the console.
+This time, let's define a `Main` module, so that we can create an executable Javascript file, which will print the answer to the console.
 
 Create a new file, `Main.purs`, and copy the following code:
 
@@ -191,6 +191,6 @@ When the compiler finishes generating `Main.js`, simply run it on the command li
 
 ### Conclusion
 
-That\'s all for this post. We\'ve seen how to use enough of the basics of `psc` and `psci` to compile and execute simple PureScript programs. If you would like more information, the [PureScript documentation](http://docs.purescript.org) lists all of the options for both `psc` and `psci`.
+That's all for this post. We've seen how to use enough of the basics of `psc` and `psci` to compile and execute simple PureScript programs. If you would like more information, the [PureScript documentation](http://docs.purescript.org) lists all of the options for both `psc` and `psci`.
 
 Until next time\...
