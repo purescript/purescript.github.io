@@ -125,18 +125,20 @@ Now that we've seen how to use `psci` to reach the answer, let's move our soluti
 
 Create a new text file `Euler.purs` and copy the following code:
 
-    module Euler1 where
+``` haskell
+module Euler1 where
 
-    import Prelude
-    import Data.Array
+import Prelude
+import Data.Array
 
-    sum = foldl (+) 0
-    
-    ns = range 0 999
+sum = foldl (+) 0
 
-    multiples = filter (\n -> n % 3 == 0 || n % 5 == 0) ns
+ns = range 0 999
 
-    answer = sum multiples
+multiples = filter (\n -> n % 3 == 0 || n % 5 == 0) ns
+
+answer = sum multiples
+```
 
 It is possible to load this file directly into `psci` and to continue working:
 
@@ -171,12 +173,14 @@ This time, let's define a `Main` module, so that we can create an executable Jav
 
 Create a new file, `Main.purs`, and copy the following code:
 
-    module Main where
+``` haskell
+module Main where
 
-    import Prelude
-    import Euler1 
+import Prelude
+import Euler1 
 
-    main = Debug.Trace.trace $ "The answer is " ++ show answer
+main = Debug.Trace.trace $ "The answer is " ++ show answer
+```
 
 Executable PureScript files must define a value `Main.main`. They are compiled with the `--main` option, which generates code to call `Main.main`:
 
