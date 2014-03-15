@@ -8,6 +8,7 @@
   <link href="http://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic" rel="stylesheet" type="text/css" />
   <link href="../css/normalize.css" rel="stylesheet" type="text/css" />
   <link href="../css/default.css" rel="stylesheet" type="text/css" />
+  <link href="../css/syntax.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -109,18 +110,18 @@ See ya!</code></pre>
 <h3 id="compiling-a-solution">Compiling a Solution</h3>
 <p>Now that we’ve seen how to use <code>psci</code> to reach the answer, let’s move our solution into a source file, and compile it using <code>psc</code>.</p>
 <p>Create a new text file <code>Euler.purs</code> and copy the following code:</p>
-<pre><code>module Euler1 where
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Euler1</span> <span class="kw">where</span>
 
-import Prelude
-import Data.Array
+<span class="kw">import </span><span class="dt">Prelude</span>
+<span class="kw">import </span><span class="dt">Data.Array</span>
 
-sum = foldl (+) 0
+sum <span class="fu">=</span> foldl (<span class="fu">+</span>) <span class="dv">0</span>
 
-ns = range 0 999
+ns <span class="fu">=</span> range <span class="dv">0</span> <span class="dv">999</span>
 
-multiples = filter (\n -&gt; n % 3 == 0 || n % 5 == 0) ns
+multiples <span class="fu">=</span> filter (\n <span class="ot">-&gt;</span> n <span class="fu">%</span> <span class="dv">3</span> <span class="fu">==</span> <span class="dv">0</span> <span class="fu">||</span> n <span class="fu">%</span> <span class="dv">5</span> <span class="fu">==</span> <span class="dv">0</span>) ns
 
-answer = sum multiples</code></pre>
+answer <span class="fu">=</span> sum multiples</code></pre>
 <p>It is possible to load this file directly into <code>psci</code> and to continue working:</p>
 <pre><code>psci Euler1.purs
 &gt; Euler1.answer
@@ -141,12 +142,12 @@ See ya!</code></pre>
 233168</code></pre>
 <p>This time, let’s define a <code>Main</code> module, so that we can create an executable Javascript file, which will print the answer to the console.</p>
 <p>Create a new file, <code>Main.purs</code>, and copy the following code:</p>
-<pre><code>module Main where
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
 
-import Prelude
-import Euler1 
+<span class="kw">import </span><span class="dt">Prelude</span>
+<span class="kw">import </span><span class="dt">Euler1</span> 
 
-main = Debug.Trace.trace $ &quot;The answer is &quot; ++ show answer</code></pre>
+main <span class="fu">=</span> Debug.Trace.trace <span class="fu">$</span> <span class="st">&quot;The answer is &quot;</span> <span class="fu">++</span> show answer</code></pre>
 <p>Executable PureScript files must define a value <code>Main.main</code>. They are compiled with the <code>--main</code> option, which generates code to call <code>Main.main</code>:</p>
 <pre><code>psc Euler1.purs Main.purs --module Main --main -o Main.js</code></pre>
 <p>Note that this time, we use the <code>Main</code> module as the entry point for the purpose of dead code elimination.</p>
