@@ -2,6 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
 import           Hakyll
+import           GHC.IO.Encoding
 
 
 --------------------------------------------------------------------------------
@@ -15,7 +16,11 @@ myFeedConfiguration = FeedConfiguration
     }
 
 main :: IO ()
-main = hakyll $ do
+main = do
+    setLocaleEncoding utf8
+    setFileSystemEncoding utf8
+    setForeignEncoding utf8
+    hakyll $ do
     match "images/*" $ do
         route   idRoute
         compile copyFileCompiler
@@ -30,13 +35,13 @@ main = hakyll $ do
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
-			
-	create ["rss.xml"] $ do
-	    route idRoute
-	    compile $ do
-	        let feedCtx = postCtx `mappend` constField "description" ""
-	        posts <- fmap (take 10) . recentFirst =<< loadAll "posts/*"
-	        renderRss myFeedConfiguration feedCtx posts
+        
+    create ["rss.xml"] $ do
+        route idRoute
+        compile $ do
+            let feedCtx = postCtx `mappend` constField "description" ""
+            posts <- fmap (take 10) . recentFirst =<< loadAll "posts/*"
+            renderRss myFeedConfiguration feedCtx posts
 
     match "index.html" $ do
         route idRoute
