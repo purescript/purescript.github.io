@@ -228,7 +228,8 @@ collatz n <span class="fu">=</span> runPure (runST (<span class="kw">do</span>
 <p>The <code>Eff</code> monad provides a way to use native effects in PureScript, in such a way that different types of effects can be interleaved, and such that the generated Javascript is relatively simple.</p>
 <p>Next, I’ll write a post which shows how to use <code>Eff</code> to wrap a real-world API.</p>
 
-<script type="text/javascript">
+<div id="disqus_thread">
+  <script type="text/javascript">
     var disqus_shortname = 'purescript';
     var disqus_title = 'Handling Native Effects with the Eff Monad';
     (function() {
@@ -236,10 +237,10 @@ collatz n <span class="fu">=</span> runPure (runST (<span class="kw">do</span>
         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
 
       </div>
       <div class="footer">
