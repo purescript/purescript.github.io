@@ -20,8 +20,7 @@ PureScript's core libraries are configured to use the `grunt` build tool, and pa
 
 If you don't have `grunt` and `bower` installed, install them now:
 
-    npm install -g grunt-cli
-    npm install -g bower
+    npm install -g grunt-cli bower
 
 ### Using the Starter Kit
 
@@ -80,8 +79,6 @@ If everything was built successfully, and the tests ran without problems, then t
 ### Working in PSCI
 
 `psci` is the interactive mode of PureScript. It is useful for working with pure computations, and for testing ideas.
-
-`psci` uses `nodejs` to execute compiled Javascript, so if you do not have that installed already, you will need to [install it now](http://nodejs.org).
 
 Open `psci` by typing `psci` at the command line.
 
