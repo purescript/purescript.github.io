@@ -1,28 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <meta charset="utf-8">
-  <title>PureScript Community Blog - First Steps With PureScript - Solving Project Euler #1</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="http://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic" rel="stylesheet" type="text/css" />
-  <link href="../css/normalize.css" rel="stylesheet" type="text/css" />
-  <link href="../css/default.css" rel="stylesheet" type="text/css" />
-  <link href="../css/syntax.css" rel="stylesheet" type="text/css" />
+    <title>PureScript Community Blog - First Steps With PureScript - Solving Project Euler #1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link href="http://fonts.googleapis.com/css?family=Sorts+Mill+Goudy" rel="stylesheet" type="text/css">
+    <link href="../css/default.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
-    <a href="https://github.com/purescript">
-        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://github-camo.global.ssl.fastly.net/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png">
+	<a href="https://github.com/purescript">
+		<img style="position: absolute; top: 0; left: 0; border: 0;" src="https://github-camo.global.ssl.fastly.net/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png">
     </a>
 	
     <div class="wrapper">
-      <div class="centered">
-        <div class="header">
-          <h1>PureScript Community Blog</h1>
-        </div>
-        <div class="body">
-          <p><a href="../index.html">Home</a></p>
+        <div class="centered">
+			
+            <h1>PureScript Community Blog</h1>
+
+            <hr />
+
+        	<p><a href="../index.html">Home</a></p>
 
 <h2>First Steps With PureScript - Solving Project Euler #1</h2>
 
@@ -33,15 +31,15 @@
     
 </p>
 
-<p>Welcome to the PureScript community blog! In this first post, I’m going to walk through the basics of getting set up to use the PureScript compiler <code>psc</code>, and its interactive mode <code>psci</code>.</p>
-<p>I’ll start with the installation of the compiler, go through the basic commands of <code>psc</code> and <code>psci</code>, working towards a solution of problem 1 from <a href="http://projecteuler.net/problem=1">Project Euler</a>.</p>
-<h3 id="installing-the-compiler">Installing the Compiler</h3>
-<p>PureScript can be installed from <a href="http://hackage.haskell.org/package/purescript">Hackage</a>. After installing the <a href="http://www.haskell.org/platform">Haskell Platform</a>, you can use the following to build the compiler from source:</p>
+<p>Welcome to the PureScript community blog! In this first post, I'm going to walk through the basics of getting set up to use the PureScript compiler <code>psc</code>, and its interactive mode <code>psci</code>.</p>
+<p>I'll start with the installation of the compiler, go through the basic commands of <code>psc</code> and <code>psci</code>, working towards a solution of problem 1 from Project Euler.</p>
+<h2 id="installing-the-compiler">Installing the Compiler</h2>
+<p>PureScript can be installed from Hackage. After installing the Haskell Platform, you can use the following to build the compiler from source:</p>
 <pre><code>cabal update
 cabal install purescript</code></pre>
-<h3 id="working-in-psci">Working in PSCI</h3>
+<h2 id="working-in-psci">Working in PSCI</h2>
 <p><code>psci</code> is the interactive mode of PureScript. It is useful for working with pure computations, and for testing ideas.</p>
-<p><code>psci</code> uses <code>nodejs</code> to execute compiled Javascript, so if you do not have that installed already, you will need to <a href="http://nodejs.org">install it now</a>.</p>
+<p><code>psci</code> uses <code>nodejs</code> to execute compiled Javascript, so if you do not have that installed already, you will need to install it now.</p>
 <p>Open <code>psci</code> by typing <code>psci</code> at the command line.</p>
 <pre><code> ____                 ____            _       _   
 |  _ \ _   _ _ __ ___/ ___|  ___ _ __(_)_ __ | |_ 
@@ -73,20 +71,22 @@ forall a b c. (Data.Tuple.Tuple a b -&gt; c) -&gt; a -&gt; b -&gt; c</code></pre
 <p>We will be using some of the functions from the <code>Data.Array</code> module, so import that module by using the <code>:i</code> command:</p>
 <pre><code>:i Data.Array</code></pre>
 <p>Note that using <code>Tab</code> to autocomplete names can be a useful time-saving device in <code>psci</code>.</p>
-<h3 id="solving-project-euler-1">Solving Project Euler #1</h3>
+<h2 id="solving-project-euler-1">Solving Project Euler #1</h2>
 <p>The following problem is taken from <a href="http://projecteuler.net/problem=1">Project Euler</a>:</p>
 <blockquote>
 <p>If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.</p>
+</blockquote>
+<blockquote>
 <p>Find the sum of all the multiples of 3 or 5 below 1000.</p>
 </blockquote>
 <p>We can solve this problem neatly using functions and function composition, directly in <code>psci</code>.</p>
-<p>Let’s start by listing all of the natural numbers below 1000 as an array. We can do this using the <code>range</code> function from <code>Data.Array</code>:</p>
+<p>Let's start by listing all of the natural numbers below 1000 as an array. We can do this using the <code>range</code> function from <code>Data.Array</code>:</p>
 <pre><code>&gt; range 0 999
 [0,1,2,3,4,...</code></pre>
 <p>You should see an array with 1000 elements printed to the command line.</p>
 <p>This value can be given a name, using a <code>let</code> binding:</p>
 <pre><code>&gt; let ns = range 0 999</code></pre>
-<p>Now let’s filter out all of those elements which do not meet the criterion. We can use the <code>filter</code> function from <code>Data.Array</code>, by providing a predicate function as its first argument:</p>
+<p>Now let's filter out all of those elements which do not meet the criterion. We can use the <code>filter</code> function from <code>Data.Array</code>, by providing a predicate function as its first argument:</p>
 <pre><code>&gt; let multiples = filter (\n -&gt; n % 3 == 0 || n % 5 == 0) ns</code></pre>
 <p>You can see the result by evaluating <code>multiples</code> if you like, or even check its type:</p>
 <pre><code>&gt; multiples
@@ -102,27 +102,27 @@ forall a b c. (Data.Tuple.Tuple a b -&gt; c) -&gt; a -&gt; b -&gt; c</code></pre
 0
 &gt; sum [1,2,3]  
 6</code></pre>
-<p>Finally, let’s use the <code>sum</code> function to find the sum of the <code>multiples</code> array:</p>
+<p>Finally, let's use the <code>sum</code> function to find the sum of the <code>multiples</code> array:</p>
 <pre><code>&gt; sum multiples
 233168</code></pre>
 <p>When you have finished using <code>psci</code>, type <code>:q</code> to quit:</p>
 <pre><code>&gt; :q
 See ya!</code></pre>
-<h3 id="compiling-a-solution">Compiling a Solution</h3>
+<h2 id="compiling-a-solution">Compiling a Solution</h2>
 <p>Now that we’ve seen how to use <code>psci</code> to reach the answer, let’s move our solution into a source file, and compile it using <code>psc</code>.</p>
 <p>Create a new text file <code>Euler.purs</code> and copy the following code:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Euler1</span> <span class="kw">where</span>
+<pre><code>module Euler1 where
 
-<span class="kw">import </span><span class="dt">Prelude</span>
-<span class="kw">import </span><span class="dt">Data.Array</span>
+import Prelude
+import Data.Array
 
-sum <span class="fu">=</span> foldl (<span class="fu">+</span>) <span class="dv">0</span>
+sum = foldl (+) 0
 
-ns <span class="fu">=</span> range <span class="dv">0</span> <span class="dv">999</span>
+ns = range 0 999
 
-multiples <span class="fu">=</span> filter (\n <span class="ot">-&gt;</span> n <span class="fu">%</span> <span class="dv">3</span> <span class="fu">==</span> <span class="dv">0</span> <span class="fu">||</span> n <span class="fu">%</span> <span class="dv">5</span> <span class="fu">==</span> <span class="dv">0</span>) ns
+multiples = filter (\n -&gt; n % 3 == 0 || n % 5 == 0) ns
 
-answer <span class="fu">=</span> sum multiples</code></pre>
+answer = sum multiples</code></pre>
 <p>It is possible to load this file directly into <code>psci</code> and to continue working:</p>
 <pre><code>psci Euler1.purs
 &gt; Euler1.answer
@@ -141,29 +141,29 @@ See ya!</code></pre>
 &gt; var euler1 = require(&quot;Euler1.js&quot;)
 &gt; euler1.Euler1.answer
 233168</code></pre>
-<p>This time, let’s define a <code>Main</code> module, so that we can create an executable Javascript file, which will print the answer to the console.</p>
+<p>This time, let's define a <code>Main</code> module, so that we can create an executable Javascript file, which will print the answer to the console.</p>
 <p>Create a new file, <code>Main.purs</code>, and copy the following code:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
+<pre><code>module Main where
 
-<span class="kw">import </span><span class="dt">Prelude</span>
-<span class="kw">import </span><span class="dt">Euler1</span> 
+import Prelude
+import Euler1 
 
-main <span class="fu">=</span> Debug.Trace.trace <span class="fu">$</span> <span class="st">&quot;The answer is &quot;</span> <span class="fu">++</span> show answer</code></pre>
+main = Debug.Trace.trace $ &quot;The answer is &quot; ++ show answer</code></pre>
 <p>Executable PureScript files must define a value <code>Main.main</code>. They are compiled with the <code>--main</code> option, which generates code to call <code>Main.main</code>:</p>
 <pre><code>psc Euler1.purs Main.purs --module Main --main -o Main.js</code></pre>
 <p>Note that this time, we use the <code>Main</code> module as the entry point for the purpose of dead code elimination.</p>
 <p>When the compiler finishes generating <code>Main.js</code>, simply run it on the command line to see the result:</p>
 <pre><code>node Main.js
 The answer is 233168</code></pre>
-<h3 id="conclusion">Conclusion</h3>
-<p>That’s all for this post. We’ve seen how to use enough of the basics of <code>psc</code> and <code>psci</code> to compile and execute simple PureScript programs. If you would like more information, the <a href="http://docs.purescript.org">PureScript documentation</a> lists all of the options for both <code>psc</code> and <code>psci</code>.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>That's all for this post. We've seen how to use enough of the basics of <code>psc</code> and <code>psci</code> to compile and execute simple PureScript programs. If you would like more information, the <a href="http://docs.purescript.org">PureScript documentation</a> lists all of the options for both <code>psc</code> and <code>psci</code>.</p>
 <p>Until next time...</p>
 
-        </div>
-        <div class="footer">
-          Site proudly generated by <a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a>
-        </div>
-      </div>
+			
+            <hr />
+			
+			<p><small>Site proudly generated by <a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a></small></p>
+		</div>
     </div>
 </body>
 

@@ -14,6 +14,69 @@ PureScript can be installed from [Hackage](http://hackage.haskell.org/package/pu
     cabal update
     cabal install purescript
 
+### Setting up the Development Environment
+
+PureScript's core libraries are configured to use the `grunt` build tool, and packages are available in the `bower` registry.
+
+If you don't have `grunt` and `bower` installed, install them now:
+
+    npm install -g grunt-cli
+    npm install -g bower
+
+### Using the Starter Kit
+
+This post will build upon the starter kit available [here](http://github.com/purescript/starter-kit). Start by cloning the project into a new directory:
+
+    git clone git@github.com:purescript/starter-kit.git
+
+Now install necessary packages using `npm`, and pull the necessary libraries from the `bower` registry:
+
+    cd starter-kit
+    npm install
+    bower update
+
+The starter kit contains the following files:
+
+- `bower.json` - contains library dependency information.
+- `package.json` - contains `npm` dependencies, including `grunt-purescript`
+- `Gruntfile.js` - builds the project and its test suite using `grunt`.
+- `.psci` - A configuration file for the interactive mode `psci`.
+
+At this point, you should be able to build the project and run the tests:
+
+    grunt
+
+You should see output similar to the following:
+
+    Running "clean:tests" (clean) task
+    Cleaning tmp...OK
+
+    Running "purescript:tests" (purescript) task
+    >> Created file tmp/tests.js.
+
+    :Running "execute:tests" (execute) task
+    -> executing tmp/tests.js
+    The differences of an empty list are empty.
+    All tests passed
+    The differences of a single-element list are empty.
+    All tests passed
+    The differences of a pair of equal elements are zero.
+    All tests passed
+    The diffs function returns Just (...) for a sorted list.
+    All tests passed
+    The diffs function returns Nothing for a reverse-sorted list with at least one pair of unequal elements.
+    All tests passed
+    -> completed tmp/tests.js (50ms)
+
+    >> 1 file and 0 calls executed (60ms)
+
+    Running "purescript-make:lib" (purescript-make) task
+    >> Make was successful.
+
+    Done, without errors.
+
+If everything was built successfully, and the tests ran without problems, then the last line should state "Done, without errors."
+
 ### Working in PSCI
 
 `psci` is the interactive mode of PureScript. It is useful for working with pure computations, and for testing ideas.
@@ -27,7 +90,7 @@ Open `psci` by typing `psci` at the command line.
     | |_) | | | | '__/ _ \___ \ / __| '__| | '_ \| __|
     |  __/| |_| | | |  __/___) | (__| |  | | |_) | |_ 
     |_|    \__,_|_|  \___|____/ \___|_|  |_| .__/ \__|
-                                         |_|        
+                                           |_|        
     
     :? shows help
 
@@ -47,7 +110,7 @@ As the introduction indicates, you can type `:?` to see a list of commands:
 
 We will use a selection of these commands during this tutorial.
 
-Start by pressing the Tab key to use the autocompletion feature. You will see a collection of names of functions from the Prelude which are available to use.
+Start by pressing the Tab key to use the autocompletion feature. You will see a collection of names of functions from the Prelude which are available to use. The `.psci` configuration file in the project directory specifies a default set of modules to load on startup.
 
 To see the type of one of these values, type the `:t` command, followed by a space, followed by the name of the value:
 
@@ -94,22 +157,11 @@ You can see the result by evaluating `multiples` if you like, or even check its 
     > :t multiples
     [Prim.Number]
 
-Now we need to find the sum of the `multiples` array, to complete the solution.
+Now we need to find the sum of the `multiples` array, to complete the solution. We can use the `sum` function from the `Data.Foldable` module:
 
-There is no `sum` function in the Prelude, but we can write one for ourselves, using the `foldl` combinator from `Data.Array`:
+    > :i Data.Foldable
 
-    > let sum = foldl (+) 0
-
-`foldl` takes a function for combining values, and an initial value, and combines all values in an array, moving from left to right.
-
-We can try our new function on a few small arrays:
-
-    > sum [] 
-    0
-    > sum [1,2,3]  
-    6
-
-Finally, let's use the `sum` function to find the sum of the `multiples` array:
+Now, let's use the `sum` function to find the sum of the `multiples` array:
 
     > sum multiples
     233168
@@ -123,15 +175,13 @@ When you have finished using `psci`, type `:q` to quit:
 
 Now that we've seen how to use `psci` to reach the answer, let's move our solution into a source file, and compile it using `psc`.
 
-Create a new text file `Euler.purs` and copy the following code:
+Create a new text file `src/Euler.purs` and copy the following code:
 
 ``` haskell
 module Euler1 where
 
-import Prelude
 import Data.Array
-
-sum = foldl (+) 0
+import Data.Foldable
 
 ns = range 0 999
 
@@ -148,50 +198,11 @@ It is possible to load this file directly into `psci` and to continue working:
     > :q
     See ya!
 
-Alternatively, we can use the compiler `psc` to compile the `Euler1.purs` file to Javascript.
+Alternatively, we can use `grunt` to compile the `Euler1.purs` file to Javascript:
 
-    psc Euler1.purs
+    grunt
 
-You should see a lot of Javascript printed onto the console. The reason that there is so much output is that the entire Prelude is being included with your program. Dead code elimination can be used to remove any code which is not required by your program. Use the `--module` command line option, specifing the module names of the modules whose code is required:
-
-    psc Euler1.purs --module Euler1
-
-This time you should see only the Prelude functions which you have used, namely `foldl`, `filter` and `range`.
-
-If you would like to save the generated Javascript to a file instead printing it to the console, specify a file using the `-o` option:
-
-    psc Euler1.purs --module Euler1 -o Euler1.js
-
-If you load this file in `node`, you will be able to evaluate its expressions there as well:
-
-    node
-    > var euler1 = require("Euler1.js")
-    > euler1.Euler1.answer
-    233168
-
-This time, let's define a `Main` module, so that we can create an executable Javascript file, which will print the answer to the console.
-
-Create a new file, `Main.purs`, and copy the following code:
-
-``` haskell
-module Main where
-
-import Prelude
-import Euler1 
-
-main = Debug.Trace.trace $ "The answer is " ++ show answer
-```
-
-Executable PureScript files must define a value `Main.main`. They are compiled with the `--main` option, which generates code to call `Main.main`:
-
-    psc Euler1.purs Main.purs --module Main --main -o Main.js
-
-Note that this time, we use the `Main` module as the entry point for the purpose of dead code elimination.
-
-When the compiler finishes generating `Main.js`, simply run it on the command line to see the result:
-
-    node Main.js
-    The answer is 233168
+This will compile each module present in `src/` into a separate file under `js/`.
 
 ### Conclusion
 
