@@ -110,8 +110,8 @@ Expressions are terminated using Ctrl+D
 <p>We will use a selection of these commands during this tutorial.</p>
 <p>Start by pressing the Tab key to use the autocompletion feature. You will see a collection of names of functions from the Prelude which are available to use. The <code>.psci</code> configuration file in the project directory specifies a default set of modules to load on startup.</p>
 <p>To see the type of one of these values, type the <code>:t</code> command, followed by a space, followed by the name of the value:</p>
-<pre><code>&gt; :t Data.Array.foldl
-forall a b. (b -&gt; a -&gt; b) -&gt; b -&gt; [a] -&gt; b
+<pre><code>&gt; :t Data.Array.map
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
 &gt; :t Data.Tuple.curry
 forall a b c. (Data.Tuple.Tuple a b -&gt; c) -&gt; a -&gt; b -&gt; c</code></pre>
 <p>We will be using some of the functions from the <code>Data.Array</code> module, so import that module by using the <code>:i</code> command:</p>

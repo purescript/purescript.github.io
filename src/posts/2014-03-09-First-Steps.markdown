@@ -111,8 +111,8 @@ Start by pressing the Tab key to use the autocompletion feature. You will see a 
 
 To see the type of one of these values, type the `:t` command, followed by a space, followed by the name of the value:
 
-    > :t Data.Array.foldl
-    forall a b. (b -> a -> b) -> b -> [a] -> b
+    > :t Data.Array.map
+    forall a b. (a -> b) -> [a] -> [b]
     > :t Data.Tuple.curry
     forall a b c. (Data.Tuple.Tuple a b -> c) -> a -> b -> c
 
