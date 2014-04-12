@@ -154,13 +154,9 @@ You can see the result by evaluating `multiples` if you like, or even check its 
     > :t multiples
     [Prim.Number]
 
-Now we need to find the sum of the `multiples` array, to complete the solution. We can use the `sum` function from the `Data.Foldable` module:
+Now we need to find the sum of the `multiples` array, to complete the solution. We can use the `sum` function from the `Data.Foldable` module.
 
-    > :i Data.Foldable
-
-Now, let's use the `sum` function to find the sum of the `multiples` array:
-
-    > sum multiples
+    > Data.Foldable.sum multiples
     233168
 
 When you have finished using `psci`, type `:q` to quit:
@@ -178,13 +174,13 @@ Create a new text file `src/Euler.purs` and copy the following code:
 module Euler1 where
 
 import Data.Array
-import Data.Foldable
+import qualified Data.Foldable as F
 
 ns = range 0 999
 
 multiples = filter (\n -> n % 3 == 0 || n % 5 == 0) ns
 
-answer = sum multiples
+answer = F.sum multiples
 ```
 
 It is possible to load this file directly into `psci` and to continue working:
