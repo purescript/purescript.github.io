@@ -137,10 +137,8 @@ forall a b c. (Data.Tuple.Tuple a b -&gt; c) -&gt; a -&gt; b -&gt; c</code></pre
 [0,3,5,6,9,10,12,15,...
 &gt; :t multiples
 [Prim.Number]</code></pre>
-<p>Now we need to find the sum of the <code>multiples</code> array, to complete the solution. We can use the <code>sum</code> function from the <code>Data.Foldable</code> module:</p>
-<pre><code>&gt; :i Data.Foldable</code></pre>
-<p>Now, let’s use the <code>sum</code> function to find the sum of the <code>multiples</code> array:</p>
-<pre><code>&gt; sum multiples
+<p>Now we need to find the sum of the <code>multiples</code> array, to complete the solution. We can use the <code>sum</code> function from the <code>Data.Foldable</code> module.</p>
+<pre><code>&gt; Data.Foldable.sum multiples
 233168</code></pre>
 <p>When you have finished using <code>psci</code>, type <code>:q</code> to quit:</p>
 <pre><code>&gt; :q
@@ -151,13 +149,13 @@ See ya!</code></pre>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Euler1</span> <span class="kw">where</span>
 
 <span class="kw">import </span><span class="dt">Data.Array</span>
-<span class="kw">import </span><span class="dt">Data.Foldable</span>
+<span class="kw">import qualified</span> <span class="dt">Data.Foldable</span> <span class="kw">as</span> <span class="dt">F</span>
 
 ns <span class="fu">=</span> range <span class="dv">0</span> <span class="dv">999</span>
 
 multiples <span class="fu">=</span> filter (\n <span class="ot">-&gt;</span> n <span class="fu">%</span> <span class="dv">3</span> <span class="fu">==</span> <span class="dv">0</span> <span class="fu">||</span> n <span class="fu">%</span> <span class="dv">5</span> <span class="fu">==</span> <span class="dv">0</span>) ns
 
-answer <span class="fu">=</span> sum multiples</code></pre>
+answer <span class="fu">=</span> F.sum multiples</code></pre>
 <p>It is possible to load this file directly into <code>psci</code> and to continue working:</p>
 <pre><code>psci Euler1.purs
 &gt; Euler1.answer
