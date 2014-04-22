@@ -15,7 +15,7 @@ Calling a PureScript function from Javascript is very simple, at least for funct
 
 Let's take the following simple module as an example:
 
-```
+``` haskell
 module Test where
 
 gcd :: Number -> Number -> Number
@@ -29,7 +29,7 @@ This function finds the greatest common divisor of two numbers by repeated subtr
 
 To understand how this function can be called from Javascript, it is important to realise that PureScript functions always get turned into Javascript functions _of a single argument_, so we need to apply its arguments one-by-one:
 
-```
+``` javascript
 // In Javascript
 var test = Test.gcd(15)(20);
 ```
@@ -38,7 +38,7 @@ Here, I am assuming that the code was compiled with `psc`, which combines all mo
 
 If instead you would like to compiled with `psc-make`, your modules will be compiled to CommonJS modules and placed in the `output` folder by default. In NodeJS, if you copy these generated modules into your `node_modules` directory, you will be able to reference the module by using `require`:
 
-```
+``` javascript
 var Test = require('Test');
 var test = Test.gcd(15)(20);
 ```
@@ -49,37 +49,37 @@ PureScript aims to preserve names during code generation as much as possible. In
 
 If you decide to use a Javascript keyword as an identifier, the name will be escaped with a double dollar symbol. For example,
 
-```
+``` haskell
 null = []
 ```
 
 generates the following Javascript:
 
-```
+``` javascript
 var $$null = [];
 ```
 
 In addition, if you would like to use special characters in your identifer names, they will be escaped using a single dollar symbol. For example,
 
-```
+``` haskell
 example' = 100
 ```
 
 generates the following Javascript:
 
-```
+``` javascript
 var example$prime = 100;
 ```
 
 This scheme also applies to names of infix operators:
 
-```
+``` haskell
 (%) a b = ...
 ```
 
 generates
 
-```
+``` javascript
 var $percent = function(a) { ... }
 ```
 
@@ -91,7 +91,7 @@ One special case that you should be aware of when calling PureScript functions f
 
 For example, let's write a simple PureScript function with a constrained type, and look at the generated Javascript.
 
-```
+``` haskell
 module Test where
 
 import Data.Tuple
@@ -103,7 +103,7 @@ inOrder a1 a2 = Tuple a2 a1
 
 The generated Javascript looks like this:
 
-```
+``` javascript
 var inOrder = function (__dict_Ord_32) {
   return function (_1) {
     return function (_2) {
@@ -120,7 +120,7 @@ Notice that `inOrder` is a (curried) function of three arguments, not two. The f
 
 We can call this function from Javascript by passing an explicit type class dictionary from the Prelude as the first parameter:
 
-```
+``` javascript
 var test = Test.inOrder(Prelude.ordNumber())(20)(10);
 ```
 
@@ -136,7 +136,7 @@ The simplest way to make a Javascript value available in PureScript is to provid
 
 Suppose you had the following function defined in Javascript:
 
-```
+``` javascript
 function interestImpl1(amount) {
   return amount * 0.1;
 }
@@ -144,7 +144,7 @@ function interestImpl1(amount) {
 
 You would be able to make this function available in PureScript as follows:
 
-```
+``` haskell
 foreign import interestImpl1 :: Number -> Number
 ```
 
@@ -168,7 +168,7 @@ Wrapper functions can be defined inline, by including a string literal in the `f
 
 For example, consider the following Javascript function:
 
-```
+``` javascript
 function interestImpl2(amount, months) {
   return amount * Math.exp(months * 0.1);
 }
@@ -176,7 +176,7 @@ function interestImpl2(amount, months) {
 
 This function cannot be given a type directly in PureScript, but we can write a wrapper function with a curried function type:
 
-```
+``` haskell
 foreign import calculateInterest 
   "function calculateInterest(amount) {\
   \  return function(months) {\
@@ -197,13 +197,13 @@ It is often useful when wrapping Javascript APIs to create new types at a specif
 
 For example, suppose we have a Javascript library `frob` which defines the `Frob` data structure and associated functions. To give meaningful types to those functions, it might be useful to define a type `Frob` at kind `*`. We can do this as follows:
 
-```
+``` haskell
 foreign import data Frob :: *
 ```
 
 The type `Frob` can now be used in other types, or in foreign import declarations:
 
-```
+``` haskell
 foreign import makeFrob :: String -> Frob
 ```
 
@@ -217,7 +217,7 @@ Suppose we have already defined a foreign data type `Frob` and would like to def
 
 We might write the type class dictionary as follows:
 
-```
+``` javascript
 var showFrob = function() {
   return {
     __superclasses: {},
@@ -230,7 +230,7 @@ var showFrob = function() {
 
 We could then make the instance available in PureScript using the following declaration:
 
-```
+``` haskell
 foreign import instance showFrob :: Show Frob
 ``` 
 
