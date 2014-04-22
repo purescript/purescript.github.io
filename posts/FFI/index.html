@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PureScript Community Blog - Javascript Interop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="http://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic" rel="stylesheet" type="text/css" />
+  <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <a href="https://github.com/purescript">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://github-camo.global.ssl.fastly.net/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png">
+    </a>
+	
+    <div class="wrapper">
+      <div class="header">
+        <h1>PureScript Community Blog</h1>
+      </div>
+      <div class="body">
+        <p><a href="../../">Home</a></p>
+
+<h2>Javascript Interop</h2>
+
+<p class="info">
+    Posted on April 19, 2014
+    
+        by Phil Freeman
+    
+</p>
+
+<p>In the last post, I promised to describe how to interact with Javascript code using the foreign function interface, or FFI. In this short post, I’ll go over how to call Javascript functions using the FFI, as well as how to call PureScript functions from Javascript.</p>
+<h3 id="disclaimer">Disclaimer</h3>
+<p>It should be said that choosing to work with Javascript via the FFI will “void the warranty” of the typechecker to a certain extent. Once you step outside the safe confines of the PureScript type system, nothing is guaranteed, so it is recommended that you know a few basic internals of the language implementation before writing your own FFI bindings. That said, the correspondence between PureScript types and their Javascript representations is fairly simple, so it should not be too difficult to understand.</p>
+<h3 id="calling-purescript-from-javascript">Calling PureScript from Javascript</h3>
+<p>Calling a PureScript function from Javascript is very simple, at least for functions with simple types.</p>
+<p>Let’s take the following simple module as an example:</p>
+<pre><code>module Test where
+
+gcd :: Number -&gt; Number -&gt; Number
+gcd n m | n == 0 = m
+gcd n m | m == 0 = n
+gcd n m | n &gt; m = gcd (n - m) m
+gcd n m = gcd (m - n) n</code></pre>
+<p>This function finds the greatest common divisor of two numbers by repeated subtraction. It is a nice example of a case where you might like to use PureScript to define the function, but have a requirement to call it from Javascript: it is simple to define this function in PureScript since it is made up of pattern matches and recursion, and the implementor can benefit from the use of the type checker.</p>
+<p>To understand how this function can be called from Javascript, it is important to realise that PureScript functions always get turned into Javascript functions <em>of a single argument</em>, so we need to apply its arguments one-by-one:</p>
+<pre><code>// In Javascript
+var test = Test.gcd(15)(20);</code></pre>
+<p>Here, I am assuming that the code was compiled with <code>psc</code>, which combines all modules into a single file, using objects in the global namespace to represent modules. For that reason, I was able to reference the <code>gcd</code> function on the <code>Test</code> object, since <code>Test</code> was the name of the module I compiled.</p>
+<p>If instead you would like to compiled with <code>psc-make</code>, your modules will be compiled to CommonJS modules and placed in the <code>output</code> folder by default. In NodeJS, if you copy these generated modules into your <code>node_modules</code> directory, you will be able to reference the module by using <code>require</code>:</p>
+<pre><code>var Test = require('Test');
+var test = Test.gcd(15)(20);</code></pre>
+<h3 id="understanding-name-generation">Understanding Name Generation</h3>
+<p>PureScript aims to preserve names during code generation as much as possible. In particular, most identifiers which are neither PureScript nor Javascript keywords can be expected to be preserved, at least for names of top-level declarations.</p>
+<p>If you decide to use a Javascript keyword as an identifier, the name will be escaped with a double dollar symbol. For example,</p>
+<pre><code>null = []</code></pre>
+<p>generates the following Javascript:</p>
+<pre><code>var $$null = [];</code></pre>
+<p>In addition, if you would like to use special characters in your identifer names, they will be escaped using a single dollar symbol. For example,</p>
+<pre><code>example' = 100</code></pre>
+<p>generates the following Javascript:</p>
+<pre><code>var example$prime = 100;</code></pre>
+<p>This scheme also applies to names of infix operators:</p>
+<pre><code>(%) a b = ...</code></pre>
+<p>generates</p>
+<pre><code>var $percent = function(a) { ... }</code></pre>
+<p>The full list of escaped characters and their Javascript representations can be found <a href="https://github.com/purescript/purescript/blob/master/src/Language/PureScript/CodeGen/Common.hs">in the compiler source</a>.</p>
+<h3 id="handling-constrained-types">Handling Constrained Types</h3>
+<p>One special case that you should be aware of when calling PureScript functions from Javascript is that values with constrained types (i.e. types which contain type class constraints) contain extra parameters which are used to pass type class dictionaries to the function.</p>
+<p>For example, let’s write a simple PureScript function with a constrained type, and look at the generated Javascript.</p>
+<pre><code>module Test where
+
+import Data.Tuple
+
+inOrder :: forall a. (Ord a) =&gt; a -&gt; a -&gt; Tuple a a
+inOrder a1 a2 | a1 &lt; a2 = Tuple a1 a2
+inOrder a1 a2 = Tuple a2 a1</code></pre>
+<p>The generated Javascript looks like this:</p>
+<pre><code>var inOrder = function (__dict_Ord_32) {
+  return function (_1) {
+    return function (_2) {
+      if (Prelude[&quot;&lt;&quot;](__dict_Ord_32)(_1)(_2)) {
+        return Data_Tuple.Tuple(_1)(_2);
+      };
+      return Data_Tuple.Tuple(_2)(_1);
+    };
+  };
+};</code></pre>
+<p>Notice that <code>inOrder</code> is a (curried) function of three arguments, not two. The first argument is the type class dictionary for the <code>Ord</code> constraint.</p>
+<p>We can call this function from Javascript by passing an explicit type class dictionary from the Prelude as the first parameter:</p>
+<pre><code>var test = Test.inOrder(Prelude.ordNumber())(20)(10);</code></pre>
+<h3 id="calling-javascript-from-purescript">Calling Javascript from PureScript</h3>
+<p>Javascript values and functions can be used from PureScript by using the foreign function interface (FFI). The problem becomes how to choose suitable types for values originating in Javascript.</p>
+<p>The general rule regarding types is that you can enforce as little or as much type safety as you like when using the FFI, but you should be careful to avoid common pitfalls when dealing with Javascript values, like the /of null or undefined values being returned from a Javascript function. Functions defined in the Prelude and core libaries tend to err on the side of type safety where possible.</p>
+<h3 id="referencing-javascript-values-directly">Referencing Javascript Values Directly</h3>
+<p>The simplest way to make a Javascript value available in PureScript is to provide a type using a <code>foreign import</code> declaration. If the value or function is sufficiently pure, you may be able to use it directly.</p>
+<p>Suppose you had the following function defined in Javascript:</p>
+<pre><code>function interestImpl1(amount) {
+  return amount * 0.1;
+}</code></pre>
+<p>You would be able to make this function available in PureScript as follows:</p>
+<pre><code>foreign import interestImpl1 :: Number -&gt; Number</code></pre>
+<p>Note that a few restrictions apply:</p>
+<ul>
+<li>Javascript functions can normally only be typed in PureScript if they take exactly one argument.</li>
+<li>Depending on how you would like to manage side-effects, you may wish to provide a wrapper function instead (see the next section).</li>
+<li>In order to handle <code>null</code> and <code>undefined</code> correctly, as well as other corner cases, you may wish to use the <code>Data.Foreign</code> module or another technique to sanitize input data.</li>
+</ul>
+<h3 id="wrapping-javascript-values">Wrapping Javascript Values</h3>
+<p>For one or more reasons, it might be preferable to define a wrapper function to call a Javascript function, instead of calling it directly. This is the approach which is taken in a lot of PureScript’s core libraries.</p>
+<p>For example, you might want to:</p>
+<ul>
+<li>Introduce a wrapper function to handle functions of many arguments correctly.</li>
+<li>Track side-effects using the <code>Eff</code> monad.</li>
+<li>Define custom logic for handling erroneous data.</li>
+</ul>
+<p>Wrapper functions can be defined inline, by including a string literal in the <code>foreign import</code> declaration.</p>
+<p>For example, consider the following Javascript function:</p>
+<pre><code>function interestImpl2(amount, months) {
+  return amount * Math.exp(months * 0.1);
+}</code></pre>
+<p>This function cannot be given a type directly in PureScript, but we can write a wrapper function with a curried function type:</p>
+<pre><code>foreign import calculateInterest 
+  &quot;function calculateInterest(amount) {\
+  \  return function(months) {\
+  \    return interestImpl2(interest, months);\
+  \  };\
+  \}&quot; :: Number -&gt; Number -&gt; Number</code></pre>
+<h3 id="santizing-foreign-data-with-data.foreign">Santizing Foreign Data With Data.Foreign</h3>
+<p>Data returned from Javascript functions cannot generally be trusted to be defined and non-null. PureScript functions in the Prelude and common libraries generally assume that values will be neither <code>undefined</code> nor <code>null</code>, so it is important to sanitize data when working with values returned from Javascript functions using the FFI.</p>
+<p>The <code>Data.Foreign</code> module (available as <code>purescript-foreign</code> from the Bower registry) defines a <code>Foreign</code> data type, and several helper functions for turning <code>Foreign</code> values into regular PureScript values, as well as support for handling <code>null</code> and <code>undefined</code> using the <code>Maybe</code> type constructor.</p>
+<h3 id="defining-foreign-data-types">Defining Foreign Data Types</h3>
+<p>It is often useful when wrapping Javascript APIs to create new types at a specific kind for use with the FFI.</p>
+<p>For example, suppose we have a Javascript library <code>frob</code> which defines the <code>Frob</code> data structure and associated functions. To give meaningful types to those functions, it might be useful to define a type <code>Frob</code> at kind <code>*</code>. We can do this as follows:</p>
+<pre><code>foreign import data Frob :: *</code></pre>
+<p>The type <code>Frob</code> can now be used in other types, or in foreign import declarations:</p>
+<pre><code>foreign import makeFrob :: String -&gt; Frob</code></pre>
+<h3 id="defining-foreign-type-class-instances">Defining Foreign Type Class Instances</h3>
+<p>It is also possible to bring type class instances into scope, whose dictionaries are defined in Javascript.</p>
+<p>This feature was added in order to support separate compilation, and so is not considered a supported feature unlike ordinary usage of the FFI, but is documented here for completeness.</p>
+<p>Suppose we have already defined a foreign data type <code>Frob</code> and would like to define an instance of the <code>Show</code> typeclass in Javascript.</p>
+<p>We might write the type class dictionary as follows:</p>
+<pre><code>var showFrob = function() {
+  return {
+    __superclasses: {},
+    show: function(frob) {
+      return frob.foo + frob.bar + frob.baz;
+    }
+  };
+};</code></pre>
+<p>We could then make the instance available in PureScript using the following declaration:</p>
+<pre><code>foreign import instance showFrob :: Show Frob</code></pre>
+<p>Note that the same could be accomplished by defining a function representing the <code>show</code> function in Javascript, importing that using the FFI, and then writing the <code>Show Frob</code> instance in PureScript as a regular type class instance.</p>
+<h3 id="conclusion">Conclusion</h3>
+<p>I have hopefully shown that interoperating with Javascript is simple in both directions, once a few small implementation details are understood. You should now be able to wrap your Javascript libraries for use in PureScript, and vice versa.</p>
+
+<div id="disqus_thread">
+  <script type="text/javascript">
+    var disqus_shortname = 'purescript';
+    var disqus_title = 'Javascript Interop';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+      </div>
+      <div class="footer">
+        Site proudly generated by <a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a>
+      </div>
+    </div>
+</body>
+
+</html>
