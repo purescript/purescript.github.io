@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PureScript Community Blog - Semigroup Motivation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="http://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic" rel="stylesheet" type="text/css" />
+  <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <a href="https://github.com/purescript">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://github-camo.global.ssl.fastly.net/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png">
+    </a>
+	
+    <div class="wrapper">
+      <div class="header">
+        <h1>PureScript Community Blog</h1>
+      </div>
+      <div class="body">
+        <p><a href="../../">Home</a></p>
+
+<h2>Semigroup Motivation</h2>
+
+<p class="info">
+    Posted on April 28, 2014
+    
+        by Hardy Jones
+    
+</p>
+
+<p>A gist with the following code can be found <a href="https://gist.github.com/joneshf/11376722">here</a></p>
+<h3 id="motivation">Motivation</h3>
+<p>So, great, you’ve got this structure with an associative operator <code>&lt;&gt;</code>. What’s the point?</p>
+<p>Most of the explanations of <code>Semigroup</code>s use a numeric analogue. This is fine and provides great intuition. But there are some other <code>Semigroup</code>s readily available that are also fairly intuitive.</p>
+<p>There are a few things you get from a <code>Semigroup</code>. This list is non-exhaustive.</p>
+<ul>
+<li>You no longer have to worry about parentheses.</li>
+<li>The order computations are done in is irrelevant to the final result.[1]</li>
+</ul>
+<h3 id="less-parens">Less parens</h3>
+<p>The first is mostly aesthetic. For instance, if you were joining strings together, and had a few lying around:</p>
+<pre class="purescript"><code>&gt; let noun1 = &quot;strings&quot;
+      verb = &quot;form&quot;
+      article = &quot;a&quot;
+      noun2 = &quot;`Semigroup`&quot;
+      space = &quot; &quot;</code></pre>
+<p>The following two examples would be equivalent.</p>
+<pre class="purescript"><code>&gt; let subject = noun1
+      predicate = verb &lt;&gt; space &lt;&gt; article &lt;&gt; space &lt;&gt; noun2
+      sentence = subject &lt;&gt; space &lt;&gt; predicate
+
+&gt; sentence
+
+&quot;strings form a `Semigroup`&quot;</code></pre>
+<pre class="purescript"><code>&gt; let sentence = noun1
+               &lt;&gt; space
+               &lt;&gt; verb
+               &lt;&gt; space
+               &lt;&gt; article
+               &lt;&gt; space
+               &lt;&gt; noun2
+
+&gt; sentence
+
+&quot;strings form a `Semigroup`&quot;</code></pre>
+<p>Of course, this example is contrived, but a bit of inspection should show that the two samples are equivalent.</p>
+<h3 id="order-is-not-important">Order is not important</h3>
+<p>The second benefit is that the order of computations no longer concerns the final result. This is less of an implementor concern and more in the realm of compilers. What this means is that you can dish out the work to multiple places and when it comes back, just <code>&lt;&gt;</code> them together as if it had be done in one spot. There have been many papers written on the subject of <code>Semigroup</code>s, concurrency and parallelism.</p>
+<h3 id="examples">Examples</h3>
+<p>There are many <code>Semigroup</code>s, quite a few of PureScript’s primitive types are <code>Semigroup</code>s.</p>
+<p>The following are <code>Semigroup</code>s, though they may lack the instance, require additional constraints, or may have more than one interpretation as a <code>Semigroup</code>:</p>
+<ul>
+<li>Array</li>
+<li>Boolean</li>
+<li>Date</li>
+<li>Function</li>
+<li>Number</li>
+<li>Object</li>
+<li>String</li>
+</ul>
+<p>Some explanation is in order.</p>
+<p>Booleans have at least two <code>Semigroup</code>s.</p>
+<ul>
+<li><code>And</code>/<code>All</code>, where <code>&lt;&gt;</code> is equivalent to <code>&amp;&amp;</code>.</li>
+<li><code>Or</code>/<code>Any</code>, where <code>&lt;&gt;</code> is equivalent to <code>||</code>.</li>
+</ul>
+<p>Numbers have at least two <code>Semigroup</code>s.</p>
+<ul>
+<li><code>Sum</code>, where <code>&lt;&gt;</code> is equivalent to <code>+</code>.</li>
+<li><code>Product</code>, where <code>&lt;&gt;</code> is equivalent to <code>*</code>.</li>
+</ul>
+<h3 id="functions">Functions</h3>
+<p>In order for functions to be a <code>Semigroup</code>, it is required that their return type also be a <code>Semigroup</code>. This can be seen by thinking about how we might <code>&lt;&gt;</code> two functions together. One (the only?) reasonable interpretation is to apply both functions to the same argument, and <code>&lt;&gt;</code> the result of each application together.</p>
+<pre class="purescript"><code>instance semigroupFunction :: (Semigroup b) =&gt; Semigroup (a -&gt; b) where
+    (&lt;&gt;) f g = \x -&gt; f x &lt;&gt; g x</code></pre>
+<p>Which we could use like this:</p>
+<pre class="purescript"><code>&gt; :i Data.String
+&gt; let bothCase s = toUpper s &lt;&gt; toLower s
+
+&gt; bothCase &quot;abc&quot;
+
+&quot;ABCabc&quot;</code></pre>
+<p>Again, another interesting example, but it still feels contrived. How about something a bit bigger?</p>
+<h3 id="parser">Parser</h3>
+<p>Let’s say we were writing a parser, and we wanted to make sure we had a valid arrangement of brackets. We just need to build up a few <code>Semigroup</code>s. Let’s use the implementation for <code>&lt;&gt;</code> on functions, and use the <code>All</code> <code>Semigroup</code> for Booleans.</p>
+<p>This can currently be found in <code>Data.Monoid.All</code></p>
+<p>The relavent parts are:</p>
+<pre class="purescript"><code>data All = All Boolean
+
+instance semigroupAll :: Semigroup All where
+  (&lt;&gt;) (All x) (All y) = All (x &amp;&amp; y)</code></pre>
+<p>Now, we just need to check that our string starts and ends with the correct delimiters.</p>
+<pre class="purescript"><code>&gt; let startsWith s s' = All $ substr 0 (lengthS s') s == s'
+      endsWith s s' = All $ substr (lengthS s - lengthS s') (lengthS s') s == s'
+      lParen s = s `startsWith` &quot;(&quot;
+      rParen s = s `endsWith` &quot;)&quot;
+      parens = lParen &lt;&gt; rParen
+
+&gt; parens &quot;(this works)&quot;
+
+true
+
+&gt; parens &quot;(this doesnt&quot;
+
+false</code></pre>
+<p>We can even go one step further and take the starting and stopping tokens.</p>
+<pre class="purescript"><code>&gt; let startStop start stop = let startTest s = s `startsWith` start
+                                 stopTest s = s `endsWith` stop
+                             in startTest &lt;&gt; stopTest</code></pre>
+<p>Now we can create a whole bunch of helper parsers.</p>
+<pre class="purescript"><code>&gt; let parens   = startStop &quot;(&quot; &quot;)&quot;
+      brackets = startStop &quot;[&quot; &quot;]&quot;
+      braces   = startStop &quot;{&quot; &quot;}&quot;
+      other    = startStop &quot;wat&quot; &quot;yup&quot;
+
+&gt; parens &quot;(this works)&quot;
+
+true
+
+&gt; parens &quot;)&quot;
+
+false
+
+&gt; braces &quot;{ here too }&quot;
+
+true
+
+&gt; other &quot;wat yup&quot;
+
+true</code></pre>
+<p>Then we can modify it a bit to allow more processing, though it starts to get a bit hectic. Let’s say we wanted to see throw together an adhoc ruby validator. We can check if a string has the form <code>if &lt;cond&gt; then &lt;expr&gt; else &lt;expr&gt; end</code></p>
+<pre class="purescript"><code>&gt; let startMidStop start middleTest stop = let startTest s = s `startsWith` start
+                                               stopTest s = s `endsWith` stop
+                                           in startTest &lt;&gt; middleTest &lt;&gt; stopTest
+      contains s s' = All $ s `indexOfS` s' /= -1
+      thenElse s = let afterThen = s `indexOfS` &quot;then&quot;
+                       s' = substring afterThen (lengthS s) s
+                   in s `contains` &quot;then&quot; &lt;&gt; s' `contains` &quot;else&quot;
+      rubyIfThenElse = startMidStop &quot;if&quot; thenElse &quot;end&quot;
+
+&gt; rubyIfThenElse &quot;if 5 &gt; 3 then 5 else 3 end&quot;
+
+true
+
+&gt; rubyIfThenElse &quot;if 5 &gt; 3 then 5 end&quot;
+
+false
+
+&gt; rubyIfThenElse &quot;if 5 &gt; 3 else 3 end&quot;
+
+false
+
+&gt; rubyIfThenElse &quot;if 5 &gt; 3 else 3 end&quot;
+
+false</code></pre>
+<p>As you can see, this got a bit out of hand in the <code>thenElse</code> function. Thankfully, there are better abstractions for this kind of logic. However, we should take a minute to analyze what we just did here.</p>
+<p>At the core of our logic, we’re only working with <code>Semigroup</code>s. We’ve only composed two different <code>Semigroup</code>s: <code>All</code> (Booleans), and Functions. But we have a good deal of expressivity with just these two.</p>
+<p>In <code>thenElse</code>, we’re working with the <code>All</code> <code>Semigroup</code>. <code>s `contains` &quot;then&quot;</code> returns true if “then” is somewhere within <code>s</code>. We then <code>&lt;&gt;</code> the result of that with <code>s' `contains` &quot;else&quot;</code>, which returns true only if “else” is found somewhere after “then” in <code>s</code>.</p>
+<p>In <code>startMidStop</code>, we’re working with the Function <code>Semigroup</code>. This is similar to our previous <code>startStop</code> function, with one important exception. We’ve made a little hole inside our <code>&lt;&gt;</code> flow, and inserted another <code>Semigroup</code>. This allowed us to pass in our new test function <code>thenElse</code>, and have everything work as we think it should. Meaning, that the string we’re analyzing still must start with “if” and end with “end”. The beauty of this is, if any one of these tests fail, the entire analyzer fails.</p>
+<p>Of course, this only really tests that each keyword is present in the string. It does not actually work as any sort of syntactic analyzer. If we take a look at <code>Bind</code> and <code>Applicative</code> and try to implement a similar test we can see a MUCH better way to work out these sort of kinks, make the implementation much more readable, and get short-cut failing for free. This is not to say that a <code>Semigroup</code> wouldn’t allow us to do all of these tests. Quite the opposite, we could continue building up little pieces of a parser in this way, and end up with something that works. However, there are easier ways to get to the same result. Plus, this is only supposed to be motivation.</p>
+<h3 id="so-what-was-the-point">So what was the point?</h3>
+<p>To answer the first question: that example is the point. A very simple abstraction, which says “Provide some way to take two values of the same type and combine then” and only require this operation to be associative, has allowed us to model a much more complicated problem in simple terms of the operation.</p>
+<p>The other important thing to see here is how simple it is to find a Semigroup.</p>
+<p>Working with The DOM? Can you combine elements such that the operation holds under associativity? Then it’s a Semigroup.</p>
+<p>Working with Dates? Can you combine Dates such that the operation holds under associativity? Then it’s a Semigroup.</p>
+<p>Working with an MVC library? Can you combine Models or Collections or Views or whatever such that the operation holds under associativity? Then it’s a Semigroup.</p>
+<p>Working with Streams? Can you combine streams such that the operation holds under associativity? Then it’s a Semigroup.</p>
+<p>There’s plenty of these things out there, and viewing them as Semigroups allows us to reason a bit more about how they operate.</p>
+<p>[1]: This comes with a caveat. If your <code>Semigroup</code> performs side-effects during concat (which we all hope it doesn’t, but there’s not much we can really do to restrict it from happening if you use the ffi), then the order of the side-effects may not reflect your intentions.</p>
+
+<div id="disqus_thread">
+  <script type="text/javascript">
+    var disqus_shortname = 'purescript';
+    var disqus_title = 'Semigroup Motivation';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+      </div>
+      <div class="footer">
+        Site proudly generated by <a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a>
+      </div>
+    </div>
+</body>
+
+</html>
