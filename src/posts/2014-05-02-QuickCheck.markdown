@@ -206,9 +206,7 @@ In fact, we don't need to sort by the identity function. Since QuickCheck suppor
 [Success,Success,Success,Success,Success,Success,Success,Success,Success,Success]
 ```
 
-Have a look through the `UnderscoreFFI` module, and see what other properties you can defin
-
-Have a look through the `UnderscoreFFI` module, and see what other properties you can define..
+Have a look through the `UnderscoreFFI` module, and see what other properties you can define.
 
 ## Conclusion
 
