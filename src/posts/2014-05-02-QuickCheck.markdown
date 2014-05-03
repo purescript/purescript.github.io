@@ -7,7 +7,7 @@ author: Phil Freeman
 
 QuickCheck works by generating random data with which to test your properties. This allows us to gain confidence that the properties hold, as more and more randomly-generated tests are run.
 
-`purescript-quickcheck` is a port of QuickCheck to PureScript, which preserves the syntax and types of the original Haskell code.
+[`purescript-quickcheck`](http://github.com/purescript/purescript-quickcheck) is a port of QuickCheck to PureScript, which preserves the syntax and types of the original Haskell code.
 
 QuickCheck can be used from PureScript to test code which is also written in PureScript, but can also be used to test Javascript functions as well. In this post, I'll demonstrate each of these use cases.
 
