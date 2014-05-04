@@ -177,10 +177,10 @@ function interestImpl2(amount, months) {
 This function cannot be given a type directly in PureScript, but we can write a wrapper function with a curried function type:
 
 ``` haskell
-foreign import calculateInterest 
-  "function calculateInterest(amount) {\
+foreign import interestImpl2 
+  "function interestImpl2(amount) {\
   \  return function(months) {\
-  \    return interestImpl2(interest, months);\
+  \    return interestImpl2(amount, months);\
   \  };\
   \}" :: Number -> Number -> Number
 ```

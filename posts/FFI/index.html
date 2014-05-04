@@ -121,10 +121,10 @@ inOrder a1 a2 <span class="fu">=</span> <span class="dt">Tuple</span> a2 a1</cod
   <span class="kw">return</span> amount * <span class="ot">Math</span>.<span class="fu">exp</span>(months * <span class="fl">0.1</span>);
 }</code></pre>
 <p>This function cannot be given a type directly in PureScript, but we can write a wrapper function with a curried function type:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">foreign <span class="kw">import </span>calculateInterest 
-  <span class="st">&quot;function calculateInterest(amount) {\</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">foreign <span class="kw">import </span>interestImpl2 
+  <span class="st">&quot;function interestImpl2(amount) {\</span>
 <span class="st">  \  return function(months) {\</span>
-<span class="st">  \    return interestImpl2(interest, months);\</span>
+<span class="st">  \    return interestImpl2(amount, months);\</span>
 <span class="st">  \  };\</span>
 <span class="st">  \}&quot;</span><span class="ot"> ::</span> <span class="dt">Number</span> <span class="ot">-&gt;</span> <span class="dt">Number</span> <span class="ot">-&gt;</span> <span class="dt">Number</span></code></pre>
 <h3 id="santizing-foreign-data-with-data.foreign">Santizing Foreign Data With Data.Foreign</h3>
