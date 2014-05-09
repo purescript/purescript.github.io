@@ -14,6 +14,8 @@ PureScript can be installed from [Hackage](http://hackage.haskell.org/package/pu
     cabal update
     cabal install purescript
 
+Make sure the `psc` executable is on your path. If not, it is usually installed to `~/.cabal/bin`.
+
 ### Setting up the Development Environment
 
 PureScript's core libraries are configured to use the `grunt` build tool, and packages are available in the `bower` registry.
