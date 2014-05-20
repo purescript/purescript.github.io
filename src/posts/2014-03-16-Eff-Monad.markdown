@@ -30,8 +30,8 @@ module RandomExample where
 
 import Prelude
 import Control.Monad.Eff
+import Control.Monad.Eff.Random
 import Debug.Trace
-import Random
 
 main = do
   n <- random
