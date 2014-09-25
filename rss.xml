@@ -6,8 +6,15 @@
         <description><![CDATA[A collection of posts about PureScript written by its authors and users]]></description>
         <atom:link href="http://purescript.github.io/rss.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Fri, 02 May 2014 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Thu, 29 May 2014 00:00:00 UT</lastBuildDate>
         <item>
+    <title>FizzBuzz with Semigroups and Apply</title>
+    <link>http://purescript.github.io/posts/FizzBuzz-With-Semigroups-And-Apply/index.html</link>
+    <description><![CDATA[]]></description>
+    <pubDate>Thu, 29 May 2014 00:00:00 UT</pubDate>
+    <guid>http://purescript.github.io/posts/FizzBuzz-With-Semigroups-And-Apply/index.html</guid>
+</item>
+<item>
     <title>Test your Javascript with QuickCheck</title>
     <link>http://purescript.github.io/posts/QuickCheck/index.html</link>
     <description><![CDATA[]]></description>
