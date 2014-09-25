@@ -24,7 +24,7 @@
 <h2>FizzBuzz with Semigroups and Apply</h2>
 
 <p class="info">
-    Posted on May 29, 2014
+    Posted on September 24, 2014
     
         by Hardy Jones
     
@@ -37,7 +37,7 @@
 <li><code>mconcat</code> is used, and that needs an identity element. Although, actually, since the list is never empty, it could’ve used something like <code>sconcat</code> from the <a href="https://hackage.haskell.org/package/semigroups">Semigroups</a> package.</li>
 </ol>
 <p>In PureScript, we’ve got a <code>Semigroup</code> in the prelude, and I’m going to do away with <code>mconcat</code> in exchange for <code>&lt;&gt;</code>.</p>
-<p>Let’s start by converting the Haskell code to PureScript.</p>
+<p>Let’s start by converting the Haskell code to PureScript (with a little abstraction over <code>fizz</code> and <code>buzz</code>).</p>
 <pre class="purescript"><code>module FizzBuzz where
 
   import Data.Array
@@ -46,20 +46,6 @@
   import Data.Monoid
 
   import Debug.Trace
-
-  instance semigroupArr :: (Semigroup b) =&gt; Semigroup (a -&gt; b) where
-    (&lt;&gt;) f g = \x -&gt; f x &lt;&gt; g x
-
-  instance monoidArr :: (Monoid b) =&gt; Monoid (a -&gt; b) where
-    mempty = const mempty
-
-  instance semigroupMaybe :: (Semigroup a) =&gt; Semigroup (Maybe a) where
-    (&lt;&gt;) Nothing s = s
-    (&lt;&gt;) s Nothing = s
-    (&lt;&gt;) (Just s) (Just s') = Just (s &lt;&gt; s')
-
-  instance monoidMaybe :: (Semigroup a) =&gt; Monoid (Maybe a) where
-    mempty = Nothing
 
   fizzBuzz :: Number -&gt; Maybe String
   fizzBuzz = mconcat [fizz, buzz]
@@ -72,9 +58,8 @@
 
   main = traverse_ (print &lt;&lt;&lt; go) $ range 1 100
     where go n = maybe (show n) id (fizzBuzz n)</code></pre>
-<p>You’ll notice that we had to add a couple of instances, as these are currently missing from the libraries.</p>
 <p>With a little help from bower we can run this in node and get the output we expect:</p>
-<pre class="shell"><code>$ bi purescript-{arrays,foldable-traversable,maybe,monoid}
+<pre class="shell"><code>$ bower i purescript-{arrays,foldable-traversable,maybe,monoid}
 ...
 $ psc fizzbuzz.purs bower_components/purescript-*/src/**/*.purs --main=FizzBuzz | node
 &quot;1&quot;
@@ -96,8 +81,8 @@ $ psc fizzbuzz.purs bower_components/purescript-*/src/**/*.purs --main=FizzBuzz 
 <p>Wonderful, so we can convert some Haskell into PureScript. Something we should take note of is the instance for <code>Semigroup</code> on functions. When I was playing around with this code, I was reminded of <code>on</code> from <code>Data.Function</code>. Its implementation is:</p>
 <pre class="purescript"><code>on :: forall a b c. (b -&gt; b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; a -&gt; c
 on f g x y = g x `f` g y</code></pre>
-<p>If we replace the <code>f</code> by <code>&lt;&gt;</code> and allow each side to take their own functions, but use the same input, we see that is exactly the <code>Semigroup</code> instance for functions. Let’s give this function a name, <code>fred</code> is as good a name as any, and look at what type <code>fred</code> would have.</p>
-<pre class="purescript"><code>fred :: forall a b c. (b -&gt; b -&gt; c) -&gt; (a -&gt; b) -&gt; (a -&gt; b) -&gt; a -&gt; c</code></pre>
+<p>If we replace the <code>f</code> by <code>&lt;&gt;</code> and allow each side to take their own functions, but use the same input, we see that is exactly the <code>Semigroup</code> instance for functions. Let’s look at what type this function would have.</p>
+<pre class="purescript"><code>forall a b c. (b -&gt; b -&gt; c) -&gt; (a -&gt; b) -&gt; (a -&gt; b) -&gt; a -&gt; c</code></pre>
 <p>Huh, now that looks awfully similar to <code>lift2</code> from <code>Control.Apply</code> (modulo some parens). Let’s see its implementation:</p>
 <pre class="purescript"><code>lift2 :: forall a b c f. (Apply f) =&gt; (a -&gt; b -&gt; c) -&gt; f a -&gt; f b -&gt; f c
 lift2 f a b = f &lt;$&gt; a &lt;*&gt; b</code></pre>
@@ -117,17 +102,6 @@ lift2' f a b = f &lt;$&gt; a &lt;*&gt; b</code></pre>
 
   import Debug.Trace
 
-  instance functorArr :: Functor ((-&gt;) r) where
-    (&lt;$&gt;) = (&lt;&lt;&lt;)
-
-  instance applyArr :: Apply ((-&gt;) r) where
-    (&lt;*&gt;) f g = \x -&gt; f x $ g x
-
-  instance semigroupMaybe :: (Semigroup a) =&gt; Semigroup (Maybe a) where
-    (&lt;&gt;) Nothing  s         = s
-    (&lt;&gt;) s        Nothing   = s
-    (&lt;&gt;) (Just s) (Just s') = Just (s &lt;&gt; s')
-
   fizzBuzz = (&lt;&gt;) &lt;$&gt; fizz &lt;*&gt; buzz
 
   fizz = ifMod 3 &quot;Fizz&quot;
@@ -140,6 +114,47 @@ lift2' f a b = f &lt;$&gt; a &lt;*&gt; b</code></pre>
     where go n = maybe (show n) id (fizzBuzz n)</code></pre>
 <p>Of course, this change from <code>mconcat</code> to <code>&lt;&gt;</code> changes how we would extend the program. In Mark’s program, we can extend it by simply adding another function to the list in <code>fizzBuzz</code>. In this program we have to be a bit more cautious, Since <code>&lt;&gt;</code> is a binary function. We can extend it with another function:</p>
 <pre class="purescript"><code>fizzBuzzBazz = (&lt;&gt;) &lt;$&gt; fizzBuzz &lt;*&gt; bazz</code></pre>
+<p>So we’d have an extended whole program of (increasing the upper bound so we actually hit the composition of <code>fizz</code>, <code>buzz</code>, and <code>bazz</code>):</p>
+<pre class="purescript"><code>module FB where
+
+  import Data.Array
+  import Data.Foldable
+  import Data.Maybe
+
+  import Debug.Trace
+
+  fizzBuzz = (&lt;&gt;) &lt;$&gt; fizz &lt;*&gt; buzz
+  fizzBuzzBazz = (&lt;&gt;) &lt;$&gt; fizzBuzz &lt;*&gt; bazz
+
+  fizz = ifMod 3 &quot;Fizz&quot;
+  buzz = ifMod 5 &quot;Buzz&quot;
+  bazz = ifMod 7 &quot;Bazz&quot;
+
+  ifMod :: Number -&gt; String -&gt; Number -&gt; Maybe String
+  ifMod m str n = if n % m == 0 then Just str else Nothing
+
+  main = traverse_ (print &lt;&lt;&lt; go) $ range 1 110
+    where go n = maybe (show n) id (fizzBuzzBazz n)</code></pre>
+<p>This gets a bit hairy if we need to continue extending it, so it’s probably better to move on to using the <code>Monoid</code> instance as in the original post:</p>
+<pre class="purescript"><code>module FB where
+
+  import Data.Array
+  import Data.Foldable
+  import Data.Maybe
+
+  import Debug.Trace
+
+  fizzBuzzBazz = mconcat [fizz, buzz, bazz]
+
+  fizz = ifMod 3 &quot;Fizz&quot;
+  buzz = ifMod 5 &quot;Buzz&quot;
+  bazz = ifMod 7 &quot;Bazz&quot;
+
+  ifMod :: Number -&gt; String -&gt; Number -&gt; Maybe String
+  ifMod m str n = if n % m == 0 then Just str else Nothing
+
+  main = traverse_ (print &lt;&lt;&lt; go) $ range 1 110
+    where go n = maybe (show n) id (fizzBuzzBazz n)</code></pre>
 
 <div id="disqus_thread">
   <script type="text/javascript">
