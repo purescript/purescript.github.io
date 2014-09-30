@@ -158,7 +158,8 @@ You can see the result by evaluating `multiples` if you like, or even check its 
 
 Now we need to find the sum of the `multiples` array, to complete the solution. We can use the `sum` function from the `Data.Foldable` module.
 
-    > Data.Foldable.sum multiples
+    > :i Data.Foldable
+    > sum multiples
     233168
 
 When you have finished using `psci`, type `:q` to quit:

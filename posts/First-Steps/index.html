@@ -139,7 +139,8 @@ forall a b c. (Data.Tuple.Tuple a b -&gt; c) -&gt; a -&gt; b -&gt; c</code></pre
 &gt; :t multiples
 [Prim.Number]</code></pre>
 <p>Now we need to find the sum of the <code>multiples</code> array, to complete the solution. We can use the <code>sum</code> function from the <code>Data.Foldable</code> module.</p>
-<pre><code>&gt; Data.Foldable.sum multiples
+<pre><code>&gt; :i Data.Foldable
+&gt; sum multiples
 233168</code></pre>
 <p>When you have finished using <code>psci</code>, type <code>:q</code> to quit:</p>
 <pre><code>&gt; :q
