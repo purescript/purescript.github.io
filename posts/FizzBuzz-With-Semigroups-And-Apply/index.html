@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PureScript Community Blog - FizzBuzz with Semigroups and Apply</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="http://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic" rel="stylesheet" type="text/css" />
+  <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <a href="https://github.com/purescript">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://github-camo.global.ssl.fastly.net/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png">
+    </a>
+	
+    <div class="wrapper">
+      <div class="header">
+        <h1>PureScript Community Blog</h1>
+      </div>
+      <div class="body">
+        <p><a href="../../">Home</a></p>
+
+<h2>FizzBuzz with Semigroups and Apply</h2>
+
+<p class="info">
+    Posted on September 24, 2014
+    
+        by Hardy Jones
+    
+</p>
+
+<p>First and foremost, this post is inspired by <a href="http://barkmadley.com/2009/01/22/fun-with-fizzbuzz-and-haskell-monoids.html">this post</a>. You will want to read this post, as it’s insightful, short and explains the code that I’m about to borrow. I noticed an interesting thing while reading that post, so I figured I’d make a post here in PureScriptland.</p>
+<p>In Mark’s post, he goes on to construct a solution to the fizz buzz question with just the <code>Maybe</code> <code>Monoid</code>. A full <code>Monoid</code> is needed for two reasons:</p>
+<ol style="list-style-type: decimal">
+<li>Haskell doesn’t have a <code>Semigroup</code> in the base package</li>
+<li><code>mconcat</code> is used, and that needs an identity element. Although, actually, since the list is never empty, it could’ve used something like <code>sconcat</code> from the <a href="https://hackage.haskell.org/package/semigroups">Semigroups</a> package.</li>
+</ol>
+<p>In PureScript, we’ve got a <code>Semigroup</code> in the prelude, and I’m going to do away with <code>mconcat</code> in exchange for <code>&lt;&gt;</code>.</p>
+<p>Let’s start by converting the Haskell code to PureScript (with a little abstraction over <code>fizz</code> and <code>buzz</code>).</p>
+<pre class="purescript"><code>module FizzBuzz where
+
+  import Data.Array
+  import Data.Foldable
+  import Data.Maybe
+  import Data.Monoid
+
+  import Debug.Trace
+
+  fizzBuzz :: Number -&gt; Maybe String
+  fizzBuzz = mconcat [fizz, buzz]
+
+  fizz = ifMod 3 &quot;Fizz&quot;
+  buzz = ifMod 5 &quot;Buzz&quot;
+
+  ifMod :: Number -&gt; String -&gt; Number -&gt; Maybe String
+  ifMod m str n = if n % m == 0 then Just str else Nothing
+
+  main = traverse_ (print &lt;&lt;&lt; go) $ range 1 100
+    where go n = maybe (show n) id (fizzBuzz n)</code></pre>
+<p>With a little help from bower we can run this in node and get the output we expect:</p>
+<pre class="shell"><code>$ bower i purescript-{arrays,foldable-traversable,maybe,monoid}
+...
+$ psc fizzbuzz.purs bower_components/purescript-*/src/**/*.purs --main=FizzBuzz | node
+&quot;1&quot;
+&quot;2&quot;
+&quot;Fizz&quot;
+&quot;4&quot;
+&quot;Buzz&quot;
+&quot;Fizz&quot;
+&quot;7&quot;
+&quot;8&quot;
+&quot;Fizz&quot;
+&quot;Buzz&quot;
+&quot;11&quot;
+&quot;Fizz&quot;
+&quot;13&quot;
+&quot;14&quot;
+&quot;FizzBuzz&quot;
+...</code></pre>
+<p>Wonderful, so we can convert some Haskell into PureScript. Something we should take note of is the instance for <code>Semigroup</code> on functions. When I was playing around with this code, I was reminded of <code>on</code> from <code>Data.Function</code>. Its implementation is:</p>
+<pre class="purescript"><code>on :: forall a b c. (b -&gt; b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; a -&gt; c
+on f g x y = g x `f` g y</code></pre>
+<p>If we replace the <code>f</code> by <code>&lt;&gt;</code> and allow each side to take their own functions, but use the same input, we see that is exactly the <code>Semigroup</code> instance for functions. Let’s look at what type this function would have.</p>
+<pre class="purescript"><code>forall a b c. (b -&gt; b -&gt; c) -&gt; (a -&gt; b) -&gt; (a -&gt; b) -&gt; a -&gt; c</code></pre>
+<p>Huh, now that looks awfully similar to <code>lift2</code> from <code>Control.Apply</code> (modulo some parens). Let’s see its implementation:</p>
+<pre class="purescript"><code>lift2 :: forall a b c f. (Apply f) =&gt; (a -&gt; b -&gt; c) -&gt; f a -&gt; f b -&gt; f c
+lift2 f a b = f &lt;$&gt; a &lt;*&gt; b</code></pre>
+<p>So if we could find an instance of <code>Apply</code> that worked for functions, we could just use lift2, or its implemenation. But there should be an instance of <code>Apply</code> for functions, the instance we just showed in the type signature above. We just need to sub out the <code>a</code>’s in <code>lift2</code> for <code>b</code>’s and fix the <code>f</code> instance to <code>(a -&gt;)</code> in order to match our wanted type. We get:</p>
+<pre class="purescript"><code>lift2' :: forall a b c. (b -&gt; b -&gt; c) -&gt; (a -&gt; b) -&gt; (a -&gt; b) -&gt; (a -&gt; c)
+lift2' f a b = f &lt;$&gt; a &lt;*&gt; b</code></pre>
+<p>Interesting! So we could’ve used <code>lift2 (&lt;&gt;)</code> for our <code>Semigroup</code> implementation. I always find it interesting to see these concepts that seem so disparate can actually be connected.</p>
+<p>The next move should come as no surprise. We’re going to replace <code>mconcat</code> with an inlined call to <code>&lt;&gt;</code>.</p>
+<pre class="purescript"><code>fizzBuzz = (&lt;&gt;) &lt;$&gt; fizz &lt;*&gt; buzz</code></pre>
+<p>This works well because it removes the necessity of a <code>Monoid</code> constraint. Well, that’s pretty cool. We managed to sneak in an <code>Apply</code> into fizz buzz and drop a <code>Monoid</code> instead.</p>
+<p>The completed program is:</p>
+<pre class="purescript"><code>module FB where
+
+  import Data.Array
+  import Data.Foldable
+  import Data.Maybe
+
+  import Debug.Trace
+
+  fizzBuzz = (&lt;&gt;) &lt;$&gt; fizz &lt;*&gt; buzz
+
+  fizz = ifMod 3 &quot;Fizz&quot;
+  buzz = ifMod 5 &quot;Buzz&quot;
+
+  ifMod :: Number -&gt; String -&gt; Number -&gt; Maybe String
+  ifMod m str n = if n % m == 0 then Just str else Nothing
+
+  main = traverse_ (print &lt;&lt;&lt; go) $ range 1 100
+    where go n = maybe (show n) id (fizzBuzz n)</code></pre>
+<p>Of course, this change from <code>mconcat</code> to <code>&lt;&gt;</code> changes how we would extend the program. In Mark’s program, we can extend it by simply adding another function to the list in <code>fizzBuzz</code>. In this program we have to be a bit more cautious, Since <code>&lt;&gt;</code> is a binary function. We can extend it with another function:</p>
+<pre class="purescript"><code>fizzBuzzBazz = (&lt;&gt;) &lt;$&gt; fizzBuzz &lt;*&gt; bazz</code></pre>
+<p>So we’d have an extended whole program of (increasing the upper bound so we actually hit the composition of <code>fizz</code>, <code>buzz</code>, and <code>bazz</code>):</p>
+<pre class="purescript"><code>module FB where
+
+  import Data.Array
+  import Data.Foldable
+  import Data.Maybe
+
+  import Debug.Trace
+
+  fizzBuzz = (&lt;&gt;) &lt;$&gt; fizz &lt;*&gt; buzz
+  fizzBuzzBazz = (&lt;&gt;) &lt;$&gt; fizzBuzz &lt;*&gt; bazz
+
+  fizz = ifMod 3 &quot;Fizz&quot;
+  buzz = ifMod 5 &quot;Buzz&quot;
+  bazz = ifMod 7 &quot;Bazz&quot;
+
+  ifMod :: Number -&gt; String -&gt; Number -&gt; Maybe String
+  ifMod m str n = if n % m == 0 then Just str else Nothing
+
+  main = traverse_ (print &lt;&lt;&lt; go) $ range 1 110
+    where go n = maybe (show n) id (fizzBuzzBazz n)</code></pre>
+<p>This gets a bit hairy if we need to continue extending it, so it’s probably better to move on to using the <code>Monoid</code> instance as in the original post:</p>
+<pre class="purescript"><code>module FB where
+
+  import Data.Array
+  import Data.Foldable
+  import Data.Maybe
+
+  import Debug.Trace
+
+  fizzBuzzBazz = mconcat [fizz, buzz, bazz]
+
+  fizz = ifMod 3 &quot;Fizz&quot;
+  buzz = ifMod 5 &quot;Buzz&quot;
+  bazz = ifMod 7 &quot;Bazz&quot;
+
+  ifMod :: Number -&gt; String -&gt; Number -&gt; Maybe String
+  ifMod m str n = if n % m == 0 then Just str else Nothing
+
+  main = traverse_ (print &lt;&lt;&lt; go) $ range 1 110
+    where go n = maybe (show n) id (fizzBuzzBazz n)</code></pre>
+
+<div id="disqus_thread">
+  <script type="text/javascript">
+    var disqus_shortname = 'purescript';
+    var disqus_title = 'FizzBuzz with Semigroups and Apply';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+      </div>
+      <div class="footer">
+        Site proudly generated by <a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a>
+      </div>
+    </div>
+</body>
+
+</html>
