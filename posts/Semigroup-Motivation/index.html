@@ -37,7 +37,7 @@
 <p>There are a few things you get from a <code>Semigroup</code>. This list is non-exhaustive.</p>
 <ul>
 <li>You no longer have to worry about parentheses.</li>
-<li>The order computations are done in is irrelevant to the final result.[1]</li>
+<li>The order computations are done in is irrelevant to the final result.<a href="This%20comes%20with%20a%20caveat.">1</a></li>
 </ul>
 <h3 id="less-parens">Less parens</h3>
 <p>The first is mostly aesthetic. For instance, if you were joining strings together, and had a few lying around:</p>
@@ -188,7 +188,7 @@ false</code></pre>
 <p>Working with an MVC library? Can you combine Models or Collections or Views or whatever such that the operation holds under associativity? Then it’s a Semigroup.</p>
 <p>Working with Streams? Can you combine streams such that the operation holds under associativity? Then it’s a Semigroup.</p>
 <p>There’s plenty of these things out there, and viewing them as Semigroups allows us to reason a bit more about how they operate.</p>
-<p>[1]: This comes with a caveat. If your <code>Semigroup</code> performs side-effects during concat (which we all hope it doesn’t, but there’s not much we can really do to restrict it from happening if you use the ffi), then the order of the side-effects may not reflect your intentions.</p>
+<p>If your <code>Semigroup</code> performs side-effects during concat (which we all hope it doesn’t, but there’s not much we can really do to restrict it from happening if you use the ffi), then the order of the side-effects may not reflect your intentions.</p>
 
 <div id="disqus_thread">
   <script type="text/javascript">
