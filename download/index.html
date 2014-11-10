@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <title>PureScript – Download</title>
+
+  <link rel="stylesheet" href="../css/style.css"/>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,300,700"/>
+
+</head>
+
+<body class="download">
+
+  <header>
+    <div class="wrap">
+      <h1>PureScript</h1>
+      <nav>
+        <h2>Menu</h2>
+        <ul>
+          <li><a href="../">Home</a></li>
+          <li><a href="../download/" class="active">Download</a></li>
+          <li><a href="../learn/">Learn</a></li>
+          <li><a href="../examples/">Examples</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <section>
+
+      <h2>Binaries</h2>
+
+      <p>Precompiled binaries are available for OSX, Linux, and Windows from the <a href="https://github.com/purescript/purescript/releases/latest">latest release page on GitHub</a>.</p>
+
+    </section>
+
+    <section>
+
+      <h2>Cabal</h2>
+
+      <p>If you already have the <a href="https://www.haskell.org/platform">Haskell Platform</a> 2014 or <a href="https://www.haskell.org/ghc/">GHC</a> 7.8 installed then PureScript can be installed using Cabal:</p>
+
+      <div class="codeblock">
+<pre>
+cabal update
+cabal install purescript
+</pre>
+      </div>
+
+    </section>
+
+    <section>
+
+      <h2>Building from source</h2>
+
+      <p>For the most up-to-date (potentially unstable) version of the compiler the code is <a href="https://github.com/purescript/purescript">available on GitHub</a>:</p>
+
+      <div class="codeblock">
+<pre>
+git clone https://github.com/purescript/purescript.git
+cd purescript
+cabal sandbox init
+cabal update
+cabal install
+</pre>
+      </div>
+
+      <p>The <code>cabal sandbox init</code> step is optional but recommended to avoid problems with dependencies. When using a sandbox <code>cabal install</code> will put the compiled binaries into <code>./.cabal-sandbox/bin/</code> rather than the global Cabal <code>bin</code> directory.</p>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <nav>
+      <ul>
+        <li><a href="../">Home</a></li>
+        <li><a href="../download/" class="active">Download</a></li>
+        <li><a href="../learn/">Learn</a></li>
+        <li><a href="../examples/">Examples</a></li>
+      </ul>
+      <ul class="external">
+        <li class="github"><a href="https://github.com/purescript/purescript" title="GitHub">GitHub</a></li>
+        <li class="twitter"><a href="https://twitter.com/purescript" title="Twitter">Twitter</a></li>
+      </ul>
+    </nav>
+  </footer>
+
+  <script src="../js/lib/zepto-1.1.4.min.js"></script>
+  <script src="../js/home.js"></script>
+
+</body>
+</html>
