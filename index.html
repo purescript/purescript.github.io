@@ -14,16 +14,18 @@
 
 <body class="home">
 
+  <script>document.body.className = "home hasJS";</script>
+
   <header>
     <div class="wrap">
-      <h1>PureScript</h1>
+      <h1><a href="/">PureScript</a></h1>
       <nav>
         <h2>Menu</h2>
         <ul>
           <li><a href="/" class="active">Home</a></li>
           <li><a href="download/">Download</a></li>
           <li><a href="learn/">Learn</a></li>
-          <li><a href="examples/">Examples</a></li>
+          <li><a href="projects/">Projects</a></li>
         </ul>
       </nav>
     </div>
@@ -33,13 +35,100 @@
 
     <section class="intro">
       <h2>PureScript is a small strongly typed programming language that compiles to JavaScript.</h2>
-      <div class="link install">
+      <div class="link">
         <a href="download/">Download</a>
       </div>
     </section>
 
+    <section class="example">
+      <h3>Examples</h3>
+      <div class="current example">
+        <h4>Modifying the DOM</h4>
+        <p>PureScript’s expressive type system and lightweight syntax make it simple to define <a href="https://leanpub.com/purescript/read#leanpub-auto-domain-specific-languages">domain-specific languages</a>, which can be used to solve problems like templating the DOM. Bindings also exist for libraries such as React and Angular.js.</p>
+<pre>
+<span class="kr">import</span> <span class="nn">Data.DOM.Free</span>
+&nbsp;
+<span class="nf">doc</span> :: <span class="kt">Element</span>
+<span class="nf">doc</span> = div [ _class <span class="kt">:=</span> <span class="s">"image"</span> ] $ <span class="kr">do</span>
+  elem $ img [ src <span class="kt">:=</span> <span class="s">"logo.jpg"</span>
+             , width  <span class="kt">:=</span> <span class="mi">100</span>
+             , height <span class="kt">:=</span> <span class="mi">200</span>
+             ]
+  text <span class="s">"Functional programming for the web!"</span></pre>
+      </div>
+      <div class="example">
+	       <h4>HTML5 Canvas</h4>
+         <p>Higher-order functions allow the developer to write fluent, expressive code. Here, higher-order functions are being used to capture some common patterns when <a href="https://leanpub.com/purescript/read#leanpub-auto-canvas-graphics">working with HTML5 canvas</a>, such as saving and restoring the context and drawing closed paths.</p>
+<pre>
+<span class="kr">import</span> <span class="nn">Control.Apply</span>
+
+<span class="kr">import</span> <span class="nn">Graphics.Canvas</span> (<span class="nf">getCanvasElementById</span>, <span class="nf">getContext2D</span>)
+<span class="kr">import</span> <span class="nn">Graphics.Canvas.Free</span>
+
+<span class="nf">closed</span> path = beginPath *&gt; path &lt;* closePath
+
+<span class="nf">filled</span> shape = shape &lt;* fill
+
+<span class="nf">withContext</span> shape = save *&gt; shape &lt;* restore
+
+<span class="nf">scene</span> :: <span class="kt">Graphics</span> <span class="kt">Unit</span>
+<span class="nf">scene</span> = withContext <span class="kr">do</span>
+  setFillStyle <span class="s">&quot;#FF0000&quot;</span>
+
+  filled $ closed <span class="kr">do</span>
+    moveTo <span class="mi">0</span> <span class="mi">0</span>
+    lineTo <span class="mi">50</span> <span class="mi">0</span>
+    lineTo <span class="mi">25</span> <span class="mi">50</span>
+
+<span class="nf">main</span> = <span class="kr">do</span>
+  canvas &lt;- getCanvasElementById <span class="s">&quot;canvas&quot;</span>
+  context &lt;- getContext2D canvas
+
+  runGraphics context scene</pre>
+      </div>
+      <div class="example">
+        <h4>Callback Hell</h4>
+        <p>The problem of <a href="https://leanpub.com/purescript/read#leanpub-auto-callback-hell">callback hell</a> can be solved by using PureScript’s type system to capture complex control flow as functions in a safe way. Here, the continuation monad is used to hide the boilerplate code associated with handling callbacks.</p>
+<pre>
+<span class="kr">import</span> <span class="nn">DOM</span>
+<span class="kr">import</span> <span class="nn">Control.Monad.Eff</span>
+<span class="kr">import</span> <span class="nn">Control.Monad.Cont.Trans</span>
+
+<span class="kr">type</span> <span class="kt">App</span> = <span class="kt">Eff</span> (dom :: <span class="kt">DOM</span>, ajax :: <span class="kt">AJAX</span>)
+
+<span class="kr">data</span> <span class="kt">Model</span> = <span class="kt">Model</span> [<span class="kt">Product</span>] [<span class="kt">ProductCategory</span>]
+
+<span class="nf">loadModel</span> :: <span class="kt">ContT</span> <span class="kt">Unit</span> <span class="kt">App</span> <span class="kt">Model</span>
+<span class="nf">loadModel</span> = <span class="kr">do</span>
+  model &lt;- runParallel $
+    <span class="kt">Model</span> &lt;$&gt; <span class="kt">Parallel</span> (get <span class="s">"/products/popular/"</span>)
+          &lt;*&gt; <span class="kt">Parallel</span> (get <span class="s">"/categories/all"</span>)
+
+<span class="nf">view</span> :: <span class="kt">Model</span> -&gt; <span class="kt">App</span> <span class="kt">Unit</span>
+<span class="nf">view</span> (<span class="kt">Model</span> ps cs) = <span class="kr">do</span>
+  renderProducts ps
+  renderCategories cs
+
+<span class="nf">main</span> :: <span class="kt">App</span> <span class="kt">Unit</span>
+<span class="nf">main</span> = loadModel `runContT` view</pre>
+      </div>
+      <div class="example">
+        <h4>Generative Testing</h4>
+        <p>PureScript provides a form of ad-hoc polymorphism in the form of type classes, inspired by Haskell. Type classes are used in the QuickCheck and StrongCheck libraries to support <a href="https://leanpub.com/purescript/read#leanpub-auto-generative-testing">generative testing</a>, which separates test definitions from the generation of test cases.</p>
+<pre>
+<span class="kr">import</span> <span class="nn">Test.QuickCheck</span>
+
+<span class="nf">main</span> = <span class="kr">do</span>
+  quickCheck $ <span class="nf">\</span>xs ys -&gt;
+    isSorted $ merge (sort xs) (sort ys)
+  quickCheck $ <span class="nf">\</span>xs ys -&gt;
+    xs `isSubarrayOf` merge xs ys</pre>
+      </div>
+
+    </section>
+
     <section class="features">
-      <h3><a name="features">Features</a></h2>
+      <h3>Features</h3>
       <ul>
         <li>Algebraic data types</li>
         <li>Pattern matching</li>
@@ -56,57 +145,15 @@
       </ul>
     </section>
 
-    <section class="example">
-      <h3>Examples</h3>
-      <div class="current example">
-        <h4>Modifying the DOM</h4>
-        <p>PureScript's expressive type system and lightweight syntax make it simple to define <a href="https://leanpub.com/purescript/read#leanpub-auto-domain-specific-languages">domain-specific languages</a>, which can be used to solve problems like templating the DOM. Bindings also exist for libraries such as React and Angular.js.</p>
-        <div class="nav">
-          <a href="#" class="prev">Previous</a>
-          <a href="#" class="next">Next</a>
-        </div>
-<pre><div class="line"><span class="kr">import</span> <span class="nn">Data.DOM.Free</span></div><div class="line">&nbsp;</div><div class="line"><span class="nf">doc</span> <span class="ow">::</span> <span class="kt">Element</span></div><div class="line"><span class="nf">doc</span> <span class="ow">=</span> <span class="n">div</span> <span class="p">[</span> <span class="n">_class</span> <span class="kt">:=</span> <span class="s">"image"</span> <span class="p">]</span> <span class="o">$</span> <span class="kr">do</span></div><div class="line">  <span class="n">elem</span> <span class="o">$</span> <span class="n">img</span> <span class="p">[</span> <span class="n">src</span> <span class="kt">:=</span> <span class="s">"logo.jpg"</span></div><div class="line">             <span class="p">,</span> <span class="n">width</span>  <span class="kt">:=</span> <span class="mi">100</span></div><div class="line">             <span class="p">,</span> <span class="n">height</span> <span class="kt">:=</span> <span class="mi">200</span>  </div><div class="line">             <span class="p">]</span></div><div class="line">  <span class="n">text</span> <span class="s">"Functional programming for the web!"</span></div></pre>
-      </div>
-      <div class="example">
-	       <h4>HTML5 Canvas</h4>
-         <p>Higher-order functions allow the developer to write fluent, expressive code. Here, higher-order functions are being used to capture some common patterns when <a href="https://leanpub.com/purescript/read#leanpub-auto-canvas-graphics">working with HTML5 canvas</a>, such as saving and restoring the context and drawing closed paths.</p>
-        <div class="nav">
-          <a href="#" class="prev">Previous</a>
-          <a href="#" class="next">Next</a>
-        </div>
-<pre><div class="line"><span class="kr">import</span> <span class="nn">Control.Apply</span></div><div class="line">&nbsp;</div><div class="line"><span class="kr">import</span> <span class="nn">Graphics.Canvas</span> <span class="p">(</span><span class="nf">getCanvasElementById</span><span class="p">,</span> <span class="nf">getContext2D</span><span class="p">)</span></div><div class="line"><span class="kr">import</span> <span class="nn">Graphics.Canvas.Free</span></div><div class="line">&nbsp;</div><div class="line"><span class="nf">closed</span> <span class="n">path</span> <span class="ow">=</span> <span class="n">beginPath</span> <span class="o">*&gt;</span> <span class="n">path</span> <span class="o">&lt;*</span> <span class="n">closePath</span></div><div class="line">  </div><div class="line"><span class="nf">filled</span> <span class="n">shape</span> <span class="ow">=</span> <span class="n">shape</span> <span class="o">&lt;*</span> <span class="n">fill</span> </div><div class="line">&nbsp;</div><div class="line"><span class="nf">withContext</span> <span class="n">shape</span> <span class="ow">=</span> <span class="n">save</span> <span class="o">*&gt;</span> <span class="n">shape</span> <span class="o">&lt;*</span> <span class="n">restore</span></div><div class="line">&nbsp;</div><div class="line"><span class="nf">scene</span> <span class="ow">::</span> <span class="kt">Graphics</span> <span class="kt">Unit</span></div><div class="line"><span class="nf">scene</span> <span class="ow">=</span> <span class="n">withContext</span> <span class="kr">do</span></div><div class="line">  <span class="n">setFillStyle</span> <span class="s">&quot;#FF0000&quot;</span></div><div class="line">&nbsp;</div><div class="line">  <span class="n">filled</span> <span class="o">$</span> <span class="n">closed</span> <span class="kr">do</span></div><div class="line">    <span class="n">moveTo</span> <span class="mi">0</span> <span class="mi">0</span></div><div class="line">    <span class="n">lineTo</span> <span class="mi">50</span> <span class="mi">0</span></div><div class="line">    <span class="n">lineTo</span> <span class="mi">25</span> <span class="mi">50</span></div><div class="line">&nbsp;</div><div class="line"><span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span></div><div class="line">  <span class="n">canvas</span> <span class="ow">&lt;-</span> <span class="n">getCanvasElementById</span> <span class="s">&quot;canvas&quot;</span></div><div class="line">  <span class="n">context</span> <span class="ow">&lt;-</span> <span class="n">getContext2D</span> <span class="n">canvas</span></div><div class="line">&nbsp;</div><div class="line">  <span class="n">runGraphics</span> <span class="n">context</span> <span class="n">scene</span></div></pre>
-      </div>
-      <div class="example">
-        <h4>Callback Hell</h4>
-        <p>The problem of <a href="https://leanpub.com/purescript/read#leanpub-auto-callback-hell">callback hell</a> can be solved by using PureScript's type system to capture complex control flow as functions in a safe way. Here, the continuation monad is used to hide the boilerplate code associated with handling callbacks.</p>
-        <div class="nav">
-          <a href="#" class="prev">Previous</a>
-          <a href="#" class="next">Next</a>
-        </div>
-<pre><div class="line"><span class="kr">import</span> <span class="nn">DOM</span></div><div class="line"><span class="kr">import</span> <span class="nn">Control.Monad.Eff</span></div><div class="line"><span class="kr">import</span> <span class="nn">Control.Monad.Cont.Trans</span></div><div class="line">&nbsp;</div><div class="line"><span class="kr">type</span> <span class="kt">App</span> <span class="ow">=</span> <span class="kt">Eff</span> <span class="p">(</span><span class="n">dom</span> <span class="ow">::</span> <span class="kt">DOM</span><span class="p">,</span> <span class="n">ajax</span> <span class="ow">::</span> <span class="kt">AJAX</span><span class="p">)</span></div><div class="line">&nbsp;</div><div class="line"><span class="kr">data</span> <span class="kt">Model</span> <span class="ow">=</span> <span class="kt">Model</span> <span class="p">[</span><span class="kt">Product</span><span class="p">]</span> <span class="p">[</span><span class="kt">ProductCategory</span><span class="p">]</span></div><div class="line">&nbsp;</div><div class="line"><span class="nf">loadModel</span> <span class="ow">::</span> <span class="kt">ContT</span> <span class="kt">Unit</span> <span class="kt">App</span> <span class="kt">Model</span></div><div class="line"><span class="nf">loadModel</span> <span class="ow">=</span> <span class="kr">do</span></div><div class="line">  <span class="n">model</span> <span class="ow">&lt;-</span> <span class="n">runParallel</span> <span class="o">$</span></div><div class="line">    <span class="kt">Model</span> <span class="o">&lt;$&gt;</span> <span class="kt">Parallel</span> <span class="p">(</span><span class="n">get</span> <span class="s">"/products/popular/"</span><span class="p">)</span></div><div class="line">          <span class="o">&lt;*&gt;</span> <span class="kt">Parallel</span> <span class="p">(</span><span class="n">get</span> <span class="s">"/categories/all"</span><span class="p">)</span></div><div class="line">&nbsp;</div><div class="line"><span class="nf">view</span> <span class="ow">::</span> <span class="kt">Model</span> <span class="ow">-&gt;</span> <span class="kt">App</span> <span class="kt">Unit</span></div><div class="line"><span class="nf">view</span> <span class="p">(</span><span class="kt">Model</span> <span class="n">ps</span> <span class="n">cs</span><span class="p">)</span> <span class="ow">=</span> <span class="kr">do</span></div><div class="line">  <span class="n">renderProducts</span> <span class="n">ps</span></div><div class="line">  <span class="n">renderCategories</span> <span class="n">cs</span></div><div class="line">&nbsp;</div><div class="line"><span class="nf">main</span> <span class="ow">::</span> <span class="kt">App</span> <span class="kt">Unit</span></div><div class="line"><span class="nf">main</span> <span class="ow">=</span> <span class="n">loadModel</span> <span class="p">`</span><span class="n">runContT</span><span class="p">`</span> <span class="n">view</span></div></pre>
-      </div>
-      <div class="example">
-        <h4>Generative Testing</h4>
-        <p>PureScript provides a form of ad-hoc polymorphism in the form of type classes, inspired by Haskell. Type classes are used in the QuickCheck and StrongCheck libraries to support <a href="https://leanpub.com/purescript/read#leanpub-auto-generative-testing">generative testing</a>, which separates test definitions from the generation of test cases.</p>
-        <div class="nav">
-          <a href="#" class="prev">Previous</a>
-          <a href="#" class="next">Next</a>
-        </div>
-<pre><div class="line"><span class="kr">import</span> <span class="nn">Test.QuickCheck</span></div><div class="line">&nbsp;</div><div class="line"><span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span></div><div class="line">  <span class="n">quickCheck</span> <span class="o">$</span> <span class="nf">\</span><span class="n">xs</span> <span class="n">ys</span> <span class="ow">-&gt;</span> </div><div class="line">    <span class="n">isSorted</span> <span class="o">$</span> <span class="n">merge</span> <span class="p">(</span><span class="n">sort</span> <span class="n">xs</span><span class="p">)</span> <span class="p">(</span><span class="n">sort</span> <span class="n">ys</span><span class="p">)</span></div><div class="line">  <span class="n">quickCheck</span> <span class="o">$</span> <span class="nf">\</span><span class="n">xs</span> <span class="n">ys</span> <span class="ow">-&gt;</span> </div><div class="line">    <span class="n">xs</span> <span class="p">`</span><span class="n">isSubarrayOf</span><span class="p">`</span> <span class="n">merge</span> <span class="n">xs</span> <span class="n">ys</span></div></pre>
-      </div>
-
-
-    </section>
-
   </main>
 
   <footer>
     <nav>
       <ul>
-        <li><a href="/" class="current">Home</a></li>
+        <li><a href="/" class="active">Home</a></li>
         <li><a href="download/">Download</a></li>
         <li><a href="learn/">Learn</a></li>
-        <li><a href="examples/">Examples</a></li>
+        <li><a href="projects/">Projects</a></li>
       </ul>
       <ul class="external">
         <li class="github"><a href="https://github.com/purescript/purescript" title="GitHub">GitHub</a></li>
@@ -127,6 +174,6 @@
     ga('send', 'pageview');
 
   </script>
-  
+
 </body>
 </html>

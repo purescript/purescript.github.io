@@ -26,8 +26,12 @@ $(function () {
   // --------------------------------------------------------------------------
 
   var $examples = $("section.example div.example");
-  var $prev = $("section.example a.prev");
-  var $next = $("section.example a.next");
+
+  $("section.example div.example pre")
+    .before("<div class='nav'>" +
+             "  <button class='prev'>Previous</a>" +
+             "  <button class='next'>Next</a>" +
+             "</div>");
 
   var go = function (delta) {
     return function (e) {
@@ -39,7 +43,7 @@ $(function () {
     };
   };
 
-  $prev.on("click", go(-1));
-  $next.on("click", go(1));
+  $("section.example button.prev").on("click", go(-1));
+  $("section.example button.next").on("click", go(1));
 
 });
