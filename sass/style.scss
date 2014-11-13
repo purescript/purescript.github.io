@@ -520,12 +520,11 @@ footer {
     }
   }
 
-  ul.cards li {
-    margin-top: 20px;
-  }
-
-  ul.cards li {
-    width: calc(50% - 15px);
+  ul.cards {
+    margin-top: 50px;
+    li {
+      width: calc(50% - 15px);
+    }
   }
 
 }
@@ -544,8 +543,8 @@ footer {
     font-size: 28px;
   }
 
-  ul.cards li {
-    margin-top: 30px;
+  ul.cards {
+    margin-top: 60px;
   }
 
   main section > p {
@@ -578,8 +577,8 @@ footer {
     padding: 70px 10px;
   }
 
-  ul.cards li {
-    margin-top: 40px;
+  ul.cards {
+    margin-top: 70px;
   }
 
   main section.intro {
