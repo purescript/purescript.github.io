@@ -253,12 +253,20 @@ main section.intro {
 main section.conf {
 
   background: #f5f5f5;
-  
+
+  div.container {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
   div.link {
 
+    width: 200px;
+    margin-top: 50px;
+
     a {
-      padding-right: 16px;
-      background: url(../img/icon-chevron.png) no-repeat right;
+      padding-left: 16px;
+      background: url(../img/icon-chevron.png) no-repeat left;
       background-size: 7px 10px;
     }
   }
@@ -269,7 +277,7 @@ main section.conf {
 main section.features {
 
   background: #f5f5f5;
-  
+
   ul {
     padding: 0;
     list-style: none;
@@ -414,7 +422,7 @@ ul.cards {
 
 footer {
   box-sizing: border-box;
-  background: #f5f5f5; 
+  background: #f5f5f5;
   position: absolute;
   bottom: 0px;
   padding: 20px 30px 50px;
@@ -608,7 +616,8 @@ footer {
   main section > h3,
   main section > ul,
   main section > pre,
-  main section > div {
+  main section > div,
+  main section.conf > div.container {
     margin-left: auto;
     margin-right: auto;
     max-width: 800px;
