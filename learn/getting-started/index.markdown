@@ -2,13 +2,13 @@ Welcome to the PureScript community blog! In this first post, I'm going to walk 
 
 I'll start with the installation of the compiler, go through the basic commands of `psc` and `psci`, working towards a solution of problem 1 from [Project Euler](http://projecteuler.net/problem=1).
 
-### Installing the Compiler
+#### Installing the Compiler
 
 PureScript can be installed from [Hackage](http://hackage.haskell.org/package/purescript) or by downloading the latest [binary bundle](https://github.com/purescript/purescript/releases) for your OS.
 
 Make sure the `psc` executable is on your path.
 
-### Setting up the Development Environment
+#### Setting up the Development Environment
 
 PureScript's core libraries are configured to use the Pulp build tool, and packages are available in the Bower registry.
 
@@ -41,7 +41,7 @@ You should see output similar to the following:
 
 If everything was built successfully, and the tests ran without problems, then the last line should state "Tests OK".
 
-### Installing Dependencies
+#### Installing Dependencies
 
 Dependencies can be installed using Bower, if you have it installed globally:
 
@@ -51,7 +51,7 @@ If you want to use Pulp, you can run `pulp dep`:
 
     pulp dep i purescript-lists --save
 
-### Working in PSCI
+#### Working in PSCI
 
 PSCi is the interactive mode of PureScript. It is useful for working with pure computations, and for testing ideas.
 
@@ -103,7 +103,7 @@ We will be using some of the functions from the `Prelude` and `Data.List` module
 
 Note that using `Tab` to autocomplete names can be a useful time-saving device in `psci`.
 
-### Solving Project Euler #1
+#### Solving Project Euler #1
 
 The following problem is taken from [Project Euler](http://projecteuler.net/problem=1):
  
@@ -145,7 +145,7 @@ When you have finished using PSCi, type `:quit` to quit:
     > :quit
     See ya!
 
-### Compiling a Solution
+#### Compiling a Solution
 
 Now that we've seen how to use `psci` to reach the answer, let's move our solution into a source file, and compile it using `psc`.
 
@@ -180,7 +180,7 @@ Alternatively, we can use Pulp to compile our new module to Javascript:
 
 This will compile each module present in `src/` into a separate file in the `output/` directory.
 
-### Writing a Test Suite
+#### Writing a Test Suite
 
 To test our code, we'll use the `purescript-assert` library:
 
@@ -203,7 +203,7 @@ Our "test suite" is just a single assertion that the `answer` value equals the c
 
 Run the tests using `pulp test`, and you should hopefully see "Tests OK" in the last line.
 
-### Creating Executables
+#### Creating Executables
 
 We can modify the `main` function in the `src/Main.purs` module to print our result to the console:
 
@@ -225,8 +225,8 @@ The `pulp run` command can be used to compile and run the `Main` module:
     * Build successful.
     The answer is 233168
 
-### Conclusion
+#### Conclusion
 
 That's all for this post. We've seen how to use enough of the basics of `psc` and PSCi to compile, execute and test simple PureScript programs. If you would like more information, the [PureScript documentation](http://docs.purescript.org) lists all of the options for both `psc` and `psci`.
 
-Until next time\...
+Until next time...
