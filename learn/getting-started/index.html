@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <title>PureScript – Learn - Getting Started with PureScript</title>
+
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,300,700"/>
+
+</head>
+
+<body>
+
+  <header>
+    <div class="wrap">
+      <h1><a href="../">PureScript</a></h1>
+      <nav>
+        <h2>Menu</h2>
+        <ul>
+          <li><a href="../../">Home</a></li>
+          <li><a href="../../download/">Download</a></li>
+          <li><a href="../../learn/" class="active">Learn</a></li>
+          <li><a href="../../projects/">Projects</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="article">
+
+<h2>Getting Started with PureScript</h2>
+<div class="meta">By Phil Freeman, updated 12 July 2015</div>
+
+<p>Welcome to the PureScript community blog! In this first post, I'm going to walk through the basics of getting set up to use the PureScript compiler <code>psc</code>, and its interactive mode <code>psci</code>.</p>
+<p>I'll start with the installation of the compiler, go through the basic commands of <code>psc</code> and <code>psci</code>, working towards a solution of problem 1 from <a href="http://projecteuler.net/problem=1">Project Euler</a>.</p>
+<h4 id="installing-the-compiler">Installing the Compiler</h4>
+<p>PureScript can be installed from <a href="http://hackage.haskell.org/package/purescript">Hackage</a> or by downloading the latest <a href="https://github.com/purescript/purescript/releases">binary bundle</a> for your OS.</p>
+<p>Make sure the <code>psc</code> executable is on your path.</p>
+<h4 id="setting-up-the-development-environment">Setting up the Development Environment</h4>
+<p>PureScript's core libraries are configured to use the Pulp build tool, and packages are available in the Bower registry.</p>
+<p>If you don't have Pulp installed, install it now:</p>
+<pre><code>npm install -g pulp</code></pre>
+<p>Create a new project in an empty directory using <code>pulp init</code>:</p>
+<pre><code>pulp init</code></pre>
+<p>Your directory should now contain the following files:</p>
+<ul>
+<li><code>bower.json</code> - contains library dependency information</li>
+<li><code>bower_components/</code> - a directory for installed dependencies</li>
+<li><code>src/Main.purs</code> - Entry point module for your project</li>
+<li><code>test/Main.purs</code> - An empty test suite</li>
+</ul>
+<p>At this point, you should be able to build the project and run the tests:</p>
+<pre><code>pulp build
+pulp test</code></pre>
+<p>You should see output similar to the following:</p>
+<pre><code>* Building project in /Users/paf31/Documents/Code/purescript/pulp-test
+* Build successful. Running tests...
+You should add some tests.
+* Tests OK.</code></pre>
+<p>If everything was built successfully, and the tests ran without problems, then the last line should state &quot;Tests OK&quot;.</p>
+<h4 id="installing-dependencies">Installing Dependencies</h4>
+<p>Dependencies can be installed using Bower, if you have it installed globally:</p>
+<pre><code>bower i purescript-lists --save</code></pre>
+<p>If you want to use Pulp, you can run <code>pulp dep</code>:</p>
+<pre><code>pulp dep i purescript-lists --save</code></pre>
+<h4 id="working-in-psci">Working in PSCI</h4>
+<p>PSCi is the interactive mode of PureScript. It is useful for working with pure computations, and for testing ideas.</p>
+<p>Open PSCi by typing <code>pulp psci</code> at the command line. Pulp will create a file in your directory called <code>.psci</code>, which contains instructions to PSCi to load your modules and dependencies. If you invoke the PSCi executable directly, you would need to load these files by hand.</p>
+<pre><code> ____                 ____            _       _
+|  _ \ _   _ _ __ ___/ ___|  ___ _ __(_)_ __ | |_
+| |_) | | | | &#39;__/ _ \___ \ / __| &#39;__| | &#39;_ \| __|
+|  __/| |_| | | |  __/___) | (__| |  | | |_) | |_
+|_|    \__,_|_|  \___|____/ \___|_|  |_| .__/ \__|
+                                       |_|
+
+:? shows help
+&gt;</code></pre>
+<p>As the introduction indicates, you can type <code>:?</code> to see a list of commands:</p>
+<pre><code>The following commands are available:
+
+:?                        Show this help menu
+:quit                     Quit PSCi
+:reset                    Discard all imported modules and declared bindings
+:browse      &lt;module&gt;     See all functions in &lt;module&gt;
+:load        &lt;file&gt;       Load &lt;file&gt; for importing
+:foreign     &lt;file&gt;       Load foreign module &lt;file&gt;
+:type        &lt;expr&gt;       Show the type of &lt;expr&gt;
+:kind        &lt;type&gt;       Show the kind of &lt;type&gt;
+:show        import       Show all imported modules
+:show        loaded       Show all loaded modules
+
+Further information is available on the PureScript wiki:
+--&gt; https://github.com/purescript/purescript/wiki/psci</code></pre>
+<p>We will use a selection of these commands during this tutorial.</p>
+<p>Start by pressing the Tab key to use the autocompletion feature. You will see a collection of names of functions from the Prelude which are available to use.</p>
+<p>To see the type of one of these values, use the <code>:type</code> command, followed by a space, followed by the name of the value:</p>
+<pre><code>&gt; :type Prelude.map
+forall a b f. (Prelude.Functor f) =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+&gt; :type Data.List.zip
+forall a b. Data.List.List a -&gt; Data.List.List b -&gt; Data.List.List (Data.Tuple.Tuple a b)</code></pre>
+<p>We will be using some of the functions from the <code>Prelude</code> and <code>Data.List</code> modules, so import those by using the <code>import</code> keyword:</p>
+<pre><code>import Prelude
+import Data.List</code></pre>
+<p>Note that using <code>Tab</code> to autocomplete names can be a useful time-saving device in <code>psci</code>.</p>
+<h4 id="solving-project-euler-1">Solving Project Euler #1</h4>
+<p>The following problem is taken from <a href="http://projecteuler.net/problem=1">Project Euler</a>:</p>
+<blockquote>
+<p>If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.</p>
+<p>Find the sum of all the multiples of 3 or 5 below 1000.</p>
+</blockquote>
+<p>We can solve this problem neatly using functions and function composition, directly in <code>psci</code>.</p>
+<p>Let's start by listing all of the natural numbers below 1000 as a list. We can do this using the <code>range</code> function from <code>Data.List</code>:</p>
+<pre><code>&gt; range 0 999</code></pre>
+<p>You should see a list with 1000 elements printed to the command line.</p>
+<p>This value can be given a name, using a <code>let</code> binding:</p>
+<pre><code>&gt; let ns = range 0 999</code></pre>
+<p>Now let's filter out all of those elements which do not meet the criterion. We can use the <code>filter</code> function from <code>Data.List</code>, by providing a predicate function as its first argument:</p>
+<pre><code>&gt; let multiples = filter (\n -&gt; mod n 3 == 0 || mod n 5 == 0) ns</code></pre>
+<p>You can see the result by evaluating <code>multiples</code> if you like, or even check its type:</p>
+<pre><code>&gt; multiples
+Cons 0 (Cons 3 (Cons 5 (Cons 6 (Cons ...
+&gt; :type multiples
+List Int</code></pre>
+<p>Now we need to find the sum of the <code>multiples</code> array, to complete the solution. We can use the <code>sum</code> function from the <code>Data.Foldable</code> module.</p>
+<pre><code>&gt; import Data.Foldable
+&gt; sum multiples
+233168</code></pre>
+<p>When you have finished using PSCi, type <code>:quit</code> to quit:</p>
+<pre><code>&gt; :quit
+See ya!</code></pre>
+<h4 id="compiling-a-solution">Compiling a Solution</h4>
+<p>Now that we've seen how to use <code>psci</code> to reach the answer, let's move our solution into a source file, and compile it using <code>psc</code>.</p>
+<p>Create a new text file <code>src/Euler.purs</code> and copy the following code:</p>
+<pre class="purescript"><code>module Euler1 where
+
+import Prelude
+
+import Data.List (range, filter)
+import Data.Foldable (sum)
+
+ns = range 0 999
+
+multiples = filter (\n -&gt; mod n 3 == 0 || mod n 5 == 0) ns
+
+answer = sum multiples</code></pre>
+      <p>It is possible to load this file directly into PSCi and to continue working:</p>
+      <pre><code>pulp psci
+&gt; Euler1.answer
+233168
+&gt; :quit
+See ya!</code></pre>
+<p>Alternatively, we can use Pulp to compile our new module to Javascript:</p>
+<pre><code>pulp build</code></pre>
+<p>This will compile each module present in <code>src/</code> into a separate file in the <code>output/</code> directory.</p>
+<h4 id="writing-a-test-suite">Writing a Test Suite</h4>
+<p>To test our code, we'll use the <code>purescript-assert</code> library:</p>
+<pre><code>bower i purescript-assert --save</code></pre>
+<p>Modify the <code>test/Main.purs</code> file, and add the following code:</p>
+<pre class="purescript"><code>module Test.Main where
+
+import Prelude
+import Euler1 (answer)
+import Test.Assert (assert)
+
+main = do
+  assert (answer == 233168)</code></pre>
+<p>Our &quot;test suite&quot; is just a single assertion that the <code>answer</code> value equals the correct integer. In a real test suite, we might use the <code>Eff</code> monad to compose multiple tests in our <code>main</code> function.</p>
+<p>Run the tests using <code>pulp test</code>, and you should hopefully see &quot;Tests OK&quot; in the last line.</p>
+<h4 id="creating-executables">Creating Executables</h4>
+<p>We can modify the <code>main</code> function in the <code>src/Main.purs</code> module to print our result to the console:</p>
+<pre class="purescript"><code>module Main where
+
+import Prelude
+import Euler1
+import Control.Monad.Eff.Console
+
+main = do
+  log (&quot;The answer is &quot; ++ show answer)</code></pre>
+<p>The <code>pulp run</code> command can be used to compile and run the <code>Main</code> module:</p>
+<pre><code>&gt; pulp run
+* Building project in /Users/paf31/Documents/Code/purescript/pulp-test
+* Build successful.
+The answer is 233168</code></pre>
+<h4 id="conclusion">Conclusion</h4>
+<p>That's all for this post. We've seen how to use enough of the basics of <code>psc</code> and PSCi to compile, execute and test simple PureScript programs. If you would like more information, the <a href="http://docs.purescript.org">PureScript documentation</a> lists all of the options for both <code>psc</code> and <code>psci</code>.</p>
+<p>Until next time...</p>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <nav>
+      <ul>
+        <li><a href="../../">Home</a></li>
+        <li><a href="../../download/" class="active">Download</a></li>
+        <li><a href="../../learn/" class="active">Learn</a></li>
+        <li><a href="../../projects/">Projects</a></li>
+      </ul>
+      <ul class="external">
+        <li class="github"><a href="https://github.com/purescript/purescript" title="GitHub">GitHub</a></li>
+        <li class="twitter"><a href="https://twitter.com/purescript" title="Twitter">Twitter</a></li>
+      </ul>
+    </nav>
+  </footer>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-56579671-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+</body>
+</html>

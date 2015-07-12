@@ -42,29 +42,21 @@
     <section>
       <h2>Package managers</h2>
       <p>OS X via <a href="http://brew.sh/">Homebrew</a></p>
-      <div class="codeblock">
 <pre>
 brew install purescript
 </pre>
-      </div>
       <p>Arch Linux via <a href="https://aur.archlinux.org/packages/purescript-bin/">AUR</a></p>
-      <div class="codeblock">
 <pre>
 yaourt -S purescript-bin
 </pre>
-      </div>
       <p>Windows via <a href="https://chocolatey.org/">Chocolatey</a></p>
-      <div class="codeblock">
 <pre>
 choco install purescript
 </pre>
-      </div>
       <p>Every platform via <a href="https://www.npmjs.com/">npm</a></p>
-      <div class="codeblock">
 <pre>
 npm install -g purescript
 </pre>
-      </div>
     </section>
 
     <section>
@@ -73,12 +65,10 @@ npm install -g purescript
 
       <p>If you already have the <a href="https://www.haskell.org/platform">Haskell Platform</a> 2014 or <a href="https://www.haskell.org/ghc/">GHC</a> 7.8 installed then PureScript can be installed using Cabal:</p>
 
-      <div class="codeblock">
 <pre>
 cabal update
 cabal install purescript
 </pre>
-      </div>
 
     </section>
 
@@ -88,7 +78,6 @@ cabal install purescript
 
       <p>For the most up-to-date (potentially unstable) version of the compiler the code is <a href="https://github.com/purescript/purescript">available on GitHub</a>:</p>
 
-      <div class="codeblock">
 <pre>
 git clone https://github.com/purescript/purescript.git
 cd purescript
@@ -96,7 +85,6 @@ cabal sandbox init
 cabal update
 cabal install
 </pre>
-      </div>
 
       <p>The <code>cabal sandbox init</code> step is optional but recommended to avoid problems with dependencies. When using a sandbox <code>cabal install</code> will put the compiled binaries into <code>./.cabal-sandbox/bin/</code> rather than the global Cabal <code>bin</code> directory.</p>
 

@@ -28,6 +28,10 @@ p {
   color: #4d4d4d;
 }
 
+h1, h2, h3, h4 {
+  color: #111;
+}
+
 pre, code {
   font-family: DejaVu Sans Mono, Menlo, Consolas, monospace;
   font-size: 12px;
@@ -145,6 +149,7 @@ header {
 /* ------------------------------------------------------------------------- */
 
 main {
+
   a[href] {
     color: $link-colour;
 
@@ -152,44 +157,35 @@ main {
       opacity: 0.7;
     }
   }
-
-  pre {
-    background: #fff;
-    padding: 20px;
-  }
-
-  .codeblock {
-    background: #fff;
-  }
-
-  .codeblock pre {
-    max-width: 600px;
-    margin: auto;
-  }
-
-  code {
-    display: inline-block;
-    background: #fff;
-    font-size: 13px;
-    padding: 0px 6px;
-  }
 }
 
 main section {
+
+  max-width: 800px;
+  margin: auto;
   padding: 50px 10px;
   overflow: hidden;
 
   > * {
     box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  > p, li {
+  > p, li, h4, &.article ul {
     font-size: 16px;
-    line-height: 150%;
+    line-height: 165%;
     max-width: 600px;
   }
 
-  > p {
+  > h4 {
+    margin-top: 36px;
+  }
+
+  > p,
+  > h4,
+  &.article > ul,
+  div.meta {
     margin-left: 20px;
     margin-right: 20px;
   }
@@ -207,13 +203,51 @@ main section {
     margin: 5px 20px 30px;
   }
 
-  > ul {
-    margin: 0px 20px 0;
+  &.article > ul {
+    padding: 0;
+    list-style: none;
+    > li {
+      padding-left: 18px;
+      background: url(../img/bullet.png) no-repeat left 12px;
+      background-size: 6px 6px;
+    }
+  }
+
+  > pre, > blockquote {
+    background: #fff;
+    padding: 20px;
+  }
+
+  > blockquote {
+    p {
+      color: #666;
+      font-style: italic;
+      margin: 0;
+    }
+    p+p {
+      margin-top: 16px;
+    }
+  }
+
+  p > code,
+  li > code {
+    display: inline-block;
+    background: #fff;
+    font-size: 13px;
+    padding: 0 6px;
+  }
+
+  > div.meta {
+    text-transform: uppercase;
+    color: #999;
+    font-size: 13px;
+    margin-top: -28px;
+    margin-bottom: 30px;
   }
 }
 
 main section+section {
-  padding: 0px 10px 50px;
+  padding: 0 10px 50px;
 }
 
 .home main section+section {
@@ -230,7 +264,6 @@ main section.intro {
     font-size: 24px;
     line-height: 160%;
     margin: 0;
-    color: #111;
   }
 
   div.link {
@@ -283,11 +316,24 @@ main section.features {
 
 main section.example {
 
-  background: #f5f5f5;
   position: relative;
+  z-index: 2;
+  max-width: 100%;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background: #f5f5f5;
+    z-index: -1;
+  }
 
   pre {
     background: #fff;
+    padding: 20px;
   }
 
   h4, p {
@@ -398,7 +444,7 @@ ul.cards {
 footer {
   box-sizing: border-box;
   position: absolute;
-  bottom: 0px;
+  bottom: 0;
   padding: 20px 30px 50px;
   width: 100%;
 
@@ -532,7 +578,7 @@ footer {
 @media (min-width: 676px) {
 
   main section+section {
-    padding: 0px 10px 60px;
+    padding: 0 10px 60px;
   }
 
   .home main section+section, main section {
@@ -547,12 +593,24 @@ footer {
     margin-top: 60px;
   }
 
-  main section > p {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 600px;
-  }
+  main section {
+    > p,
+    > h4,
+    &.article > ul {
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 600px;
+    }
 
+    > div.meta {
+      margin-left: 20px;
+    }
+
+    > pre,
+    > blockquote {
+      padding: 20px calc((100% - 600px) / 2);
+    }
+  }
 }
 
 @media (min-width: 700px) {
@@ -570,7 +628,7 @@ footer {
 @media (min-width: 876px) {
 
   main section+section {
-    padding: 0px 10px 70px;
+    padding: 0 10px 70px;
   }
 
   .home main section+section, main section {
@@ -586,10 +644,12 @@ footer {
     max-width: 800px;
   }
 
+  main section > div.meta {
+    margin-left: 0;
+  }
+
   main section > h2,
   main section > h3,
-  main section > ul,
-  main section > pre,
   main section > div {
     margin-left: auto;
     margin-right: auto;
@@ -652,21 +712,21 @@ footer {
 
   .show-nav header {
     position: fixed;
-    left: 0px;
-    top: 0px;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
 
     h2 {
       position: absolute;
-      right: 0px;
+      right: 0;
       top: 47px;
     }
 
     nav {
       position: absolute;
-      left: 0px;
-      top: 0px;
+      left: 0;
+      top: 0;
       padding: 30px;
 
       ul {
