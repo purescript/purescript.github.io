@@ -35,10 +35,11 @@
 
 <h2>The Foreign Function Interface</h2>
 <div class="meta">By Phil Freeman, updated 15 July 2015</div>
+
 <p>In this short post, I'll show how to interoperate with Javascript code using PureScript's Foreign Function Interface (or <em>FFI</em>). We'll see how to call Javascript code from PureScript code and vice versa.</p>
-<h3 id="disclaimer">Disclaimer</h3>
+<h4 id="disclaimer">Disclaimer</h4>
 <p>It should be said that choosing to work with Javascript via the FFI will &quot;void the warranty&quot; of the typechecker to a certain extent. Once you step outside the safe confines of the PureScript type system, nothing is guaranteed, so it is recommended that you know a few basics of the language implementation before writing your own FFI bindings. That said, the correspondence between PureScript types and their Javascript representations is fairly simple, so it should not be too difficult to understand.</p>
-<h3 id="calling-purescript-from-javascript">Calling PureScript from Javascript</h3>
+<h4 id="calling-purescript-from-javascript">Calling PureScript from Javascript</h4>
 <p>Calling a PureScript function from Javascript is very simple, at least for functions with simple types.</p>
 <p>Let's take the following simple module as an example:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Test</span> <span class="kw">where</span>
@@ -56,7 +57,7 @@ gcd n m <span class="fu">=</span> gcd (m <span class="fu">-</span> n) n</code></
 <p>You might also like to bundle JavaScript code for the browser, using <code>psc-bundle</code>. In that case, you would access the <code>Test</code> module on the global namespace, which defaults to <code>PS</code>:</p>
 <pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> Test = <span class="ot">PS</span>.<span class="fu">Test</span>;
 <span class="ot">Test</span>.<span class="fu">gcd</span>(<span class="dv">15</span>)(<span class="dv">20</span>);</code></pre>
-<h3 id="understanding-name-generation">Understanding Name Generation</h3>
+<h4 id="understanding-name-generation">Understanding Name Generation</h4>
 <p>PureScript aims to preserve names during code generation as much as possible. In particular, most identifiers which are neither PureScript nor Javascript keywords can be expected to be preserved, at least for names of top-level declarations.</p>
 <p>If you decide to use a Javascript keyword as an identifier, the name will be escaped with a double dollar symbol. For example,</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">null <span class="fu">=</span> []</code></pre>
@@ -70,10 +71,10 @@ gcd n m <span class="fu">=</span> gcd (m <span class="fu">-</span> n) n</code></
 <pre class="sourceCode haskell"><code class="sourceCode haskell">(<span class="fu">%</span>) a b <span class="fu">=</span> <span class="fu">...</span></code></pre>
 <p>generates</p>
 <pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> $percent = <span class="kw">function</span>(a) { ... }</code></pre>
-<h3 id="calling-javascript-from-purescript">Calling Javascript from PureScript</h3>
+<h4 id="calling-javascript-from-purescript">Calling Javascript from PureScript</h4>
 <p>Javascript values and functions can be used from PureScript by using the FFI. The problem becomes how to choose suitable types for values originating in Javascript.</p>
 <p>The general rule regarding types is that you can enforce as little or as much type safety as you like when using the FFI, but you should be careful to avoid common pitfalls when dealing with Javascript values, like the possibility of null or undefined values being returned from a Javascript function. Functions defined in the Prelude and core libraries tend to err on the side of type safety where possible.</p>
-<h3 id="foreign-modules">Foreign Modules</h3>
+<h4 id="foreign-modules">Foreign Modules</h4>
 <p>In PureScript, JavaScript code is wrapped using a <em>foreign module</em>. A foreign module is just a CommonJS module which is associated with a PureScript module. Foreign modules are required to adhere to certain conventions:</p>
 <ul>
 <li>The module must contain a comment of the form <code>// module ModuleName</code>, which associates the foreign module with its companion PureScript module.</li>
@@ -92,7 +93,7 @@ gcd n m <span class="fu">=</span> gcd (m <span class="fu">-</span> n) n</code></
 
 foreign import calculateInterest :: Number -&gt; Number</code></pre>
 <p>In the companion PureScript module, we simply assign a type to the exports of the foreign module by using a <code>foreign import</code> declaration. These values are then available to modules which <code>import</code> our PureScript module.</p>
-<h3 id="functions-of-multiple-arguments">Functions of Multiple Arguments</h3>
+<h4 id="functions-of-multiple-arguments">Functions of Multiple Arguments</h4>
 <p>PureScript functions are curried by default, so Javascript functions of multiple arguments require special treatment.</p>
 <p>Suppose we wanted to modify our <code>calculateInterest</code> function to take a second argument:</p>
 <pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="st">&quot;use strict&quot;</span>;
@@ -121,7 +122,7 @@ calculateInterestCurried = runFn2 calculateInterest</code></pre>
 };</code></pre>
 <p>This time, we can assign the curried function type directly:</p>
 <pre class="purescript"><code>foreign import calculateInterest :: Number -&gt; Number -&gt; Number</code></pre>
-<h3 id="handling-constrained-types">Handling Constrained Types</h3>
+<h4 id="handling-constrained-types">Handling Constrained Types</h4>
 <p>Another special case that you should be aware of when calling PureScript functions from Javascript is that values with constrained types (i.e. types which contain type class constraints) contain extra parameters which are used to pass type class dictionaries to the function.</p>
 <p>For example, let's write a simple PureScript function with a constrained type, and look at the generated Javascript.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Test</span> <span class="kw">where</span>
@@ -145,23 +146,24 @@ inOrder a1 a2 <span class="fu">=</span> <span class="dt">Tuple</span> a2 a1</cod
 <p>Notice that <code>inOrder</code> is a (curried) function of three arguments, not two. The first argument is the type class dictionary for the <code>Ord</code> constraint.</p>
 <p>We can call this function from Javascript by passing an explicit type class dictionary from the Prelude as the first parameter:</p>
 <pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> test = <span class="ot">Test</span>.<span class="fu">inOrder</span>(<span class="ot">Prelude</span>.<span class="fu">ordNumber</span>())(<span class="dv">20</span>)(<span class="dv">10</span>);</code></pre>
-<h3 id="handling-side-effects">Handling Side Effects</h3>
+<h4 id="handling-side-effects">Handling Side Effects</h4>
 <p>Notice that the <code>calculateInterest</code> functions defined above were <em>pure</em>: they had no side-effects and produced the same result for the same input on every invocation.</p>
 <p>The PureScript function type <code>a -&gt; b</code> does not allow for side-effects, so it would be incorrect to assign a function type to a Javascript computation with side-effects. The correct approach in this case is to use the <code>Eff</code> type constructor, defined in the <code>purescript-eff</code> package, to assign a type to the computation.</p>
 <p>The <code>Eff</code> type constructor and its usage is documented <a href="https://github.com/purescript/purescript/wiki/Handling-Native-Effects-with-the-Eff-Monad">on the wiki</a>.</p>
-<h3 id="santizing-foreign-data-with-data.foreign">Santizing Foreign Data With Data.Foreign</h3>
+<h4 id="santizing-foreign-data-with-data.foreign">Santizing Foreign Data With Data.Foreign</h4>
 <p>Data returned from Javascript functions cannot generally be trusted to be defined and non-null. PureScript functions in the Prelude and common libraries generally assume that values will be neither <code>undefined</code> nor <code>null</code>, so it is important to sanitize data when working with values returned from Javascript functions using the FFI.</p>
 <p>The <code>Data.Foreign</code> module (available in the <code>purescript-foreign</code> package) defines a <code>Foreign</code> data type, and several helper functions for turning <code>Foreign</code> values into regular PureScript values, as well as support for handling <code>null</code> and <code>undefined</code> using the <code>Maybe</code> type constructor.</p>
-<h3 id="defining-foreign-data-types">Defining Foreign Data Types</h3>
+<h4 id="defining-foreign-data-types">Defining Foreign Data Types</h4>
 <p>It is often useful when wrapping Javascript APIs to create new types at a specific kind for use with the FFI.</p>
 <p>For example, suppose we have a Javascript library <code>frob</code> which defines the <code>Frob</code> data structure and associated functions. To give meaningful types to those functions, it might be useful to define a type <code>Frob</code> at kind <code>*</code>. We can do this as follows:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">foreign <span class="kw">import </span>data <span class="dt">Frob</span> :: *</code></pre>
 <p>The type <code>Frob</code> can now be used in other types, or in foreign import declarations:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">foreign <span class="kw">import </span>makeFrob :: <span class="dt">String</span> -&gt; <span class="dt">Frob</span></code></pre>
 <p>Developers who define their own foreign data types should take care to document their expected runtime representations.</p>
-<h3 id="conclusion">Conclusion</h3>
+<h4 id="conclusion">Conclusion</h4>
 <p>I have hopefully shown that interoperating with Javascript is simple in both directions, once a few small implementation details are understood. You should now be able to wrap your Javascript libraries for use in PureScript, and vice versa.</p>
 <p>The <a href="https://leanpub.com/purescript/read#leanpub-auto-the-foreign-function-interface">PureScript book</a> contains more information on the FFI, and plenty of examples and exercises for any interested readers.</p>
+
 
     </section>
 
