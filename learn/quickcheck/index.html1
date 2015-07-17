@@ -1,0 +1,116 @@
+<p><a href="http://en.wikipedia.org/wiki/QuickCheck">QuickCheck</a> is a <em>property-based</em> testing library which was originally written in Haskell, but which has been ported to <a href="https://github.com/mcandre/node-quickcheck">a</a> <a href="https://github.com/mcandre/qc">number</a> <a href="https://github.com/mcandre/cl-quickcheck">of</a> <a href="https://pypi.python.org/pypi/pytest-quickcheck/">other</a> <a href="https://github.com/hayeah/rantly">languages</a>.</p>
+<p>QuickCheck works by generating random data with which to test your properties. This allows us to gain confidence that the properties hold, as more and more randomly-generated tests are run.</p>
+<p><a href="http://github.com/purescript/purescript-quickcheck"><code>purescript-quickcheck</code></a> is a port of QuickCheck to PureScript, which preserves the syntax and types of the original Haskell code.</p>
+<p><code>purescript-quickcheck</code> can be used to test code which is written in PureScript, but can be used to test Javascript functions as well. In this post, I'll demonstrate each of these use cases.</p>
+<h4 id="testing-purescript-functions">Testing PureScript Functions</h4>
+<p>QuickCheck defines the <code>quickCheck</code> function, which will print test results to the console, or fail with an exception in the event of a test failure.</p>
+<p>Create a new project using Pulp, install <code>purescript-quickcheck</code>, and open PSCi:</p>
+<pre class="text"><code>pulp init
+pulp dep i purescript-quickcheck
+pulp psci</code></pre>
+<p>Start by importing the QuickCheck library:</p>
+<pre><code>&gt; import Prelude
+&gt; import Test.QuickCheck</code></pre>
+<p>The <code>quickCheck</code> function takes one argument: the property you would like to test. Let's try a very simple property:</p>
+<pre><code>&gt; quickCheck \n -&gt; n + 1 == 1 + n</code></pre>
+<p>If everything worked, you should see the following result:</p>
+<pre><code>100/100 test(s) passed.
+unit</code></pre>
+<p>This indicates 100 successful random test runs.</p>
+<h4 id="error-messages">Error Messages</h4>
+<p>Let's see what happens when we try testing a broken property:</p>
+<pre><code>&gt; quickCheck \n -&gt; n + 1 == n </code></pre>
+<p>You should see an exception printed to the console:</p>
+<pre><code>Error: Test 1 failed:
+Failed: Test returned false</code></pre>
+<p>That's not a very helpful error, so let's improve it:</p>
+<pre><code>&gt; quickCheck \n -&gt; n + 1 == n &lt;?&gt; &quot;Test failed for input &quot; ++ show n</code></pre>
+<p>This time you should see the following failure message:</p>
+<pre><code>Error: Test 1 failed: 
+Test failed for input -654791</code></pre>
+<p>Alternatively, we could use the <code>===</code> operator, which provides a better error message:</p>
+<pre><code>&gt; quickCheck \n -&gt; n + 1 === n 
+Error: Test 1 failed: 
+-663820 /= -663821</code></pre>
+<h4 id="example-1---gcd-function">Example 1 - GCD Function</h4>
+<p>Let's write an implementation of the <em>greatest common divisor</em> function in PSCi (you will need to enable multiline mode):</p>
+<pre><code>&gt; let
+    gcd 0 n = n
+    gcd n 0 = n
+    gcd n m | n &lt; 0 = gcd (-n) m
+    gcd n m | m &lt; 0 = gcd n (-m)
+    gcd n m | n &gt; m = gcd (n - m) m
+    gcd n m = gcd n (m - n)</code></pre>
+<p>Now let's assert some basic properties that we expect to hold of the <code>gcd</code> function.</p>
+<pre><code>&gt; quickCheck \n -&gt; gcd n 1 === 1</code></pre>
+<p>This test should pass, but will take a while, because the standard random generator for integers which comes bundled with <code>purescript-quickcheck</code> generates integers in the range -1000000 to 1000000.</p>
+<p>We can modify our test to only consider small integers:</p>
+<pre><code>&gt; quickCheck \n -&gt; gcd (n / 1000) 1 === 1</code></pre>
+<p>This time, the test should complete quickly. However, we've coupled the generation of our data (<code>/ 1000</code>) with the property we're testing, which is against the spirit of QuickCheck. A better approach is to define a <code>newtype</code> which can be used to generate small integers.</p>
+<p>Create a new file <code>src/SmallInt.purs</code> and paste the following code:</p>
+<pre><code>module SmallInt where
+
+import Prelude
+import Test.QuickCheck
+import Test.QuickCheck.Arbitrary
+
+data SmallInt = SmallInt Int
+
+runInt :: SmallInt -&gt; Int
+runInt (SmallInt i) = i
+
+instance arbSmallInt :: Arbitrary SmallInt where
+  arbitrary = (/ 1000) &lt;$&gt; arbitrary</code></pre>
+<p>Back in PSCi, we can now test properties without having to explicitly define how to generate our random data:</p>
+<pre><code>&gt; quickCheck \(SmallInt n) (SmallInt m) -&gt; gcd n m == gcd m n</code></pre>
+<p>The idea is that the particular scheme that is chosen to generate data should be indicated by the types of our function arguments, so <code>newtype</code>s can be quite useful when defining multiple data generation schemes for a single type.</p>
+<h4 id="example-2---testing-higher-order-functions">Example 2 - Testing Higher Order Functions</h4>
+<p>QuickCheck can also be used to test higher-order functions, by randomly generating functions.</p>
+<p>Let's test that the <code>map</code> function on arrays satisfies the functor laws.</p>
+<p>For these two tests, I will write the test function using a let binding to avoid having to write type signatures in properties.</p>
+<p>The first functor law says that if you map a function which does not modify its argument (the identity function) over a structure, then the structure should not be modified either.</p>
+<pre><code>&gt; import Data.Array
+
+&gt; let 
+    firstFunctorLaw :: [Int] -&gt; Boolean
+    firstFunctorLaw arr = map id arr == arr
+
+&gt; quickCheck firstFunctorLaw
+
+100/100 test(s) passed.
+unit</code></pre>
+<p>The second functor law says that mapping two functions over a structure one-by-one is equivalent to mapping their composition over the structure:</p>
+<pre><code>&gt; let
+    secondFunctorLaw :: (Int -&gt; Int) -&gt; (Int -&gt; Int) -&gt; [Int] -&gt; Boolean
+    secondFunctorLaw f g arr = map f (map g arr) == map (f &lt;&lt;&lt; g) arr
+  
+&gt; quickCheck secondFunctorLaw
+
+100/100 test(s) passed.
+unit</code></pre>
+<h4 id="testing-javascript-functions">Testing Javascript Functions</h4>
+<p>Now let's try an example of testing a function written in Javascript.</p>
+<p><a href="https://gist.github.com/paf31/3aedd6c3e3ac5c8a78e7">This file</a> contains a set of FFI bindings for some of the functions defined by the <a href="http://underscorejs.org/">UnderscoreJS</a> library. It is a nice example of a set of pure functions written in Javascript which we can test with QuickCheck.</p>
+<p>Copy the contents of that file into <code>src/UnderscoreFFI.purs</code>, and reload PSCi with that module loaded:</p>
+<pre><code>&gt; import UnderscoreFFI</code></pre>
+<p>The <code>UnderscoreFFI</code> module defines a wrapper for the <code>sortBy</code> function. Let's test that the function is idempotent:</p>
+<pre><code>&gt; let 
+    sortIsIdempotent :: [Int] -&gt; Boolean
+    sortIsIdempotent arr = sortBy id (sortBy id arr) == sortBy id arr
+  
+&gt; quickCheck sortIsIdempotent
+
+100/100 test(s) passed.
+unit</code></pre>
+<p>In fact, we don't need to sort by the identity function. Since QuickCheck supports higher-order functions, we can test with a randomly-generated sorting function:</p>
+<pre><code>&gt; let 
+    sortIsIdempotent&#39; :: (Int -&gt; Int) -&gt; [Int] -&gt; Boolean
+    sortIsIdempotent&#39; f arr = sortBy f (sortBy f arr) == sortBy f arr
+  
+&gt; quickCheck sortIsIdempotent
+
+100/100 test(s) passed.
+unit</code></pre>
+<p>Have a look through the <code>UnderscoreFFI</code> module, and see what other properties you can define.</p>
+<h4 id="conclusion">Conclusion</h4>
+<p>Hopefully I've shown that QuickCheck can be a useful tool, whether you write your code in PureScript or not. Its strength is in its <em>type-directed</em> approach to data generation, which allows you to say <em>what</em> you want to test directly, rather than <em>how</em> to generate test data.</p>
