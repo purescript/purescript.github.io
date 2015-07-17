@@ -94,8 +94,8 @@
 
 <span class="nf">loadModel</span> = <span class="kr">do</span>
   model &lt;- runParallel $
-    <span class="kt">Model</span> &lt;$&gt; <span class="kt">inParallel</span> (get <span class="s">"/products/popular/"</span>)
-          &lt;*&gt; <span class="kt">inParallel</span> (get <span class="s">"/categories/all"</span>)
+    <span class="kt">Model</span> &lt;$&gt; inParallel (get <span class="s">"/products/popular/"</span>)
+          &lt;*&gt; inParallel (get <span class="s">"/categories/all"</span>)
 
 <span class="nf">view</span> (<span class="kt">Model</span> ps cs) = <span class="kr">do</span>
   renderProducts ps
