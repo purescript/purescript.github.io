@@ -48,7 +48,6 @@
 <pre>
 <span class="kr">import</span> <span class="nn">Data.DOM.Free</span>
 &nbsp;
-<span class="nf">doc</span> :: <span class="kt">Element</span>
 <span class="nf">doc</span> = div [ _class <span class="kt">:=</span> <span class="s">"image"</span> ] $ <span class="kr">do</span>
   elem $ img [ src <span class="kt">:=</span> <span class="s">"logo.jpg"</span>
              , width  <span class="kt">:=</span> <span class="mi">100</span>
@@ -71,7 +70,6 @@
 
 <span class="nf">withContext</span> shape = save *&gt; shape &lt;* restore
 
-<span class="nf">scene</span> :: <span class="kt">Graphics</span> <span class="kt">Unit</span>
 <span class="nf">scene</span> = withContext <span class="kr">do</span>
   setFillStyle <span class="s">&quot;#FF0000&quot;</span>
 
@@ -90,26 +88,19 @@
         <h4>Callback Hell</h4>
         <p>The problem of <a href="https://leanpub.com/purescript/read#leanpub-auto-callback-hell">callback hell</a> can be solved by using PureScript’s type system to capture complex control flow as functions in a safe way. Here, the continuation monad is used to hide the boilerplate code associated with handling callbacks.</p>
 <pre>
-<span class="kr">import</span> <span class="nn">DOM</span>
-<span class="kr">import</span> <span class="nn">Control.Monad.Eff</span>
-<span class="kr">import</span> <span class="nn">Control.Monad.Cont.Trans</span>
-
-<span class="kr">type</span> <span class="kt">App</span> = <span class="kt">Eff</span> (dom :: <span class="kt">DOM</span>, ajax :: <span class="kt">AJAX</span>)
+<span class="kr">import</span> <span class="nn">Control.Parallel</span>
 
 <span class="kr">data</span> <span class="kt">Model</span> = <span class="kt">Model</span> [<span class="kt">Product</span>] [<span class="kt">ProductCategory</span>]
 
-<span class="nf">loadModel</span> :: <span class="kt">ContT</span> <span class="kt">Unit</span> <span class="kt">App</span> <span class="kt">Model</span>
 <span class="nf">loadModel</span> = <span class="kr">do</span>
   model &lt;- runParallel $
-    <span class="kt">Model</span> &lt;$&gt; <span class="kt">Parallel</span> (get <span class="s">"/products/popular/"</span>)
-          &lt;*&gt; <span class="kt">Parallel</span> (get <span class="s">"/categories/all"</span>)
+    <span class="kt">Model</span> &lt;$&gt; <span class="kt">inParallel</span> (get <span class="s">"/products/popular/"</span>)
+          &lt;*&gt; <span class="kt">inParallel</span> (get <span class="s">"/categories/all"</span>)
 
-<span class="nf">view</span> :: <span class="kt">Model</span> -&gt; <span class="kt">App</span> <span class="kt">Unit</span>
 <span class="nf">view</span> (<span class="kt">Model</span> ps cs) = <span class="kr">do</span>
   renderProducts ps
   renderCategories cs
 
-<span class="nf">main</span> :: <span class="kt">App</span> <span class="kt">Unit</span>
 <span class="nf">main</span> = loadModel `runContT` view</pre>
       </div>
       <div class="example">
