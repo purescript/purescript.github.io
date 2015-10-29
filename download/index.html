@@ -40,53 +40,33 @@
     </section>
 
     <section>
-      <h2>Package managers</h2>
-      <p>OS X via <a href="http://brew.sh/">Homebrew</a></p>
-<pre>
-brew install purescript
-</pre>
-      <p>Arch Linux via <a href="https://aur.archlinux.org/packages/purescript-bin/">AUR</a></p>
-<pre>
-yaourt -S purescript-bin
-</pre>
-      <p>Windows via <a href="https://chocolatey.org/">Chocolatey</a></p>
-<pre>
-choco install purescript
-</pre>
-      <p>Every platform via <a href="https://www.npmjs.com/">npm</a></p>
+      <h2>NPM</h2>
+      <p>PureScipt is available on most platforms via <a href="https://www.npmjs.com/">npm</a></p>
 <pre>
 npm install -g purescript
 </pre>
     </section>
 
     <section>
-
-      <h2>Cabal</h2>
-
-      <p>If you already have the <a href="https://www.haskell.org/platform">Haskell Platform</a> 2014 or <a href="https://www.haskell.org/ghc/">GHC</a> 7.8 installed then PureScript can be installed using Cabal:</p>
-
+      <h2>Homebrew</h2>
+      <p>PureScript is available on OS X via <a href="http://brew.sh/">Homebrew</a></p>
 <pre>
-cabal update
-cabal install purescript
+brew install purescript
 </pre>
-
     </section>
 
     <section>
 
-      <h2>Building from source</h2>
+      <h2>Stack</h2>
 
-      <p>For the most up-to-date (potentially unstable) version of the compiler the code is <a href="https://github.com/purescript/purescript">available on GitHub</a>:</p>
-
-<pre>
-git clone https://github.com/purescript/purescript.git
-cd purescript
-cabal sandbox init
-cabal update
-cabal install
+      <p><a href="https://www.haskell.org/ghc/">GHC</a> 7.6.1 or newer is required to compile from source. The easiest way is to use <a href="https://github.com/commercialhaskell/stack">Stack</a>:</p>
+      <pre>
+stack install purescript
 </pre>
 
-      <p>The <code>cabal sandbox init</code> step is optional but recommended to avoid problems with dependencies. When using a sandbox <code>cabal install</code> will put the compiled binaries into <code>./.cabal-sandbox/bin/</code> rather than the global Cabal <code>bin</code> directory.</p>
+      <p>This will copy the compiler and utilities into <code>~/.local/bin</code>.</p>
+      
+      <p>If you don't have Stack installed, there are install instructions <a href="https://github.com/commercialhaskell/stack/blob/master/doc/install_and_upgrade.md">here</a>.</p>
 
     </section>
 
