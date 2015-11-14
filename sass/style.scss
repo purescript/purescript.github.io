@@ -254,6 +254,18 @@ main section+section {
   padding: 50px 10px;
 }
 
+main.projects section {
+
+  > h2 {
+    margin-bottom: 60px;
+  }
+
+  > h3 {
+    margin-top: 0;
+    margin-bottom: -40px;
+  }
+}
+
 /* ------------------------------------------------------------------------- */
 
 main section.intro {
