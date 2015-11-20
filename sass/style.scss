@@ -40,7 +40,7 @@ pre, code {
 
 pre {
 
-  .kr, .nn, .nf, .kt {
+  .kr, .nn, .nf, .kt, .kw, .dt {
     font-weight: bold;
   }
 
@@ -48,11 +48,11 @@ pre {
     color: #945277;
   }
 
-  .mi, .s {
+  .mi, .s, .st {
     color: $link-colour;
   }
 
-  .nn, .kt {
+  .nn, .kt, .dt {
     color: #445588;
   }
 
