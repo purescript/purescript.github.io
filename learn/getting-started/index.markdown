@@ -2,15 +2,21 @@ Welcome to the PureScript community blog! In this first post, I'm going to walk 
 
 I'll start with the installation of the compiler, go through the basic commands of `psc` and `psci`, working towards a solution of problem 1 from [Project Euler](http://projecteuler.net/problem=1).
 
+
 #### Installing the Compiler
 
-PureScript can be installed from [Hackage](http://hackage.haskell.org/package/purescript) or by downloading the latest [binary bundle](https://github.com/purescript/purescript/releases) for your OS.
+You'll need [Node.js and npm](https://docs.npmjs.com/getting-started/installing-node) and to be [able to install global packages](https://docs.npmjs.com/getting-started/fixing-npm-permissions#option-1-change-the-permission-to-npm-s-default-directory) to proceed.
 
-Make sure the `psc` executable is on your path.
+The Purescript compiler (psc) can be installed with npm:
+
+    npm install -g purescript
+
+(It can also be installed from [Hackage](http://hackage.haskell.org/package/purescript), or by downloading the latest [binary bundle](https://github.com/purescript/purescript/releases) for your OS. If you do so, make sure the `psc` executable is on your `$PATH`.)
+
 
 #### Setting up the Development Environment
 
-PureScript's core libraries are configured to use the Pulp build tool, and packages are available in the Bower registry.
+PureScript's core libraries are configured to use the [Pulp](https://github.com/bodil/pulp) build tool, and packages are available in the [Bower registry](http://bower.io/search/?q=purescript-).
 
 If you don't have Pulp installed, install it now:
 
@@ -45,11 +51,11 @@ If everything was built successfully, and the tests ran without problems, then t
 
 Dependencies can be installed using Bower, if you have it installed globally:
 
-    bower i purescript-lists --save
+    bower install purescript-lists --save
 
 If you want to use Pulp, you can run `pulp dep`:
 
-    pulp dep i purescript-lists --save
+    pulp dep install purescript-lists --save
 
 #### Working in PSCI
 

@@ -34,13 +34,15 @@
     <section class="article">
 
 <h2>Getting Started with PureScript</h2>
-<div class="meta">By Phil Freeman, updated 12 July 2015</div>
+<div class="meta">By Phil Freeman, updated 13 December 2015</div>
 
 <p>Welcome to the PureScript community blog! In this first post, I'm going to walk through the basics of getting set up to use the PureScript compiler <code>psc</code>, and its interactive mode <code>psci</code>.</p>
 <p>I'll start with the installation of the compiler, go through the basic commands of <code>psc</code> and <code>psci</code>, working towards a solution of problem 1 from <a href="http://projecteuler.net/problem=1">Project Euler</a>.</p>
 <h4 id="installing-the-compiler">Installing the Compiler</h4>
-<p>PureScript can be installed from <a href="http://hackage.haskell.org/package/purescript">Hackage</a> or by downloading the latest <a href="https://github.com/purescript/purescript/releases">binary bundle</a> for your OS.</p>
-<p>Make sure the <code>psc</code> executable is on your path.</p>
+<p>You'll need <a href="https://docs.npmjs.com/getting-started/installing-node">Node.js and npm</a> and to be <a href="https://docs.npmjs.com/getting-started/fixing-npm-permissions#option-1-change-the-permission-to-npm-s-default-directory">able to install global packages</a> to proceed.</p>
+<p>The Purescript compiler (psc) can be installed with npm:</p>
+<pre><code>npm install -g purescript</code></pre>
+<p>(It can also be installed from <a href="http://hackage.haskell.org/package/purescript">Hackage</a>, or by downloading the latest <a href="https://github.com/purescript/purescript/releases">binary bundle</a> for your OS. If you do so, make sure the <code>psc</code> executable is on your <code>$PATH</code>.</p>
 <h4 id="setting-up-the-development-environment">Setting up the Development Environment</h4>
 <p>PureScript's core libraries are configured to use the Pulp build tool, and packages are available in the Bower registry.</p>
 <p>If you don't have Pulp installed, install it now:</p>
