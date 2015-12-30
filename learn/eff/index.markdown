@@ -39,7 +39,7 @@ printRandom = do
 This example requires the `purescript-console` and `purescript-random` dependencies to be installed:
 
     pulp init
-    pulp dep i purescript-console purescript-random
+    bower install --save purescript-console purescript-random
 
 If you save this file as `RandomExample.purs`, you will be able to compile and run it using PSCi:
 

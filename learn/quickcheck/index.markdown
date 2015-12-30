@@ -15,7 +15,7 @@ Create a new project using Pulp, install `purescript-quickcheck`, and open PSCi:
 
 ```text
 pulp init
-pulp dep i purescript-quickcheck
+bower install purescript-quickcheck
 pulp psci
 ```
 

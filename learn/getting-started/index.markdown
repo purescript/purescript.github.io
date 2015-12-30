@@ -18,9 +18,9 @@ The Purescript compiler (psc) can be installed with npm:
 
 PureScript's core libraries are configured to use the [Pulp](https://github.com/bodil/pulp) build tool, and packages are available in the [Bower registry](http://bower.io/search/?q=purescript-).
 
-If you don't have Pulp installed, install it now:
+If you don't have Pulp and Bower installed, install them now:
 
-    npm install -g pulp
+    npm install -g pulp bower
 
 Create a new project in an empty directory using `pulp init`:
 
@@ -49,13 +49,9 @@ If everything was built successfully, and the tests ran without problems, then t
 
 #### Installing Dependencies
 
-Dependencies can be installed using Bower, if you have it installed globally:
+Dependencies can be installed using Bower:
 
     bower install purescript-lists --save
-
-If you want to use Pulp, you can run `pulp dep`:
-
-    pulp dep install purescript-lists --save
 
 #### Working in PSCI
 
