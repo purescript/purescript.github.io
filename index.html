@@ -46,62 +46,43 @@
         <h4>Modifying the DOM</h4>
         <p>PureScript’s expressive type system and lightweight syntax make it simple to define <a href="https://leanpub.com/purescript/read#leanpub-auto-domain-specific-languages">domain-specific languages</a>, which can be used to solve problems like templating the DOM. Bindings also exist for libraries such as React and Angular.js.</p>
 <pre>
-<span class="kr">import</span> <span class="nn">Data.DOM.Free</span>
+<span class="kr">import</span> <span class="nn">Flare</span>
+<span class="kr">import</span> <span class="nn">Flare.Smolder</span>
 &nbsp;
-<span class="nf">doc</span> = div [ _class <span class="kt">:=</span> <span class="s">"image"</span> ] $ <span class="kr">do</span>
-  elem $ img [ src <span class="kt">:=</span> <span class="s">"logo.jpg"</span>
-             , width  <span class="kt">:=</span> <span class="mi">100</span>
-             , height <span class="kt">:=</span> <span class="mi">200</span>
-             ]
-  text <span class="s">"Functional programming for the web!"</span></pre>
+<span class="nf">ui</span> :: UI _ H.Markup
+<span class="nf">ui</span> = greet <span class="kt">&lt;$&gt;</span> string <span class="s">"Name"</span> <span class="s">"World"</span>
+  where
+  <span class="nf">greet</span> name = h1 <span class="kt">$</span> text <span class="kt">$</span> <span class="s">"Hello, "</span> <span class="kt">&lt;&gt;</span> name <span class="kt">&lt;&gt;</span> <span class="s">"!"</span></pre>
       </div>
       <div class="example">
 	       <h4>HTML5 Canvas</h4>
-         <p>Higher-order functions allow the developer to write fluent, expressive code. Here, higher-order functions are being used to capture some common patterns when <a href="https://leanpub.com/purescript/read#leanpub-auto-canvas-graphics">working with HTML5 canvas</a>, such as saving and restoring the context and drawing closed paths.</p>
+         <p>Higher-order functions allow the developer to write fluent, expressive code. Here, higher-order functions are being used to capture some common patterns when <a href="https://leanpub.com/purescript/read#leanpub-auto-canvas-graphics">working with HTML5 canvas</a>, such as closing and filling paths.</p>
 <pre>
 <span class="kr">import</span> <span class="nn">Control.Apply</span>
-
-<span class="kr">import</span> <span class="nn">Graphics.Canvas</span> (<span class="nf">getCanvasElementById</span>, <span class="nf">getContext2D</span>)
 <span class="kr">import</span> <span class="nn">Graphics.Canvas.Free</span>
 
-<span class="nf">closed</span> path = beginPath *&gt; path &lt;* closePath
-
-<span class="nf">filled</span> shape = shape &lt;* fill
-
-<span class="nf">withContext</span> shape = save *&gt; shape &lt;* restore
-
-<span class="nf">scene</span> = withContext <span class="kr">do</span>
-  setFillStyle <span class="s">&quot;#FF0000&quot;</span>
-
+<span class="nf">scene</span> =
   filled $ closed <span class="kr">do</span>
     moveTo <span class="mi">0</span> <span class="mi">0</span>
     lineTo <span class="mi">50</span> <span class="mi">0</span>
     lineTo <span class="mi">25</span> <span class="mi">50</span>
-
-<span class="nf">main</span> = <span class="kr">do</span>
-  canvas &lt;- getCanvasElementById <span class="s">&quot;canvas&quot;</span>
-  context &lt;- getContext2D canvas
-
-  runGraphics context scene</pre>
+  <span class="kr">where</span>
+    <span class="nf">closed</span> path = beginPath *&gt; path &lt;* closePath
+    <span class="nf">filled</span> shape = shape &lt;* fill</pre>
       </div>
       <div class="example">
         <h4>Callback Hell</h4>
         <p>The problem of <a href="https://leanpub.com/purescript/read#leanpub-auto-callback-hell">callback hell</a> can be solved by using PureScript’s type system to capture complex control flow as functions in a safe way. Here, the continuation monad is used to hide the boilerplate code associated with handling callbacks.</p>
 <pre>
-<span class="kr">import</span> <span class="nn">Control.Parallel</span>
+<span class="kr">import</span> <span class="nn">Control.Monad.Aff</span>
+<span class="kr">import</span> <span class="nn">Control.Monad.Aff.Par</span>
 
-<span class="kr">data</span> <span class="kt">Model</span> = <span class="kt">Model</span> [<span class="kt">Product</span>] [<span class="kt">ProductCategory</span>]
+<span class="kr">data</span> <span class="kt">Model</span> = <span class="kt">Model</span> (<span class="kt">List Product</span>)
 
 <span class="nf">loadModel</span> = <span class="kr">do</span>
-  model &lt;- runParallel $
-    <span class="kt">Model</span> &lt;$&gt; inParallel (get <span class="s">"/products/popular/"</span>)
-          &lt;*&gt; inParallel (get <span class="s">"/categories/all"</span>)
-
-<span class="nf">view</span> (<span class="kt">Model</span> ps cs) = <span class="kr">do</span>
-  renderProducts ps
-  renderCategories cs
-
-<span class="nf">main</span> = loadModel `runContT` view</pre>
+  popular <- get <span class="s">"/products/popular"</span>
+  products <- runPar $ for_ popular \product -> <span class="kt">Par</span> (get product.uri)
+  return $ <span class="kt">Model</span> products</pre>
       </div>
       <div class="example">
         <h4>Generative Testing</h4>
