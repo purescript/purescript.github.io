@@ -65,7 +65,6 @@ a {
 div.link {
   border-top: 1px solid $link-colour;
   padding: 6px 0 6px 0;
-  text-align: right;
 
   a {
     display: inline-block;
@@ -280,14 +279,14 @@ main section.intro {
 
   div.link {
 
-    width: 200px;
+    width: 160px;
     margin-top: 50px;
     display: none;
 
     a {
-      background: url(../img/icon-install.png) no-repeat left;
-      background-size: 17px 15px;
-      padding-left: 30px;
+      background: url(../img/icon-chevron.png) no-repeat left;
+      background-size: 7px 10px;
+      padding-left: 18px;
     }
   }
 
