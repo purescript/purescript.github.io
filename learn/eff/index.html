@@ -24,6 +24,7 @@
           <li><a href="../../download/">Download</a></li>
           <li><a href="../../learn/" class="active">Learn</a></li>
           <li><a href="../../projects/">Projects</a></li>
+          <li><a href="../../conf/">Conf</a></li>
         </ul>
       </nav>
     </div>
@@ -120,8 +121,8 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <p>Rows of effects can also appear on the left-hand side of a function arrow. This is what differentiates actions like <code>print</code> and <code>random</code> from effect <em>handlers</em>.</p>
 <p>While actions <em>add</em> to the set of required effects, a handler <code>subtracts</code> effects from the set.</p>
 <p>Consider <code>catchException</code> from the <code>purescript-exceptions</code> package:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">catchException ::</span> forall a e<span class="fu">.</span> (<span class="dt">Error</span> <span class="ot">-&gt;</span> <span class="dt">Eff</span> e a) <span class="ot">-&gt;</span> 
-                              <span class="dt">Eff</span> (<span class="ot">err ::</span> <span class="dt">EXCEPTION</span> <span class="fu">|</span> e) a <span class="ot">-&gt;</span> 
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">catchException ::</span> forall a e<span class="fu">.</span> (<span class="dt">Error</span> <span class="ot">-&gt;</span> <span class="dt">Eff</span> e a) <span class="ot">-&gt;</span>
+                              <span class="dt">Eff</span> (<span class="ot">err ::</span> <span class="dt">EXCEPTION</span> <span class="fu">|</span> e) a <span class="ot">-&gt;</span>
                               <span class="dt">Eff</span> e a</code></pre>
 <p>Note that the type of the effect on the right of the final function arrow requires <em>fewer</em> effects than the effect to its left. Namely, <code>catchException</code> <em>removes</em> the <code>EXCEPTION</code> effect from the set of required effects.</p>
 <p>This is useful, because the type system can be used to delimit portions of code which require a particular effect, and then to wrap that code in a handler, embedding it inside a piece of code which does not use that effect.</p>
@@ -168,7 +169,7 @@ dividePure n m <span class="fu">=</span> runPure (catchException (return <span c
 <h4 id="the-eff-monad-is-magic">The Eff Monad is Magic</h4>
 <p>The <code>psc</code> compiler has special support for the <code>Eff</code> monad. Ordinarily, a chain of monadic binds might result in poor performance when executed in <code>nodejs</code> or in the browser. However, the compiler can generate code for the <code>Eff</code> monad without explicit calls to the monadic bind function <code>&gt;&gt;=</code>.</p>
 <p>Take the random number generation from the start of the post. If we compile this example without optimizations, we end up the following Javascript:</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> main = 
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> main =
   Prelude[<span class="st">&quot;&gt;&gt;=&quot;</span>]
     (<span class="ot">Control_Monad_Eff</span>.<span class="fu">monadEff</span>())
     (<span class="ot">Control_Monad_Eff_Random</span>.<span class="fu">random</span>)
@@ -188,7 +189,7 @@ dividePure n m <span class="fu">=</span> runPure (catchException (return <span c
 
 main <span class="fu">=</span> go <span class="dv">1</span></code></pre>
 <p>Without optimizations, the compiler generates the following Javascript, which fails after a few iterations with a stack overflow:</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> go = 
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> go =
   Prelude[<span class="st">&quot;&gt;&gt;=&quot;</span>]
     (<span class="ot">Control_Monad_Eff</span>.<span class="fu">monadEff</span>())
     (<span class="ot">Control_Monad_Eff_Console</span>.<span class="fu">print</span>(<span class="ot">Prelude</span>.<span class="fu">showNumber</span>())(n))
@@ -253,6 +254,7 @@ collatz n <span class="fu">=</span> pureST <span class="kw">do</span>
         <li><a href="../../download/" class="active">Download</a></li>
         <li><a href="../../learn/" class="active">Learn</a></li>
         <li><a href="../../projects/">Projects</a></li>
+        <li><a href="../../conf/">Conf</a></li>
       </ul>
       <ul class="external">
         <li class="github"><a href="https://github.com/purescript/purescript" title="GitHub">GitHub</a></li>
@@ -274,4 +276,3 @@ collatz n <span class="fu">=</span> pureST <span class="kw">do</span>
 
 </body>
 </html>
-
