@@ -1,3 +1,8 @@
+---
+title: Test your JavaScript with QuickCheck
+author: Phil Freeman
+published: 2015-07-16
+---
 
 [QuickCheck](http://en.wikipedia.org/wiki/QuickCheck) is a _property-based_ testing library which was originally written in Haskell, but which has been ported to [a](https://github.com/mcandre/node-quickcheck) [number](https://github.com/mcandre/qc) [of](https://github.com/mcandre/cl-quickcheck) [other](https://pypi.python.org/pypi/pytest-quickcheck/) [languages](https://github.com/hayeah/rantly).
 

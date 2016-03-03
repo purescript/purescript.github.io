@@ -3,18 +3,23 @@ purescript.github.io
 
 The Purescript project homepage.
 
-
 ## Development
 
-TODO: Describe how the Pandoc Markdown => HTML process works.
+You'll need the following installed to proceed:
 
-You'll need [npm](https://www.npmjs.org) and [Compass](http://compass-style.org/install/) installed to proceed. Run:
+* [npm](https://www.npmjs.org),
+* [Compass](http://compass-style.org/install/),
+* [stack](http://haskellstack.org/).
 
-    npm install
-    grunt
+The site is generated using [Hakyll](https://jaspervdj.be/hakyll/). To
+regenerate it, run the following:
 
-To have a server running to preview changes, kick off:
+```
+$ grunt
+$ stack build
+$ stack exec site rebuild
+```
 
-    grunt dev
+The static site will be written to the `_site` directory.
 
-... And open your browser to [http://0.0.0.0:8000](http://0.0.0.0:8000).
+TODO: work out how to get a 'watch' command working.
