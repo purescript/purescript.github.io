@@ -1,6 +1,7 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 import Data.Monoid (mappend, (<>))
+import Data.Char (toUpper)
 import Data.Foldable (for_)
 import Data.String (fromString)
 import Hakyll
@@ -72,8 +73,11 @@ nav activeSubsection =
 baseCtx :: Maybe String -> Context String
 baseCtx activeSubsection =
   constField "nav" (nav activeSubsection) <>
-  maybe mempty (constField "subsection") activeSubsection <>
+  maybe mempty (constField "subsection" . capitalize) activeSubsection <>
   defaultContext
+  where
+  capitalize (x:xs) = toUpper x : xs
+  capitalize [] = []
 
 postCtx :: Maybe String -> Context String
 postCtx activeSubsection =
