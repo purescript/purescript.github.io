@@ -1,9 +1,13 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE LambdaCase #-}
 import Data.Monoid (mappend, (<>))
 import Data.Char (toUpper)
 import Data.Foldable (for_)
 import Data.String (fromString)
+import Data.List (intersperse)
+import Data.Maybe (maybeToList)
+import qualified Data.Map as Map
 import Hakyll
 
 
@@ -73,15 +77,29 @@ nav activeSubsection =
 baseCtx :: Maybe String -> Context String
 baseCtx activeSubsection =
   constField "nav" (nav activeSubsection) <>
-  maybe mempty subsectionFields activeSubsection <>
+  maybe mempty (constField "subsection") activeSubsection <>
+  field "page_title" makePageTitle <>
   defaultContext
   where
-  subsectionFields sub =
-    constField "subsection_id" sub <>
-    constField "subsection" (capitalize sub)
-
   capitalize (x:xs) = toUpper x : xs
   capitalize [] = []
+
+  makePageTitle item = do
+    mtitle <- getTitle item
+    let elems = [ "PureScript" ] <>
+                maybeToList subsectionTitle <>
+                maybeToList mtitle
+    return $ concat $ intersperse " – " elems
+
+  subsectionTitle =
+    activeSubsection >>= \case
+      "home" -> Nothing
+      other -> Just (capitalize other)
+
+  getTitle :: Item a -> Compiler (Maybe String)
+  getTitle item = do
+    metadata <- getMetadata (itemIdentifier item)
+    return $ Map.lookup "title" metadata
 
 postCtx :: Maybe String -> Context String
 postCtx activeSubsection =

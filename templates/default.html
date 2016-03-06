@@ -5,16 +5,16 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-  <title>PureScript$if(subsection)$ – $subsection$$endif$$if(title)$ – $title$$endif$</title>
+  <title>$page_title$</title>
 
   <link rel="stylesheet" href="/css/style.css"/>
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,300,700"/>
 
 </head>
 
-<body $if(subsection_id)$class="$subsection_id$"$endif$>
+<body $if(subsection)$class="$subsection$"$endif$>
 
-  <script>document.body.className = "$if(subsection_id)$$subsection_id$$endif$ hasJS";</script>
+  <script>document.body.className = "$if(subsection)$$subsection$$endif$ hasJS";</script>
 
   <header>
     <div class="wrap">
