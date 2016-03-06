@@ -73,9 +73,13 @@ nav activeSubsection =
 baseCtx :: Maybe String -> Context String
 baseCtx activeSubsection =
   constField "nav" (nav activeSubsection) <>
-  maybe mempty (constField "subsection" . capitalize) activeSubsection <>
+  maybe mempty subsectionFields activeSubsection <>
   defaultContext
   where
+  subsectionFields sub =
+    constField "subsection_id" sub <>
+    constField "subsection" (capitalize sub)
+
   capitalize (x:xs) = toUpper x : xs
   capitalize [] = []
 
