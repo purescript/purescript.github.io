@@ -1,3 +1,9 @@
+---
+title: Handling Native Effects with the Eff Monad
+author: Phil Freeman
+published: 2015-07-16
+---
+
 In this post, I'm going to talk about PureScript's hybrid approach to handling side-effects.
 
 As in Haskell, values in PureScript do not have side-effects by default, and there are a number of techniques for handling "non-native" side-effects. Such techniques include the use of things like monoids, monads, applicative functors and arrows, but I'm not going to talk about those here. I'm going to talk about how PureScript handles "native" effects, i.e. effects which are provided by the runtime system, and which cannot be emulated by pure functions.

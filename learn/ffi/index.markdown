@@ -1,3 +1,9 @@
+---
+title: The Foreign Function Interface
+author: Phil Freeman
+published: 2015-07-15
+---
+
 In this short post, I'll show how to interoperate with Javascript code using PureScript's Foreign Function Interface (or _FFI_). We'll see how to call Javascript code from PureScript code and vice versa.
 
 #### Disclaimer

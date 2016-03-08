@@ -1,3 +1,9 @@
+---
+title: Getting Started with PureScript
+author: Phil Freeman
+published: 2015-12-13
+---
+
 Welcome to the PureScript community blog! In this first post, I'm going to walk through the basics of getting set up to use the PureScript compiler `psc`, and its interactive mode `psci`.
 
 I'll start with the installation of the compiler, go through the basic commands of `psc` and `psci`, working towards a solution of problem 1 from [Project Euler](http://projecteuler.net/problem=1).
