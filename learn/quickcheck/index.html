@@ -24,6 +24,7 @@
           <li><a href="../../download/">Download</a></li>
           <li><a href="../../learn/" class="active">Learn</a></li>
           <li><a href="../../projects/">Projects</a></li>
+          <li><a href="../../conf/">Conf</a></li>
         </ul>
       </nav>
     </div>
@@ -62,11 +63,11 @@ Failed: Test returned false</code></pre>
 <p>That's not a very helpful error, so let's improve it:</p>
 <pre><code>&gt; quickCheck \n -&gt; n + 1 == n &lt;?&gt; &quot;Test failed for input &quot; ++ show n</code></pre>
 <p>This time you should see the following failure message:</p>
-<pre><code>Error: Test 1 failed: 
+<pre><code>Error: Test 1 failed:
 Test failed for input -654791</code></pre>
 <p>Alternatively, we could use the <code>===</code> operator, which provides a better error message:</p>
-<pre><code>&gt; quickCheck \n -&gt; n + 1 === n 
-Error: Test 1 failed: 
+<pre><code>&gt; quickCheck \n -&gt; n + 1 === n
+Error: Test 1 failed:
 -663820 /= -663821</code></pre>
 <h4 id="example-1---gcd-function">Example 1 - GCD Function</h4>
 <p>Let's write an implementation of the <em>greatest common divisor</em> function in PSCi (you will need to enable multiline mode):</p>
@@ -107,7 +108,7 @@ instance arbSmallInt :: Arbitrary SmallInt where
 <p>The first functor law says that if you map a function which does not modify its argument (the identity function) over a structure, then the structure should not be modified either.</p>
 <pre><code>&gt; import Data.Array
 
-&gt; let 
+&gt; let
     firstFunctorLaw :: [Int] -&gt; Boolean
     firstFunctorLaw arr = map id arr == arr
 
@@ -119,7 +120,7 @@ unit</code></pre>
 <pre><code>&gt; let
     secondFunctorLaw :: (Int -&gt; Int) -&gt; (Int -&gt; Int) -&gt; [Int] -&gt; Boolean
     secondFunctorLaw f g arr = map f (map g arr) == map (f &lt;&lt;&lt; g) arr
-  
+
 &gt; quickCheck secondFunctorLaw
 
 100/100 test(s) passed.
@@ -130,19 +131,19 @@ unit</code></pre>
 <p>Copy the contents of that file into <code>src/UnderscoreFFI.purs</code>, and reload PSCi with that module loaded:</p>
 <pre><code>&gt; import UnderscoreFFI</code></pre>
 <p>The <code>UnderscoreFFI</code> module defines a wrapper for the <code>sortBy</code> function. Let's test that the function is idempotent:</p>
-<pre><code>&gt; let 
+<pre><code>&gt; let
     sortIsIdempotent :: [Int] -&gt; Boolean
     sortIsIdempotent arr = sortBy id (sortBy id arr) == sortBy id arr
-  
+
 &gt; quickCheck sortIsIdempotent
 
 100/100 test(s) passed.
 unit</code></pre>
 <p>In fact, we don't need to sort by the identity function. Since QuickCheck supports higher-order functions, we can test with a randomly-generated sorting function:</p>
-<pre><code>&gt; let 
+<pre><code>&gt; let
     sortIsIdempotent&#39; :: (Int -&gt; Int) -&gt; [Int] -&gt; Boolean
     sortIsIdempotent&#39; f arr = sortBy f (sortBy f arr) == sortBy f arr
-  
+
 &gt; quickCheck sortIsIdempotent
 
 100/100 test(s) passed.
@@ -162,6 +163,7 @@ unit</code></pre>
         <li><a href="../../download/" class="active">Download</a></li>
         <li><a href="../../learn/" class="active">Learn</a></li>
         <li><a href="../../projects/">Projects</a></li>
+        <li><a href="../../conf/">Conf</a></li>
       </ul>
       <ul class="external">
         <li class="github"><a href="https://github.com/purescript/purescript" title="GitHub">GitHub</a></li>
