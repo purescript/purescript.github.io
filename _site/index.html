@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <title>PureScript</title>
+
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,300,700"/>
+
+</head>
+
+<body class="home">
+
+  <script>document.body.className = "home hasJS";</script>
+
+  <header>
+    <div class="wrap">
+      <h1><a href="/">PureScript</a></h1>
+      <nav>
+        <h2>Menu</h2>
+        <ul>
+          <li><a href="/" class="active">Home</a></li>
+          <li><a href="download/">Download</a></li>
+          <li><a href="learn/">Learn</a></li>
+          <li><a href="projects/">Projects</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="intro">
+      <h2>PureScript is a small strongly typed programming language that compiles to JavaScript.</h2>
+      <div class="link">
+        <a href="download/">Download</a>
+      </div>
+    </section>
+
+    <section class="example">
+      <h3>Examples</h3>
+      <div class="current example">
+        <h4>Modifying the DOM</h4>
+        <p>PureScript’s expressive type system and lightweight syntax make it simple to define <a href="https://leanpub.com/purescript/read#leanpub-auto-domain-specific-languages">domain-specific languages</a>, which can be used to solve problems like templating the DOM. Bindings also exist for libraries such as React and Angular.js.</p>
+<pre>
+<span class="kr">import</span> <span class="nn">Flare</span>
+<span class="kr">import</span> <span class="nn">Flare.Smolder</span>
+&nbsp;
+<span class="nf">ui</span> :: UI _ H.Markup
+<span class="nf">ui</span> = greet <span class="kt">&lt;$&gt;</span> string <span class="s">"Name"</span> <span class="s">"World"</span>
+  where
+  <span class="nf">greet</span> name = h1 <span class="kt">$</span> text <span class="kt">$</span> <span class="s">"Hello, "</span> <span class="kt">&lt;&gt;</span> name <span class="kt">&lt;&gt;</span> <span class="s">"!"</span></pre>
+      </div>
+      <div class="example">
+	       <h4>HTML5 Canvas</h4>
+         <p>Higher-order functions allow the developer to write fluent, expressive code. Here, higher-order functions are being used to capture some common patterns when <a href="https://leanpub.com/purescript/read#leanpub-auto-canvas-graphics">working with HTML5 canvas</a>, such as closing and filling paths.</p>
+<pre>
+<span class="kr">import</span> <span class="nn">Control.Apply</span>
+<span class="kr">import</span> <span class="nn">Graphics.Canvas.Free</span>
+
+<span class="nf">scene</span> =
+  filled $ closed <span class="kr">do</span>
+    moveTo <span class="mi">0</span> <span class="mi">0</span>
+    lineTo <span class="mi">50</span> <span class="mi">0</span>
+    lineTo <span class="mi">25</span> <span class="mi">50</span>
+  <span class="kr">where</span>
+    <span class="nf">closed</span> path = beginPath *&gt; path &lt;* closePath
+    <span class="nf">filled</span> shape = shape &lt;* fill</pre>
+      </div>
+      <div class="example">
+        <h4>Callback Hell</h4>
+        <p>The problem of <a href="https://leanpub.com/purescript/read#leanpub-auto-callback-hell">callback hell</a> can be solved by using PureScript’s type system to capture complex control flow as functions in a safe way. Here, the continuation monad is used to hide the boilerplate code associated with handling callbacks.</p>
+<pre>
+<span class="kr">import</span> <span class="nn">Control.Monad.Aff</span>
+<span class="kr">import</span> <span class="nn">Control.Monad.Aff.Par</span>
+
+<span class="kr">data</span> <span class="kt">Model</span> = <span class="kt">Model</span> (<span class="kt">List Product</span>)
+
+<span class="nf">loadModel</span> = <span class="kr">do</span>
+  popular <- get <span class="s">"/products/popular"</span>
+  products <- runPar $ for_ popular \product -> <span class="kt">Par</span> (get product.uri)
+  return $ <span class="kt">Model</span> products</pre>
+      </div>
+      <div class="example">
+        <h4>Generative Testing</h4>
+        <p>PureScript provides a form of ad-hoc polymorphism in the form of type classes, inspired by Haskell. Type classes are used in the QuickCheck and StrongCheck libraries to support <a href="https://leanpub.com/purescript/read#leanpub-auto-generative-testing">generative testing</a>, which separates test definitions from the generation of test cases.</p>
+<pre>
+<span class="kr">import</span> <span class="nn">Test.QuickCheck</span>
+
+<span class="nf">main</span> = <span class="kr">do</span>
+  quickCheck $ <span class="nf">\</span>xs ys -&gt;
+    isSorted $ merge (sort xs) (sort ys)
+  quickCheck $ <span class="nf">\</span>xs ys -&gt;
+    xs `isSubarrayOf` merge xs ys</pre>
+      </div>
+
+    </section>
+
+    <section class="features">
+      <h3>Features</h3>
+      <ul>
+        <li>Algebraic data types</li>
+        <li>Pattern matching</li>
+        <li>Type inference</li>
+        <li>Type classes</li>
+        <li>Higher kinded types</li>
+        <li>Rank-N types</li>
+        <li>Extensible records</li>
+        <li>Extensible effects</li>
+        <li>Modules</li>
+        <li>Simple FFI</li>
+        <li>No runtime system</li>
+        <li>Human-readable output</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer>
+    <nav>
+      <ul>
+        <li><a href="/" class="active">Home</a></li>
+        <li><a href="download/">Download</a></li>
+        <li><a href="learn/">Learn</a></li>
+        <li><a href="projects/">Projects</a></li>
+      </ul>
+      <ul class="external">
+        <li class="github"><a href="https://github.com/purescript/purescript" title="GitHub">GitHub</a></li>
+        <li class="twitter"><a href="https://twitter.com/purescript" title="Twitter">Twitter</a></li>
+      </ul>
+    </nav>
+  </footer>
+
+  <script src="js/lib/zepto-1.1.4.min.js"></script>
+  <script src="js/home.js"></script>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-56579671-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+</body>
+</html>

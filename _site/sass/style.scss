@@ -1,0 +1,761 @@
+@import "normalize-3.0.1";
+@import "compass/css3/columns";
+@import "compass/typography/lists/inline-list";
+
+$link-colour: #c4953a;
+
+html {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  height: 100%;
+}
+
+body {
+  position: relative;
+  background: #f5f5f5;
+  font: 18px Roboto, sans-serif;
+  box-sizing: border-box;
+  padding-bottom: 185px;
+  min-height: 100%;
+
+  &.home {
+    background: #fff;
+  }
+}
+
+p {
+  color: #4d4d4d;
+}
+
+h1, h2, h3, h4 {
+  color: #111;
+}
+
+pre, code {
+  font-family: DejaVu Sans Mono, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 135%;
+}
+
+pre {
+
+  .kr, .nn, .nf, .kt, .kw, .dt {
+    font-weight: bold;
+  }
+
+  .nf {
+    color: #945277;
+  }
+
+  .mi, .s, .st {
+    color: $link-colour;
+  }
+
+  .nn, .kt, .dt {
+    color: #445588;
+  }
+
+}
+
+a {
+  text-decoration: none;
+}
+
+div.link {
+  border-top: 1px solid $link-colour;
+  padding: 6px 0 6px 0;
+  text-align: right;
+
+  a {
+    display: inline-block;
+    color: $link-colour;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
+header {
+  position: relative;
+  background: #1d222d;
+  color: #fff;
+  height: 110px;
+
+  h1 {
+    display: block;
+    position: absolute;
+    top: 38px;
+    left: 30px;
+    margin: 0;
+
+    a {
+      display: block;
+      width: 54px;
+      height: 34px;
+      overflow: hidden;
+      text-indent: 100%;
+      background: url(../img/logo.png);
+      background-size: 54px 34px;
+      opacity: 1;
+    }
+
+  }
+
+  a {
+    color: #fff;
+    text-decoration: none;
+    opacity: 0.6;
+    font-weight: 300;
+  }
+
+  a:hover, a.active {
+    opacity: 1;
+  }
+
+  nav {
+    position: absolute;
+    top: 47px;
+    right: 30px;
+    margin: 0;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+
+    h2 {
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    ul {
+      display: none;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
+main {
+
+  a[href] {
+    color: $link-colour;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
+main section {
+
+  max-width: 800px;
+  margin: auto;
+  padding: 50px 10px;
+  overflow: hidden;
+
+  > * {
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  > p, li, h4, &.article ul {
+    font-size: 16px;
+    line-height: 165%;
+    max-width: 600px;
+  }
+
+  > h4 {
+    margin-top: 36px;
+  }
+
+  > p,
+  > h4,
+  &.article > ul,
+  div.meta {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  > h2 {
+    font-size: 28px;
+    font-weight: 300;
+    margin: 5px 20px 30px;
+  }
+
+  > h3 {
+    text-transform: uppercase;
+    font-size: 15px;
+    letter-spacing: 3px;
+    margin: 5px 20px 30px;
+  }
+
+  &.article > ul {
+    padding: 0;
+    list-style: none;
+    > li {
+      padding-left: 18px;
+      background: url(../img/bullet.png) no-repeat left 12px;
+      background-size: 6px 6px;
+    }
+  }
+
+  > pre, > blockquote {
+    background: #fff;
+    padding: 20px;
+  }
+
+  > blockquote {
+    p {
+      color: #666;
+      font-style: italic;
+      margin: 0;
+    }
+    p+p {
+      margin-top: 16px;
+    }
+  }
+
+  p > code,
+  li > code {
+    display: inline-block;
+    background: #fff;
+    font-size: 13px;
+    padding: 0 6px;
+  }
+
+  > div.meta {
+    text-transform: uppercase;
+    color: #999;
+    font-size: 13px;
+    margin-top: -28px;
+    margin-bottom: 30px;
+  }
+}
+
+main section+section {
+  padding: 0 10px 50px;
+}
+
+.home main section+section {
+  padding: 50px 10px;
+}
+
+main.projects section {
+
+  > h2 {
+    margin-bottom: 60px;
+  }
+
+  > h3 {
+    margin-top: 0;
+    margin-bottom: -40px;
+  }
+}
+
+/* ------------------------------------------------------------------------- */
+
+main section.intro {
+  margin: 30px 20px;
+
+  h2 {
+    font-weight: 300;
+    font-size: 24px;
+    line-height: 160%;
+    margin: 0;
+  }
+
+  div.link {
+
+    width: 200px;
+    margin-top: 50px;
+    display: none;
+
+    a {
+      background: url(../img/icon-install.png) no-repeat left;
+      background-size: 17px 15px;
+      padding-left: 30px;
+    }
+  }
+
+}
+
+/* ------------------------------------------------------------------------- */
+
+main section.features {
+
+  ul {
+    padding: 0;
+    list-style: none;
+    color: #4d4d4d;
+    margin-top: -4px;
+
+    li {
+      font-size: 18px;
+      line-height: 40px;
+
+      &:nth-child(n+5) {
+        display: none;
+      }
+
+      &.moreless {
+        display: list-item;
+        color: $link-colour;
+        cursor: pointer;
+      }
+    }
+
+    &.expanded li:nth-child(n+5) {
+      display: list-item;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------- */
+
+main section.example {
+
+  position: relative;
+  z-index: 2;
+  max-width: 100%;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background: #f5f5f5;
+    z-index: -1;
+  }
+
+  pre {
+    background: #fff;
+    padding: 20px;
+  }
+
+  h4, p {
+    font-size: 16px;
+    margin-left: 20px;
+    margin-right: 20px;
+    line-height: 150%;
+  }
+
+  p {
+    color: #4d4d4d;
+  }
+
+  h4 {
+    margin-top: 50px;
+  }
+
+  div.nav {
+    display: none;
+
+    margin: 30px 20px 0;
+
+    .prev {
+      float: left;
+    }
+    .next {
+      float: right;
+    }
+
+    button {
+      background: none;
+      border: none;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 1.5px;
+      color: $link-colour;
+
+      &.next {
+        padding-right: 16px;
+        background: url(../img/icon-chevron.png) no-repeat right;
+        background-size: 7px 10px;
+      }
+
+      &.prev {
+        padding-left: 16px;
+        background: url(../img/icon-chevron-left.png) no-repeat left;
+        background-size: 7px 10px;
+      }
+      margin-bottom: 6px;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+
+    overflow: hidden;
+
+  }
+}
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
+ul.cards {
+  list-style: none;
+  padding: 0;
+
+  li {
+    position: relative;
+    float: left;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0 15px 15px 0;
+    padding: 20px;
+    display: block;
+    min-height: 320px;
+    background: #fff;
+
+    h3 {
+      font-size: 28px;
+      line-height: 125%;
+      font-weight: 300;
+      margin: 0;
+    }
+
+    div.link {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+
+      a {
+        background: url(../img/icon-chevron.png) no-repeat left;
+        background-size: 7px 10px;
+        padding-left: 18px;
+      }
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
+footer {
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 0;
+  padding: 20px 30px 50px;
+  width: 100%;
+
+  nav {
+    ul {
+      text-transform: uppercase;
+      font-size: 14px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      float: left;
+
+      a {
+        color: $link-colour;
+        text-decoration: none;
+
+        &:hover, &.active {
+          opacity: 0.7;
+        }
+      }
+
+      &.external {
+        float: right;
+
+        a {
+          display: block;
+          width: 25px;
+          height: 25px;
+          overflow: hidden;
+          text-indent: 100%;
+          background-repeat: no-repeat;
+          background-size: 25px 25px;
+        }
+
+        .github a {
+          background-image: url(../img/github.png);
+        }
+
+        .twitter a {
+          background-image: url(../img/twitter.png);
+        }
+      }
+
+      li {
+        margin-top: 20px;
+      }
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
+@media (min-width: 525px) {
+
+  body {
+    padding-bottom: 80px;
+  }
+
+  header nav {
+    h2 {
+      display: none;
+    }
+
+    ul {
+      display: block;
+    }
+  }
+
+  footer nav {
+    ul {
+      float: right;
+
+      &.external {
+        float: left;
+        margin-left: -25px;
+      }
+    }
+  }
+
+  nav ul li {
+    margin: 0 0 0 25px;
+    float: left;
+  }
+
+  main section.intro div.link {
+    display: inline-block;
+  }
+
+  main section.features ul li:nth-child(n+1) {
+    display: block;
+  }
+
+  main section.features ul li.moreless {
+    display: none;
+  }
+
+  main section.features ul {
+    @include column-count(2);
+  }
+
+  .hasJS main section.example {
+
+    h4 {
+      display: none;
+    }
+
+    div.example {
+      display: none;
+
+      &.current {
+        display: block;
+      }
+    }
+
+    div.nav {
+      display: block;
+    }
+  }
+
+  ul.cards {
+    margin-top: 50px;
+    li {
+      width: calc(50% - 15px);
+    }
+  }
+
+}
+
+@media (min-width: 676px) {
+
+  main section+section {
+    padding: 0 10px 60px;
+  }
+
+  .home main section+section, main section {
+    padding: 60px 10px;
+  }
+
+  main section.intro h2 {
+    font-size: 28px;
+  }
+
+  ul.cards {
+    margin-top: 60px;
+  }
+
+  main section {
+    > p,
+    > h4,
+    &.article > ul {
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 600px;
+    }
+
+    > div.meta {
+      margin-left: 20px;
+    }
+
+    > pre,
+    > blockquote {
+      padding: 20px calc((100% - 600px) / 2);
+    }
+  }
+}
+
+@media (min-width: 700px) {
+
+  main section.features ul {
+    @include column-count(3);
+  }
+
+  ul.cards li {
+    width: calc(33% - 15px);
+  }
+
+}
+
+@media (min-width: 876px) {
+
+  main section+section {
+    padding: 0 10px 70px;
+  }
+
+  .home main section+section, main section {
+    padding: 70px 10px;
+  }
+
+  ul.cards {
+    margin-top: 70px;
+  }
+
+  main section.intro {
+    margin: 30px auto;
+    max-width: 800px;
+  }
+
+  main section > div.meta {
+    margin-left: 0;
+  }
+
+  main section > h2,
+  main section > h3,
+  main section > div {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 800px;
+  }
+
+  main section.example {
+    h4, p, div.nav {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+}
+
+@media (min-width: 1016px) {
+
+  header {
+    height: 150px;
+
+    h1 {
+      top: 54px;
+      left: 100px;
+      a {
+        width: 68px;
+        height: 41px;
+        background-size: 68px 41px;
+      }
+    }
+
+    nav {
+      top: 67px;
+      right: 100px;
+    }
+  }
+
+  main section.intro h2 {
+    font-size: 34px;
+  }
+
+  footer nav ul {
+    margin-right: 70px;
+  }
+
+  footer nav ul.external {
+    margin-left: 25px;
+  }
+
+  nav ul li {
+    margin-left: 45px;
+  }
+
+}
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
+@media (max-width: 524px) {
+
+  .show-nav header {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    h2 {
+      position: absolute;
+      right: 0;
+      top: 47px;
+    }
+
+    nav {
+      position: absolute;
+      left: 0;
+      top: 0;
+      padding: 30px;
+
+      ul {
+        display: block;
+        font-size: 24px;
+        text-transform: none;
+        margin-top: 100px;
+
+        li {
+          margin-top: 20px;
+        }
+      }
+    }
+  }
+
+  .show-nav main, .show-nav footer {
+    display: none;
+  }
+
+}
