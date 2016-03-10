@@ -2,5 +2,4 @@
 !/.gitignore
 /node_modules
 /_cache/
-/_site/
 /css/
