@@ -4,13 +4,13 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
 
-    clean: ["css/*"],
+    clean: ["_site/css/*"],
 
     compass: {
       dev: {
         options: {
           sassDir: "sass",
-          cssDir: "css",
+          cssDir: "_site/css",
           fontsDir: "fonts",
           imagesDir: "img",
           relativeAssets: true,
