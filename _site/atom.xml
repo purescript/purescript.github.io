@@ -1,0 +1,757 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>PureScript.org</title>
+    <link href="http://purescript.org/atom.xml" rel="self" />
+    <link href="http://purescript.org" />
+    <id>http://purescript.org/atom.xml</id>
+    <author>
+        <name>PureScript Community</name>
+        <email></email>
+    </author>
+    <updated>2015-12-13T00:00:00Z</updated>
+    <entry>
+    <title>Getting Started with PureScript</title>
+    <link href="http://purescript.org/learn/getting-started/index.html" />
+    <id>http://purescript.org/learn/getting-started/index.html</id>
+    <published>2015-12-13T00:00:00Z</published>
+    <updated>2015-12-13T00:00:00Z</updated>
+    <summary type="html"><![CDATA[<section class="article">
+  <h2>Getting Started with PureScript</h2>
+  <div class="meta">By Phil Freeman, published on December 13, 2015</div>
+
+  <p>Welcome to the PureScript community blog! In this first post, I’m going to walk through the basics of getting set up to use the PureScript compiler <code>psc</code>, and its interactive mode <code>psci</code>.</p>
+<p>I’ll start with the installation of the compiler, go through the basic commands of <code>psc</code> and <code>psci</code>, working towards a solution of problem 1 from <a href="http://projecteuler.net/problem=1">Project Euler</a>.</p>
+<h4 id="installing-the-compiler">Installing the Compiler</h4>
+<p>You’ll need <a href="https://docs.npmjs.com/getting-started/installing-node">Node.js and npm</a> and to be <a href="https://docs.npmjs.com/getting-started/fixing-npm-permissions#option-1-change-the-permission-to-npm-s-default-directory">able to install global packages</a> to proceed.</p>
+<p>The Purescript compiler (psc) can be installed with npm:</p>
+<pre><code>npm install -g purescript</code></pre>
+<p>(It can also be installed from <a href="http://hackage.haskell.org/package/purescript">Hackage</a>, or by downloading the latest <a href="https://github.com/purescript/purescript/releases">binary bundle</a> for your OS. If you do so, make sure the <code>psc</code> executable is on your <code>$PATH</code>.)</p>
+<h4 id="setting-up-the-development-environment">Setting up the Development Environment</h4>
+<p>PureScript’s core libraries are configured to use the <a href="https://github.com/bodil/pulp">Pulp</a> build tool, and packages are available in the <a href="http://bower.io/search/?q=purescript-">Bower registry</a>.</p>
+<p>If you don’t have Pulp and Bower installed, install them now:</p>
+<pre><code>npm install -g pulp bower</code></pre>
+<p>Create a new project in an empty directory using <code>pulp init</code>:</p>
+<pre><code>pulp init</code></pre>
+<p>Your directory should now contain the following files:</p>
+<ul>
+<li><code>bower.json</code> - contains library dependency information</li>
+<li><code>bower_components/</code> - a directory for installed dependencies</li>
+<li><code>src/Main.purs</code> - Entry point module for your project</li>
+<li><code>test/Main.purs</code> - An empty test suite</li>
+</ul>
+<p>At this point, you should be able to build the project and run the tests:</p>
+<pre><code>pulp build
+pulp test</code></pre>
+<p>You should see output similar to the following:</p>
+<pre><code>* Building project in /Users/paf31/Documents/Code/purescript/pulp-test
+* Build successful. Running tests...
+You should add some tests.
+* Tests OK.</code></pre>
+<p>If everything was built successfully, and the tests ran without problems, then the last line should state “Tests OK”.</p>
+<h4 id="installing-dependencies">Installing Dependencies</h4>
+<p>Dependencies can be installed using Bower:</p>
+<pre><code>bower install purescript-lists --save</code></pre>
+<h4 id="working-in-psci">Working in PSCI</h4>
+<p>PSCi is the interactive mode of PureScript. It is useful for working with pure computations, and for testing ideas.</p>
+<p>Open PSCi by typing <code>pulp psci</code> at the command line. Pulp will create a file in your directory called <code>.psci</code>, which contains instructions to PSCi to load your modules and dependencies. If you invoke the PSCi executable directly, you would need to load these files by hand.</p>
+<pre><code> ____                 ____            _       _   
+|  _ \ _   _ _ __ ___/ ___|  ___ _ __(_)_ __ | |_ 
+| |_) | | | | &#39;__/ _ \___ \ / __| &#39;__| | &#39;_ \| __|
+|  __/| |_| | | |  __/___) | (__| |  | | |_) | |_ 
+|_|    \__,_|_|  \___|____/ \___|_|  |_| .__/ \__|
+                                       |_|        
+
+:? shows help
+&gt;</code></pre>
+<p>As the introduction indicates, you can type <code>:?</code> to see a list of commands:</p>
+<pre><code>The following commands are available:
+
+:?                        Show this help menu
+:quit                     Quit PSCi
+:reset                    Discard all imported modules and declared bindings
+:browse      &lt;module&gt;     See all functions in &lt;module&gt;
+:load        &lt;file&gt;       Load &lt;file&gt; for importing
+:foreign     &lt;file&gt;       Load foreign module &lt;file&gt;
+:type        &lt;expr&gt;       Show the type of &lt;expr&gt;
+:kind        &lt;type&gt;       Show the kind of &lt;type&gt;
+:show        import       Show all imported modules
+:show        loaded       Show all loaded modules
+
+Further information is available on the PureScript wiki:
+--&gt; https://github.com/purescript/purescript/wiki/psci</code></pre>
+<p>We will use a selection of these commands during this tutorial.</p>
+<p>Start by pressing the Tab key to use the autocompletion feature. You will see a collection of names of functions from the Prelude which are available to use.</p>
+<p>To see the type of one of these values, use the <code>:type</code> command, followed by a space, followed by the name of the value:</p>
+<pre><code>&gt; :type Prelude.map
+forall a b f. (Prelude.Functor f) =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+&gt; :type Data.List.zip
+forall a b. Data.List.List a -&gt; Data.List.List b -&gt; Data.List.List (Data.Tuple.Tuple a b)</code></pre>
+<p>We will be using some of the functions from the <code>Prelude</code> and <code>Data.List</code> modules, so import those by using the <code>import</code> keyword:</p>
+<pre><code>import Prelude
+import Data.List</code></pre>
+<p>Note that using <code>Tab</code> to autocomplete names can be a useful time-saving device in <code>psci</code>.</p>
+<h4 id="solving-project-euler-1">Solving Project Euler #1</h4>
+<p>The following problem is taken from <a href="http://projecteuler.net/problem=1">Project Euler</a>:</p>
+<blockquote>
+<p>If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.</p>
+<p>Find the sum of all the multiples of 3 or 5 below 1000.</p>
+</blockquote>
+<p>We can solve this problem neatly using functions and function composition, directly in <code>psci</code>.</p>
+<p>Let’s start by listing all of the natural numbers below 1000 as a list. We can do this using the <code>range</code> function from <code>Data.List</code>:</p>
+<pre><code>&gt; range 0 999</code></pre>
+<p>You should see a list with 1000 elements printed to the command line.</p>
+<p>This value can be given a name, using a <code>let</code> binding:</p>
+<pre><code>&gt; let ns = range 0 999</code></pre>
+<p>Now let’s filter out all of those elements which do not meet the criterion. We can use the <code>filter</code> function from <code>Data.List</code>, by providing a predicate function as its first argument:</p>
+<pre><code>&gt; let multiples = filter (\n -&gt; mod n 3 == 0 || mod n 5 == 0) ns</code></pre>
+<p>You can see the result by evaluating <code>multiples</code> if you like, or even check its type:</p>
+<pre><code>&gt; multiples
+Cons 0 (Cons 3 (Cons 5 (Cons 6 (Cons ...
+&gt; :type multiples
+List Int</code></pre>
+<p>Now we need to find the sum of the <code>multiples</code> array, to complete the solution. We can use the <code>sum</code> function from the <code>Data.Foldable</code> module.</p>
+<pre><code>&gt; import Data.Foldable
+&gt; sum multiples
+233168</code></pre>
+<p>When you have finished using PSCi, type <code>:quit</code> to quit:</p>
+<pre><code>&gt; :quit
+See ya!</code></pre>
+<h4 id="compiling-a-solution">Compiling a Solution</h4>
+<p>Now that we’ve seen how to use <code>psci</code> to reach the answer, let’s move our solution into a source file, and compile it using <code>psc</code>.</p>
+<p>Create a new text file <code>src/Euler.purs</code> and copy the following code:</p>
+<pre class="purescript"><code>module Euler1 where
+
+import Prelude
+
+import Data.List (range, filter)
+import Data.Foldable (sum)
+
+ns = range 0 999
+
+multiples = filter (\n -&gt; mod n 3 == 0 || mod n 5 == 0) ns
+
+answer = sum multiples</code></pre>
+<p>It is possible to load this file directly into PSCi and to continue working:</p>
+<pre><code>pulp psci
+&gt; Euler1.answer
+233168
+&gt; :quit
+See ya!</code></pre>
+<p>Alternatively, we can use Pulp to compile our new module to Javascript:</p>
+<pre><code>pulp build</code></pre>
+<p>This will compile each module present in <code>src/</code> into a separate file in the <code>output/</code> directory.</p>
+<h4 id="writing-a-test-suite">Writing a Test Suite</h4>
+<p>To test our code, we’ll use the <code>purescript-assert</code> library:</p>
+<pre><code>bower i purescript-assert --save</code></pre>
+<p>Modify the <code>test/Main.purs</code> file, and add the following code:</p>
+<pre class="purescript"><code>module Test.Main where
+
+import Prelude
+import Euler1 (answer)
+import Test.Assert (assert)
+
+main = do
+  assert (answer == 233168)</code></pre>
+<p>Our “test suite” is just a single assertion that the <code>answer</code> value equals the correct integer. In a real test suite, we might use the <code>Eff</code> monad to compose multiple tests in our <code>main</code> function.</p>
+<p>Run the tests using <code>pulp test</code>, and you should hopefully see “Tests OK” in the last line.</p>
+<h4 id="creating-executables">Creating Executables</h4>
+<p>We can modify the <code>main</code> function in the <code>src/Main.purs</code> module to print our result to the console:</p>
+<pre class="purescript"><code>module Main where
+
+import Prelude
+import Euler1
+import Control.Monad.Eff.Console
+
+main = do
+  log (&quot;The answer is &quot; ++ show answer)</code></pre>
+<p>The <code>pulp run</code> command can be used to compile and run the <code>Main</code> module:</p>
+<pre><code>&gt; pulp run
+* Building project in /Users/paf31/Documents/Code/purescript/pulp-test
+* Build successful.
+The answer is 233168</code></pre>
+<h4 id="conclusion">Conclusion</h4>
+<p>That’s all for this post. We’ve seen how to use enough of the basics of <code>psc</code> and PSCi to compile, execute and test simple PureScript programs. If you would like more information, the <a href="http://docs.purescript.org">PureScript documentation</a> lists all of the options for both <code>psc</code> and <code>psci</code>.</p>
+<p>Until next time…</p>
+</section>
+]]></summary>
+</entry>
+<entry>
+    <title>Generic Programming</title>
+    <link href="http://purescript.org/learn/generic/index.html" />
+    <id>http://purescript.org/learn/generic/index.html</id>
+    <published>2015-10-20T00:00:00Z</published>
+    <updated>2015-10-20T00:00:00Z</updated>
+    <summary type="html"><![CDATA[<section class="article">
+  <h2>Generic Programming</h2>
+  <div class="meta">By Phil Freeman, published on October 20, 2015</div>
+
+  <p>As of version 0.7.3, the PureScript compiler now supports <em>generic deriving</em>, thanks to <a href="http://gbaz.github.io/">Gershom Bazerman</a>. Generic deriving makes it possible to have the compiler derive boilerplate code based on types. One example of this is the serialization and deserialization of JSON, and in this post I’ll show how to use the <a href="https://github.com/paf31/purescript-foreign-generic"><code>purescript-foreign-generic</code></a> library to create such functions using generics.</p>
+<h4 id="generics-overview">Generics Overview</h4>
+<p>PureScript’s generics are supported by the <code>purescript-generics</code> library, and in particular, the <code>Data.Generic.Generic</code> type class:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Generic</span> a <span class="kw">where</span>
+<span class="ot">  toSignature ::</span> <span class="dt">Proxy</span> a <span class="ot">-&gt;</span> <span class="dt">GenericSignature</span>
+<span class="ot">  toSpine ::</span> a <span class="ot">-&gt;</span> <span class="dt">GenericSpine</span>
+<span class="ot">  fromSpine ::</span> <span class="dt">GenericSpine</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a</code></pre></div>
+<p><code>Generic</code> defines three functions:</p>
+<ul>
+<li><code>toSignature</code> creates a generic <em>signature</em> for a type. We can think of this as a representation of a type at runtime.</li>
+<li><code>toSpine</code> converts a value into a generic <em>spine</em>, which is a common representation for many types of data.</li>
+<li><code>fromSpine</code> converts a spine back into a value.</li>
+</ul>
+<p><code>purescript-generics</code> provides <code>Generic</code> instances for lots of types in PureScript’s standard libraries.</p>
+<p>It is possible to write out instances for our own types by hand, but doing so is very laborious. Instead, we can <em>derive</em> instances by using the <code>derive</code> keyword:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">Person</span> <span class="fu">=</span> <span class="dt">Person</span> {<span class="ot"> name ::</span> <span class="dt">String</span>,<span class="ot"> location ::</span> <span class="dt">String</span> }
+
+derive <span class="kw">instance</span><span class="ot"> genericPerson ::</span> <span class="dt">Generic</span> <span class="dt">Person</span></code></pre></div>
+<h4 id="show-eq-ord">Show, Eq, Ord</h4>
+<p>The key insight regarding generics is this: if we can write a function which works with any <code>GenericSpine</code>, then we implement the same function for any instance of <code>Generic</code>. We can even exploit type information in our implementation by using <code>toSignature</code> to reflect the type information at runtime.</p>
+<p><code>purescript-generics</code> provides helper functions for implementing common type classes from the Prelude:</p>
+<ul>
+<li><code>gShow</code> gives a default implementation of <code>show</code> from the <code>Show</code> class</li>
+<li><code>gEq</code> gives a default implementation of <code>eq</code> from the <code>Eq</code> class</li>
+<li><code>gCompare</code> gives a default implementation of <code>compare</code> from the <code>Ord</code> class</li>
+</ul>
+<p>Using these functions is as simple as dropping the generic implementation into your instances:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span><span class="ot"> showPerson ::</span> <span class="dt">Show</span> <span class="dt">Person</span> <span class="kw">where</span>
+  show <span class="fu">=</span> gShow
+
+<span class="kw">instance</span><span class="ot"> eqPerson ::</span> <span class="dt">Eq</span> <span class="dt">Person</span> <span class="kw">where</span>
+  eq <span class="fu">=</span> gEq
+
+<span class="kw">instance</span><span class="ot"> ordPerson ::</span> <span class="dt">Ord</span> <span class="dt">Person</span> <span class="kw">where</span>
+  compare <span class="fu">=</span> gCompare</code></pre></div>
+<h4 id="handling-foreign-data">Handling Foreign Data</h4>
+<p>The <code>purescript-foreign</code> library is used in PureScript to handle untrusted external data, and to turn such data into typed values. This functionality is represented by the <code>IsForeign</code> type class:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">IsForeign</span> a <span class="kw">where</span>
+<span class="ot">  read ::</span> <span class="dt">Foreign</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">ForeignError</span> a</code></pre></div>
+<p><code>IsForeign</code> instances are a good example of boilerplate code. In most cases, we proceed based on the structure of the type in question. For example, here is one possible implementation of <code>IsForeign</code> for our <code>Person</code> type, using the new <em>field puns</em> feature:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span><span class="ot"> isForeignPerson ::</span> <span class="dt">IsForeign</span> <span class="dt">Person</span> <span class="kw">where</span>
+  read value <span class="fu">=</span> <span class="kw">do</span>
+    name <span class="ot">&lt;-</span> readProp <span class="st">&quot;name&quot;</span> value
+    location <span class="ot">&lt;-</span> readProp <span class="st">&quot;location&quot;</span> value
+    return <span class="fu">$</span> <span class="dt">Person</span> { name, location }</code></pre></div>
+<p>This is not too bad, but real-world records often contain many more fields. Let’s see how to verify the same data using <code>Generic</code>.</p>
+<p>The <code>purescript-foreign-generic</code> library defines a function <code>readGeneric</code>, with the following type:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">readGeneric ::</span> forall a<span class="fu">.</span> (<span class="dt">Generic</span> a) <span class="ot">=&gt;</span> <span class="dt">Options</span> <span class="ot">-&gt;</span> <span class="dt">Foreign</span> <span class="ot">-&gt;</span> <span class="dt">F</span> a</code></pre></div>
+<p>The <code>Options</code> type here is based on the options record from Haskell’s <code>aeson</code> library. For our purposes, the default options will work, but we need to turn on the <code>unwrapNewtypes</code> option, so that our <code>newtype</code> constructor gets ignored during serialization:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">myOptions ::</span> <span class="dt">Options</span>
+myOptions <span class="fu">=</span> defaultOptions { unwrapNewtypes <span class="fu">=</span> true }</code></pre></div>
+<p>With this, our <code>IsForeign</code> instance is as simple as:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span><span class="ot"> isForeignPerson ::</span> <span class="dt">IsForeign</span> <span class="dt">Person</span> <span class="kw">where</span>
+  read <span class="fu">=</span> readGeneric myOptions</code></pre></div>
+<p>We can test out this instance in PSCi as follows:</p>
+<pre class="text"><code>&gt; import Data.Generic
+&gt; import Data.Foreign.Class
+
+&gt; map gShow (readJSON &quot;{ &#39;name&#39;: &#39;John Smith&#39;, &#39;location&#39;: &#39;USA&#39; }&quot; :: Either ForeignError Person)
+Right (Person { name: &quot;John Smith&quot;, location: &quot;USA&quot; })</code></pre>
+<h4 id="handling-null">Handling Null</h4>
+<p>The default <code>Options</code> object also enables the <code>maybeAsNull</code> option, which special-cases the <code>Maybe</code> data type for handling null and undefined values.</p>
+<p>For example, if we want to allow the <code>location</code> property to be nullable in the <code>Person</code> data type, we can simply change our type as follows:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">Person</span> <span class="fu">=</span> <span class="dt">Person</span> {<span class="ot"> name ::</span> <span class="dt">String</span>,<span class="ot"> location ::</span> <span class="dt">Maybe</span> <span class="dt">String</span> }</code></pre></div>
+<p>Our <code>IsForeign</code> implementation will be updated to handle null/undefined values automatically. For example, back in PSCi:</p>
+<pre class="text"><code>&gt; map gShow (readJSON &quot;{ &#39;name&#39;: &#39;John Smith&#39; }&quot; :: Either ForeignError Person)
+Right (Person { name: &quot;John Smith&quot;, location: Nothing })</code></pre>
+<h4 id="generating-json">Generating JSON</h4>
+<p>Just as <code>readGeneric</code> can be used to <em>read</em> well-typed data, the <code>toForeignGeneric</code> and <code>toJSONGeneric</code> functions can be used to produce the appropriate data or JSON from a PureScript value. The generated <code>readGeneric</code> and <code>toForeignGeneric</code> functions are inverse to each other for any given input type.</p>
+<p>In PSCi, we can test JSON generation for our <code>Person</code> data type:</p>
+<pre class="text"><code>&gt; toJSONGeneric (Person { name: &quot;John Smith&quot;, location: Nothing })
+&quot;{ &#39;name&#39;: &#39;John Smith&#39;, location: null }&quot;</code></pre>
+<p>One application of this technique is to produce and consume JSON for use with JSON web services, using generics to reduce the amount of boilerplate model code needed.</p>
+<h4 id="performance-concerns">Performance Concerns</h4>
+<p>Generic deriving can be very convenient for code generation, but it comes with a performance penalty. Consider defining a <code>Show</code> instance using <code>gShow</code> - instead of simply converting our data type directly to a <code>String</code>, we first convert it into a <code>GenericSpine</code>, and then convert that representation into a <code>String</code>. Creating this intermediate structure comes with a cost.</p>
+<p>Now consider the <code>gEq</code> function, used to define <code>Eq</code> instances. We might be able to determine that two records are <em>not</em> equal by comparing their first properties, for example. In this case, we only need to evaluate a small amount of the spine of each value, so the representation of <code>GenericSpine</code> uses laziness to avoid evaluating more of the spine than is necessary.</p>
+<p>In the case of <code>foreign-generic</code>, the performance cost is often an acceptable trade-off for our increase in productivity, since we rarely need to parse or generate JSON in performance-critical sections of code in many applications.</p>
+</section>
+]]></summary>
+</entry>
+<entry>
+    <title>Test your JavaScript with QuickCheck</title>
+    <link href="http://purescript.org/learn/quickcheck/index.html" />
+    <id>http://purescript.org/learn/quickcheck/index.html</id>
+    <published>2015-07-16T00:00:00Z</published>
+    <updated>2015-07-16T00:00:00Z</updated>
+    <summary type="html"><![CDATA[<section class="article">
+  <h2>Test your JavaScript with QuickCheck</h2>
+  <div class="meta">By Phil Freeman, published on July 16, 2015</div>
+
+  <p><a href="http://en.wikipedia.org/wiki/QuickCheck">QuickCheck</a> is a <em>property-based</em> testing library which was originally written in Haskell, but which has been ported to <a href="https://github.com/mcandre/node-quickcheck">a</a> <a href="https://github.com/mcandre/qc">number</a> <a href="https://github.com/mcandre/cl-quickcheck">of</a> <a href="https://pypi.python.org/pypi/pytest-quickcheck/">other</a> <a href="https://github.com/hayeah/rantly">languages</a>.</p>
+<p>QuickCheck works by generating random data with which to test your properties. This allows us to gain confidence that the properties hold, as more and more randomly-generated tests are run.</p>
+<p><a href="http://github.com/purescript/purescript-quickcheck"><code>purescript-quickcheck</code></a> is a port of QuickCheck to PureScript, which preserves the syntax and types of the original Haskell code.</p>
+<p><code>purescript-quickcheck</code> can be used to test code which is written in PureScript, but can be used to test Javascript functions as well. In this post, I’ll demonstrate each of these use cases.</p>
+<h4 id="testing-purescript-functions">Testing PureScript Functions</h4>
+<p>QuickCheck defines the <code>quickCheck</code> function, which will print test results to the console, or fail with an exception in the event of a test failure.</p>
+<p>Create a new project using Pulp, install <code>purescript-quickcheck</code>, and open PSCi:</p>
+<pre class="text"><code>pulp init
+bower install purescript-quickcheck
+pulp psci</code></pre>
+<p>Start by importing the QuickCheck library:</p>
+<pre><code>&gt; import Prelude
+&gt; import Test.QuickCheck</code></pre>
+<p>The <code>quickCheck</code> function takes one argument: the property you would like to test. Let’s try a very simple property:</p>
+<pre><code>&gt; quickCheck \n -&gt; n + 1 == 1 + n</code></pre>
+<p>If everything worked, you should see the following result:</p>
+<pre><code>100/100 test(s) passed.
+unit</code></pre>
+<p>This indicates 100 successful random test runs.</p>
+<h4 id="error-messages">Error Messages</h4>
+<p>Let’s see what happens when we try testing a broken property:</p>
+<pre><code>&gt; quickCheck \n -&gt; n + 1 == n </code></pre>
+<p>You should see an exception printed to the console:</p>
+<pre><code>Error: Test 1 failed:
+Failed: Test returned false</code></pre>
+<p>That’s not a very helpful error, so let’s improve it:</p>
+<pre><code>&gt; quickCheck \n -&gt; n + 1 == n &lt;?&gt; &quot;Test failed for input &quot; ++ show n</code></pre>
+<p>This time you should see the following failure message:</p>
+<pre><code>Error: Test 1 failed: 
+Test failed for input -654791</code></pre>
+<p>Alternatively, we could use the <code>===</code> operator, which provides a better error message:</p>
+<pre><code>&gt; quickCheck \n -&gt; n + 1 === n 
+Error: Test 1 failed: 
+-663820 /= -663821</code></pre>
+<h4 id="example-1---gcd-function">Example 1 - GCD Function</h4>
+<p>Let’s write an implementation of the <em>greatest common divisor</em> function in PSCi (you will need to enable multiline mode):</p>
+<pre><code>&gt; let
+    gcd 0 n = n
+    gcd n 0 = n
+    gcd n m | n &lt; 0 = gcd (-n) m
+    gcd n m | m &lt; 0 = gcd n (-m)
+    gcd n m | n &gt; m = gcd (n - m) m
+    gcd n m = gcd n (m - n)</code></pre>
+<p>Now let’s assert some basic properties that we expect to hold of the <code>gcd</code> function.</p>
+<pre><code>&gt; quickCheck \n -&gt; gcd n 1 === 1</code></pre>
+<p>This test should pass, but will take a while, because the standard random generator for integers which comes bundled with <code>purescript-quickcheck</code> generates integers in the range -1000000 to 1000000.</p>
+<p>We can modify our test to only consider small integers:</p>
+<pre><code>&gt; quickCheck \n -&gt; gcd (n / 1000) 1 === 1</code></pre>
+<p>This time, the test should complete quickly. However, we’ve coupled the generation of our data (<code>/ 1000</code>) with the property we’re testing, which is against the spirit of QuickCheck. A better approach is to define a <code>newtype</code> which can be used to generate small integers.</p>
+<p>Create a new file <code>src/SmallInt.purs</code> and paste the following code:</p>
+<pre><code>module SmallInt where
+
+import Prelude
+import Test.QuickCheck
+import Test.QuickCheck.Arbitrary
+
+data SmallInt = SmallInt Int
+
+runInt :: SmallInt -&gt; Int
+runInt (SmallInt i) = i
+
+instance arbSmallInt :: Arbitrary SmallInt where
+  arbitrary = (/ 1000) &lt;$&gt; arbitrary</code></pre>
+<p>Back in PSCi, we can now test properties without having to explicitly define how to generate our random data:</p>
+<pre><code>&gt; quickCheck \(SmallInt n) (SmallInt m) -&gt; gcd n m == gcd m n</code></pre>
+<p>The idea is that the particular scheme that is chosen to generate data should be indicated by the types of our function arguments, so <code>newtype</code>s can be quite useful when defining multiple data generation schemes for a single type.</p>
+<h4 id="example-2---testing-higher-order-functions">Example 2 - Testing Higher Order Functions</h4>
+<p>QuickCheck can also be used to test higher-order functions, by randomly generating functions.</p>
+<p>Let’s test that the <code>map</code> function on arrays satisfies the functor laws.</p>
+<p>For these two tests, I will write the test function using a let binding to avoid having to write type signatures in properties.</p>
+<p>The first functor law says that if you map a function which does not modify its argument (the identity function) over a structure, then the structure should not be modified either.</p>
+<pre><code>&gt; import Data.Array
+
+&gt; let 
+    firstFunctorLaw :: [Int] -&gt; Boolean
+    firstFunctorLaw arr = map id arr == arr
+
+&gt; quickCheck firstFunctorLaw
+
+100/100 test(s) passed.
+unit</code></pre>
+<p>The second functor law says that mapping two functions over a structure one-by-one is equivalent to mapping their composition over the structure:</p>
+<pre><code>&gt; let
+    secondFunctorLaw :: (Int -&gt; Int) -&gt; (Int -&gt; Int) -&gt; [Int] -&gt; Boolean
+    secondFunctorLaw f g arr = map f (map g arr) == map (f &lt;&lt;&lt; g) arr
+  
+&gt; quickCheck secondFunctorLaw
+
+100/100 test(s) passed.
+unit</code></pre>
+<h4 id="testing-javascript-functions">Testing Javascript Functions</h4>
+<p>Now let’s try an example of testing a function written in Javascript.</p>
+<p><a href="https://gist.github.com/paf31/3aedd6c3e3ac5c8a78e7">This file</a> contains a set of FFI bindings for some of the functions defined by the <a href="http://underscorejs.org/">UnderscoreJS</a> library. It is a nice example of a set of pure functions written in Javascript which we can test with QuickCheck.</p>
+<p>Copy the contents of that file into <code>src/UnderscoreFFI.purs</code>, and reload PSCi with that module loaded:</p>
+<pre><code>&gt; import UnderscoreFFI</code></pre>
+<p>The <code>UnderscoreFFI</code> module defines a wrapper for the <code>sortBy</code> function. Let’s test that the function is idempotent:</p>
+<pre><code>&gt; let 
+    sortIsIdempotent :: [Int] -&gt; Boolean
+    sortIsIdempotent arr = sortBy id (sortBy id arr) == sortBy id arr
+  
+&gt; quickCheck sortIsIdempotent
+
+100/100 test(s) passed.
+unit</code></pre>
+<p>In fact, we don’t need to sort by the identity function. Since QuickCheck supports higher-order functions, we can test with a randomly-generated sorting function:</p>
+<pre><code>&gt; let 
+    sortIsIdempotent&#39; :: (Int -&gt; Int) -&gt; [Int] -&gt; Boolean
+    sortIsIdempotent&#39; f arr = sortBy f (sortBy f arr) == sortBy f arr
+  
+&gt; quickCheck sortIsIdempotent
+
+100/100 test(s) passed.
+unit</code></pre>
+<p>Have a look through the <code>UnderscoreFFI</code> module, and see what other properties you can define.</p>
+<h4 id="conclusion">Conclusion</h4>
+<p>Hopefully I’ve shown that QuickCheck can be a useful tool, whether you write your code in PureScript or not. Its strength is in its <em>type-directed</em> approach to data generation, which allows you to say <em>what</em> you want to test directly, rather than <em>how</em> to generate test data.</p>
+</section>
+]]></summary>
+</entry>
+<entry>
+    <title>Handling Native Effects with the Eff Monad</title>
+    <link href="http://purescript.org/learn/eff/index.html" />
+    <id>http://purescript.org/learn/eff/index.html</id>
+    <published>2015-07-16T00:00:00Z</published>
+    <updated>2015-07-16T00:00:00Z</updated>
+    <summary type="html"><![CDATA[<section class="article">
+  <h2>Handling Native Effects with the Eff Monad</h2>
+  <div class="meta">By Phil Freeman, published on July 16, 2015</div>
+
+  <p>In this post, I’m going to talk about PureScript’s hybrid approach to handling side-effects.</p>
+<p>As in Haskell, values in PureScript do not have side-effects by default, and there are a number of techniques for handling “non-native” side-effects. Such techniques include the use of things like monoids, monads, applicative functors and arrows, but I’m not going to talk about those here. I’m going to talk about how PureScript handles “native” effects, i.e. effects which are provided by the runtime system, and which cannot be emulated by pure functions.</p>
+<p>Some examples of native effects are:</p>
+<ul>
+<li>Console IO</li>
+<li>Random number generation</li>
+<li>Exceptions</li>
+<li>Reading/writing mutable state</li>
+</ul>
+<p>And in the browser:</p>
+<ul>
+<li>DOM manipulation</li>
+<li>XMLHttpRequest / AJAX calls</li>
+<li>Interacting with a websocket</li>
+<li>Writing/reading to/from local storage</li>
+</ul>
+<h4 id="the-eff-monad">The Eff Monad</h4>
+<p>PureScript’s <code>purescript-eff</code> package defines a monad called <code>Eff</code>, which is used to handle native effects. The goal of the <code>Eff</code> monad is to provide a typed API for effectful computations, while at the same time generating efficient Javascript.</p>
+<p>Let’s start with an example:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">RandomExample</span> <span class="kw">where</span>
+
+<span class="kw">import </span><span class="dt">Prelude</span>
+
+<span class="kw">import </span><span class="dt">Control.Monad.Eff</span>
+<span class="kw">import </span><span class="dt">Control.Monad.Eff.Random</span> (random)
+<span class="kw">import </span><span class="dt">Control.Monad.Eff.Console</span> (print)
+
+printRandom <span class="fu">=</span> <span class="kw">do</span>
+  n <span class="ot">&lt;-</span> random
+  print n</code></pre></div>
+<p>This example requires the <code>purescript-console</code> and <code>purescript-random</code> dependencies to be installed:</p>
+<pre><code>pulp init
+bower install --save purescript-console purescript-random</code></pre>
+<p>If you save this file as <code>RandomExample.purs</code>, you will be able to compile and run it using PSCi:</p>
+<pre><code>pulp psci
+
+&gt; import RandomExample
+&gt; printRandom
+...</code></pre>
+<p>You should see a randomly selected number between 0 and 1 printed to the console.</p>
+<p>This program uses <code>do</code>-notation to combine two types of native effects provided by the Javascript runtime: random number generation and console IO.</p>
+<h4 id="extensible-records-and-extensible-effects">Extensible Records and Extensible Effects</h4>
+<p>We can inspect the type of <code>printRandom</code> by using the <code>:type command</code></p>
+<pre><code>&gt; :type RandomExample.main</code></pre>
+<p>The type of <code>main</code> will be printed to the console. You should see a type which looks like this:</p>
+<pre><code>forall e. Eff (console :: CONSOLE, random :: RANDOM | e) Unit</code></pre>
+<p>This type looks quite complicated, but is easily explained by analogy with PureScript’s extensible records system.</p>
+<p>Consider a simple function which uses extensible records:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fullName person <span class="fu">=</span> person<span class="fu">.</span>firstName <span class="fu">++</span> <span class="st">&quot; &quot;</span> <span class="fu">++</span> person<span class="fu">.</span>lastName</code></pre></div>
+<p>This function creates a full name string from an object containing <code>firstName</code> and <code>lastName</code> properties. If you find the type of this function in PSCi as before, you will see this:</p>
+<pre><code>forall t. { firstName :: String, lastName :: String | t } -&gt; String </code></pre>
+<p>The readable version of this type is “<code>fullName</code> takes an object with <code>firstName</code> and <code>lastName</code> properties <em>and any other properties</em> and returns a <code>String</code>”.</p>
+<p>That is, <code>fullName</code> does not care if you pass an object with <em>more</em> properties, as long as the <code>firstName</code> and <code>lastName</code> properties are present:</p>
+<pre><code>&gt; firstName { firstName: &quot;Phil&quot;, lastName: &quot;Freeman&quot;, location: &quot;Los Angeles&quot; }
+Phil Freeman</code></pre>
+<p>Similarly, the type of <code>printRandom</code> above can be interpreted as follows: “<code>printRandom</code> is a side-effecting computation, which can be run in any environment which supports random number generation and console IO, <em>and any other types of side effect</em>, and which yields a value of type <code>Unit</code>”.</p>
+<p>This is the origin of the name “extensible effects”: we can always <em>extend</em> the set of side-effects, as long as we can support the set of effects that we need.</p>
+<h4 id="interleaving-effects">Interleaving Effects</h4>
+<p>This extensibility allows code in the <code>Eff</code> monad to <em>interleave</em> different types of effects.</p>
+<p>The <code>random</code> function which we used has the following type:</p>
+<pre><code>forall e1. Eff (random :: RANDOM | e1) Number</code></pre>
+<p>which is <em>not</em> the same as the type of <code>main</code>.</p>
+<p>However, we can instantiate the polymorphic type variable in such a way that the types do match. If we choose <code>e1 ~ (console :: CONSOLE | e)</code>, then the two rows are equal, up to reordering.</p>
+<p>Similarly, <code>print</code> has a type which can be instantiated to match the type of <code>printRandom</code>:</p>
+<pre><code>forall a e2. (Show a) =&gt; a -&gt; Eff (console :: CONSOLE | e2) Unit</code></pre>
+<p>This time we have to choose <code>e2 ~ random :: RANDOM | e</code>.</p>
+<p>The key is that we don’t have to give a type for <code>printRandom</code> in order to be able to find these substitutions. <code>psc</code> will find a most general type for <code>printRandom</code> given the polymorphic types of <code>random</code> and <code>print</code>.</p>
+<h4 id="aside-the-kind-of-eff">Aside: The Kind of Eff</h4>
+<p>Looking at the <a href="https://github.com/purescript/purescript-eff/blob/master/src/Control/Monad/Eff.purs">source code</a>, you will see the following definition for <code>Eff</code>:</p>
+<pre><code>foreign import Eff :: # ! -&gt; * -&gt; *</code></pre>
+<p><code>*</code> is the usual kind of types, and <code>!</code> is the kind of effects. The <code>#</code> kind constructor is used to construct kinds for <em>rows</em>, i.e. unordered, labelled collections.</p>
+<p>So <code>Eff</code> is parameterized by a row of effects, and a return type.</p>
+<p>If we were to give a kind to the object type constructor <code>{ ... }</code>, it would have kind <code># * -&gt; *</code>. That is, an object type is parameterized by a row of types.</p>
+<h4 id="fine-grained-effects">Fine-Grained Effects</h4>
+<p>Type annotations are usually not required when using <code>Eff</code>, since rows of effects can be inferred, but they can be used to indicate to the compiler which effects are expected in a computation.</p>
+<p>If we annotate the previous example with a <em>closed</em> row of effects:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">Eff</span> (<span class="ot">console ::</span> <span class="dt">CONSOLE</span>,<span class="ot"> random ::</span> <span class="dt">RANDOM</span>) <span class="dt">Unit</span>
+main <span class="fu">=</span> <span class="kw">do</span>
+  n <span class="ot">&lt;-</span> random
+  print n</code></pre></div>
+<p>(note the lack of a type variable here), then we cannot accidentally include a subcomputation which makes use of a different type of effect. This is an advantage of <code>Eff</code> over Haskell’s more coarsely-grained <code>IO</code> monad.</p>
+<h4 id="handlers-and-actions">Handlers and Actions</h4>
+<p>Rows of effects can also appear on the left-hand side of a function arrow. This is what differentiates actions like <code>print</code> and <code>random</code> from effect <em>handlers</em>.</p>
+<p>While actions <em>add</em> to the set of required effects, a handler <code>subtracts</code> effects from the set.</p>
+<p>Consider <code>catchException</code> from the <code>purescript-exceptions</code> package:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">catchException ::</span> forall a e<span class="fu">.</span> (<span class="dt">Error</span> <span class="ot">-&gt;</span> <span class="dt">Eff</span> e a) <span class="ot">-&gt;</span> 
+                              <span class="dt">Eff</span> (<span class="ot">err ::</span> <span class="dt">EXCEPTION</span> <span class="fu">|</span> e) a <span class="ot">-&gt;</span> 
+                              <span class="dt">Eff</span> e a</code></pre></div>
+<p>Note that the type of the effect on the right of the final function arrow requires <em>fewer</em> effects than the effect to its left. Namely, <code>catchException</code> <em>removes</em> the <code>EXCEPTION</code> effect from the set of required effects.</p>
+<p>This is useful, because the type system can be used to delimit portions of code which require a particular effect, and then to wrap that code in a handler, embedding it inside a piece of code which does not use that effect.</p>
+<p>For example, we can write a piece of code which uses exceptions, then wrap that code using <code>catchException</code> to embed the computation in a piece of code which does not use exceptions.</p>
+<p><code>purescript-eff</code> also defines the handler <code>runPure</code>, which takes a computation with <em>no</em> side-effects, and safely evaluates it as a pure value:</p>
+<pre><code>type Pure a = forall e. Eff e a
+
+runPure :: forall a. Pure a -&gt; a</code></pre>
+<p>For example, we can define a version of the division function for which division by zero results in an exception:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">ErrorsExample</span> <span class="kw">where</span>
+
+<span class="kw">import </span><span class="dt">Prelude</span>
+<span class="kw">import </span><span class="dt">Control.Monad.Eff</span>
+<span class="kw">import </span><span class="dt">Control.Monad.Eff.Error</span>
+
+<span class="ot">divide ::</span> forall e<span class="fu">.</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Eff</span> (<span class="ot">err ::</span> <span class="dt">EXCEPTION</span> <span class="fu">|</span> e) <span class="dt">Int</span>
+divide _ <span class="dv">0</span> <span class="fu">=</span> throwError <span class="st">&quot;Division by zero&quot;</span>
+divide n m <span class="fu">=</span> return (n <span class="fu">/</span> m)</code></pre></div>
+<p>If we have already defined this function, we can use the <code>runPure</code> and <code>catchException</code> handlers to define a version of <code>divide</code> which reports its errors using <code>Either</code>:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Either</span>
+
+<span class="ot">dividePure ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">String</span> <span class="dt">Int</span>
+dividePure n m <span class="fu">=</span> runPure (catchException (return <span class="fu">&lt;&lt;&lt;</span> <span class="dt">Left</span>) (<span class="dt">Right</span> <span class="fu">&lt;$&gt;</span> divide n m))</code></pre></div>
+<p>Note that <em>after</em> we use <code>catchException</code> to remove the <code>EXCEPTION</code> effect, there are no more effects remaining, so we can use <code>runPure</code> to evaluate the return value.</p>
+<h4 id="defining-new-effect-types">Defining New Effect Types</h4>
+<p>New effects can be defined using <code>foreign import data</code> just as in the case of types.</p>
+<p>Suppose we wanted to define an effect for incrementing a single shared global counter. We simply declare the kind of our new type constructor to be <code>!</code>:</p>
+<pre><code>foreign import data COUNTER :: !</code></pre>
+<p>We can then use our new effect in an action. Primitive actions are usually defined using the FFI, so it is important to understand the underlying model for <code>Eff</code>-based effects.</p>
+<p>A computation of type <code>Eff e a</code> is implemented in Javascript as a zero-argument function whose body is expected to perform its side effects, before finally returning its result.</p>
+<p>We can therefore implement a simple action as follows:</p>
+<pre class="purescript"><code>foreign import incrCounter :: forall e. Eff (counter :: COUNTER | e) Number</code></pre>
+<p>and in the corresponding <a href="../ffi/">native module</a>:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">exports</span>.<span class="at">incrCounter</span> <span class="op">=</span> <span class="kw">function</span>() <span class="op">{</span>
+  <span class="cf">return</span> <span class="op">++</span>globalCounter<span class="op">;</span>
+<span class="op">};</span></code></pre></div>
+<p>Note the type we give to <code>incrCounter</code>: we use a polymorphic type to make sure that <code>Counter</code> can be interleaved with other effects.</p>
+<p>Usually, we wouldn’t write a handler for the <code>Counter</code> effect, since we have no way to guarantee that the <code>globalCounter</code> hasn’t been modified. However, if we wanted to provide an unsafe “escape hatch” for <code>Counter</code>, we might do so as follows:</p>
+<pre class="purescript"><code>foreign import unsafeRunCounter :: forall e. Eff (counter :: COUNTER | e) a -&gt; Eff e a</code></pre>
+<p>And in JavaScript:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">exports</span>.<span class="at">unsafeRunCounter</span> <span class="op">=</span> <span class="kw">function</span>(f) <span class="op">{</span>
+  <span class="cf">return</span> f<span class="op">;</span>
+<span class="op">};</span></code></pre></div>
+<h4 id="the-eff-monad-is-magic">The Eff Monad is Magic</h4>
+<p>The <code>psc</code> compiler has special support for the <code>Eff</code> monad. Ordinarily, a chain of monadic binds might result in poor performance when executed in <code>nodejs</code> or in the browser. However, the compiler can generate code for the <code>Eff</code> monad without explicit calls to the monadic bind function <code>&gt;&gt;=</code>.</p>
+<p>Take the random number generation from the start of the post. If we compile this example without optimizations, we end up the following Javascript:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> main <span class="op">=</span> 
+  Prelude[<span class="st">&quot;&gt;&gt;=&quot;</span>]
+    (<span class="va">Control_Monad_Eff</span>.<span class="at">monadEff</span>())
+	(<span class="va">Control_Monad_Eff_Random</span>.<span class="at">random</span>)
+	(<span class="kw">function</span> (n) <span class="op">{</span>
+      <span class="cf">return</span> <span class="va">Control_Monad_Eff_Console</span>.<span class="at">print</span>(<span class="va">Prelude</span>.<span class="at">showNumber</span>())(n)<span class="op">;</span>
+    <span class="op">}</span>)<span class="op">;</span></code></pre></div>
+<p>However, if we use the default optimizations, the calls to <code>Eff</code>’s monadic bind function are inlined, resulting the following tidier Javascript:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> main <span class="op">=</span> <span class="kw">function</span> <span class="at">__do</span>() <span class="op">{</span>
+  <span class="kw">var</span> n <span class="op">=</span> <span class="va">Control_Monad_Eff_Random</span>.<span class="at">random</span>()<span class="op">;</span>
+  <span class="cf">return</span> <span class="va">Control_Monad_Eff_Console</span>.<span class="at">print</span>(<span class="va">Prelude</span>.<span class="at">showNumber</span>())(n)()<span class="op">;</span>
+<span class="op">};</span></code></pre></div>
+<p>While this is a small improvement, the benefit is greater when using multiple nested calls to <code>&gt;&gt;=</code>.</p>
+<p>The improvement is even more marked when optimizations are used in conjunction with tail call elimination. Consider the following recursive program which prints an increasing sequence of numbers to the console:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">go n <span class="fu">=</span> <span class="kw">do</span>
+  print n
+  go (n <span class="fu">+</span> <span class="dv">1</span>)
+
+main <span class="fu">=</span> go <span class="dv">1</span></code></pre></div>
+<p>Without optimizations, the compiler generates the following Javascript, which fails after a few iterations with a stack overflow:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> go <span class="op">=</span> 
+  Prelude[<span class="st">&quot;&gt;&gt;=&quot;</span>]
+    (<span class="va">Control_Monad_Eff</span>.<span class="at">monadEff</span>())
+	(<span class="va">Control_Monad_Eff_Console</span>.<span class="at">print</span>(<span class="va">Prelude</span>.<span class="at">showNumber</span>())(n))
+	(<span class="kw">function</span> (_) <span class="op">{</span>
+      <span class="cf">return</span> <span class="at">go</span>(n <span class="op">+</span> <span class="dv">1</span>)<span class="op">;</span>
+    <span class="op">}</span>)<span class="op">;</span></code></pre></div>
+<p>However, with optimizations, the Javascript can be made to run without errors:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> go <span class="op">=</span> <span class="kw">function</span> (__copy_n) <span class="op">{</span>
+  <span class="cf">return</span> <span class="kw">function</span> <span class="at">__do</span>() <span class="op">{</span>
+    <span class="kw">var</span> n <span class="op">=</span> __copy_n<span class="op">;</span>
+    <span class="dt">tco</span><span class="op">:</span> <span class="cf">while</span> (<span class="kw">true</span>) <span class="op">{</span>
+      <span class="va">Control_Monad_Eff_Console</span>.<span class="at">print</span>(<span class="va">Prelude</span>.<span class="at">showNumber</span>())(n)()<span class="op">;</span>
+      <span class="kw">var</span> __tco_n <span class="op">=</span> n <span class="op">+</span> <span class="dv">1</span><span class="op">;</span>
+      n <span class="op">=</span> __tco_n<span class="op">;</span>
+      <span class="cf">continue</span> tco<span class="op">;</span>
+    <span class="op">};</span>
+  <span class="op">};</span>
+<span class="op">};</span></code></pre></div>
+<h4 id="efficient-mutation-with-st">Efficient Mutation with ST</h4>
+<p>The <code>psc</code> compiler has additional support for one particular native effect, namely the <code>ST</code> effect, which is used to provide scoped mutable state.</p>
+<p>Consider the following function, which computes the total stopping time of the Collatz sequence for a given initial value:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">collatz ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
+collatz n <span class="fu">=</span> pureST <span class="kw">do</span>
+  r <span class="ot">&lt;-</span> newSTRef n
+  count <span class="ot">&lt;-</span> newSTRef <span class="dv">0</span>
+  untilE <span class="fu">$</span> <span class="kw">do</span>
+    modifySTRef count <span class="fu">$</span> (<span class="fu">+</span>) <span class="dv">1</span>
+    m <span class="ot">&lt;-</span> readSTRef r
+    writeSTRef r <span class="fu">$</span> <span class="kw">if</span> m <span class="ot">`mod`</span> <span class="dv">2</span> <span class="fu">==</span> <span class="dv">0</span> <span class="kw">then</span> m <span class="fu">/</span> <span class="dv">2</span> <span class="kw">else</span> <span class="dv">3</span> <span class="fu">*</span> m <span class="fu">+</span> <span class="dv">1</span>
+    return <span class="fu">$</span> m <span class="fu">==</span> <span class="dv">1</span>
+  readSTRef count</code></pre></div>
+<p>In this case, <code>psc</code> notices that the mutable variables <code>r</code> and <code>count</code> are scoped by <code>runST</code> and so can safely be turned into local mutable variables.</p>
+<p>The resulting Javascript is surprisingly short:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> collatz <span class="op">=</span> <span class="kw">function</span> (n) <span class="op">{</span>
+  <span class="cf">return</span> <span class="va">Control_Monad_Eff</span>.<span class="at">runPure</span>(<span class="kw">function</span> <span class="at">__do</span>() <span class="op">{</span>
+    <span class="kw">var</span> r <span class="op">=</span> n<span class="op">;</span>
+    <span class="kw">var</span> count <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>
+    (<span class="kw">function</span> () <span class="op">{</span>
+      <span class="cf">while</span> (<span class="op">!</span>(<span class="kw">function</span> <span class="at">__do</span>() <span class="op">{</span>
+        count <span class="op">=</span> <span class="dv">1</span> <span class="op">+</span> count<span class="op">;</span>
+        <span class="kw">var</span> m <span class="op">=</span> r<span class="op">;</span>
+        r <span class="op">=</span> (m <span class="op">%</span> <span class="dv">2</span> <span class="op">===</span> <span class="dv">0</span>) <span class="op">?</span> m / <span class="dv">2</span> : <span class="dv">3</span> <span class="op">*</span> m <span class="op">+</span> <span class="dv">1</span><span class="op">;</span>
+        <span class="cf">return</span> m <span class="op">===</span> <span class="dv">1</span><span class="op">;</span>
+      <span class="op">}</span>)()) <span class="op">{</span>
+	  <span class="op">};</span>
+      <span class="cf">return</span> <span class="op">{};</span>
+    <span class="op">}</span>)()<span class="op">;</span>
+    <span class="cf">return</span> count<span class="op">;</span>
+  <span class="op">}</span>)<span class="op">;</span>
+<span class="op">};</span></code></pre></div>
+<h4 id="conclusion">Conclusion</h4>
+<p>The <code>Eff</code> monad provides a way to use native effects in PureScript, in such a way that different types of effects can be interleaved, and such that the generated Javascript is relatively simple.</p>
+</section>
+]]></summary>
+</entry>
+<entry>
+    <title>The Foreign Function Interface</title>
+    <link href="http://purescript.org/learn/ffi/index.html" />
+    <id>http://purescript.org/learn/ffi/index.html</id>
+    <published>2015-07-15T00:00:00Z</published>
+    <updated>2015-07-15T00:00:00Z</updated>
+    <summary type="html"><![CDATA[<section class="article">
+  <h2>The Foreign Function Interface</h2>
+  <div class="meta">By Phil Freeman, published on July 15, 2015</div>
+
+  <p>In this short post, I’ll show how to interoperate with Javascript code using PureScript’s Foreign Function Interface (or <em>FFI</em>). We’ll see how to call Javascript code from PureScript code and vice versa.</p>
+<h4 id="disclaimer">Disclaimer</h4>
+<p>It should be said that choosing to work with Javascript via the FFI will “void the warranty” of the typechecker to a certain extent. Once you step outside the safe confines of the PureScript type system, nothing is guaranteed, so it is recommended that you know a few basics of the language implementation before writing your own FFI bindings. That said, the correspondence between PureScript types and their Javascript representations is fairly simple, so it should not be too difficult to understand.</p>
+<h4 id="calling-purescript-from-javascript">Calling PureScript from Javascript</h4>
+<p>Calling a PureScript function from Javascript is very simple, at least for functions with simple types.</p>
+<p>Let’s take the following simple module as an example:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Test</span> <span class="kw">where</span>
+
+gcd<span class="ot"> ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
+gcd n m <span class="fu">|</span> n <span class="fu">==</span> <span class="dv">0</span> <span class="fu">=</span> m
+gcd n m <span class="fu">|</span> m <span class="fu">==</span> <span class="dv">0</span> <span class="fu">=</span> n
+gcd n m <span class="fu">|</span> n <span class="fu">&gt;</span> m <span class="fu">=</span> gcd (n <span class="fu">-</span> m) m
+gcd n m <span class="fu">=</span> gcd (m <span class="fu">-</span> n) n</code></pre></div>
+<p>This function finds the greatest common divisor of two numbers by repeated subtraction. It is a nice example of a case where you might like to use PureScript to define the function, but have a requirement to call it from Javascript: it is simple to define this function in PureScript since it is made up of pattern matches and recursion, and the implementor can benefit from the use of the type checker.</p>
+<p>To understand how this function can be called from Javascript, it is important to realize that PureScript functions always get turned into Javascript functions <em>of a single argument</em>, so we need to apply its arguments one-by-one:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> Test <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;Test&#39;</span>)<span class="op">;</span>
+<span class="va">Test</span>.<span class="at">gcd</span>(<span class="dv">15</span>)(<span class="dv">20</span>)<span class="op">;</span></code></pre></div>
+<p>Here, I am assuming that the code was compiled with <code>psc</code>, which compiles PureScript modules to CommonJS modules. For that reason, I was able to reference the <code>gcd</code> function on the <code>Test</code> object, after importing the <code>Test</code> module using <code>require</code>.</p>
+<p>You might also like to bundle JavaScript code for the browser, using <code>psc-bundle</code>. In that case, you would access the <code>Test</code> module on the global namespace, which defaults to <code>PS</code>:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> Test <span class="op">=</span> <span class="va">PS</span>.<span class="at">Test</span><span class="op">;</span>
+<span class="va">Test</span>.<span class="at">gcd</span>(<span class="dv">15</span>)(<span class="dv">20</span>)<span class="op">;</span></code></pre></div>
+<h4 id="understanding-name-generation">Understanding Name Generation</h4>
+<p>PureScript aims to preserve names during code generation as much as possible. In particular, most identifiers which are neither PureScript nor Javascript keywords can be expected to be preserved, at least for names of top-level declarations.</p>
+<p>If you decide to use a Javascript keyword as an identifier, the name will be escaped with a double dollar symbol. For example,</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">null <span class="fu">=</span> []</code></pre></div>
+<p>generates the following Javascript:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> $$null <span class="op">=</span> []<span class="op">;</span></code></pre></div>
+<p>In addition, if you would like to use special characters in your identifier names, they will be escaped using a single dollar symbol. For example,</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">example&#39; <span class="fu">=</span> <span class="dv">100</span></code></pre></div>
+<p>generates the following Javascript:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> example$prime <span class="op">=</span> <span class="dv">100</span><span class="op">;</span></code></pre></div>
+<p>This scheme also applies to names of infix operators:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">(<span class="fu">%</span>) a b <span class="fu">=</span> <span class="fu">...</span></code></pre></div>
+<p>generates</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> $percent <span class="op">=</span> <span class="kw">function</span>(a) <span class="op">{</span> ... <span class="op">}</span></code></pre></div>
+<h4 id="calling-javascript-from-purescript">Calling Javascript from PureScript</h4>
+<p>Javascript values and functions can be used from PureScript by using the FFI. The problem becomes how to choose suitable types for values originating in Javascript.</p>
+<p>The general rule regarding types is that you can enforce as little or as much type safety as you like when using the FFI, but you should be careful to avoid common pitfalls when dealing with Javascript values, like the possibility of null or undefined values being returned from a Javascript function. Functions defined in the Prelude and core libraries tend to err on the side of type safety where possible.</p>
+<h4 id="foreign-modules">Foreign Modules</h4>
+<p>In PureScript, JavaScript code is wrapped using a <em>foreign module</em>. A foreign module is just a CommonJS module which is associated with a PureScript module. Foreign modules are required to adhere to certain conventions:</p>
+<ul>
+<li>The module must contain a comment of the form <code>// module ModuleName</code>, which associates the foreign module with its companion PureScript module.</li>
+<li>All exports must be of the form <code>exports.name = value;</code>, specified at the top level.</li>
+</ul>
+<p>Here is an example, where we export a function which computes interest amounts from a foreign module:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="st">&quot;use strict&quot;</span><span class="op">;</span>
+
+<span class="co">// module Interest</span>
+
+<span class="va">exports</span>.<span class="at">calculateInterest</span> <span class="op">=</span> <span class="kw">function</span>(amount) <span class="op">{</span>
+  <span class="cf">return</span> amount <span class="op">*</span> <span class="fl">0.1</span><span class="op">;</span>
+<span class="op">};</span></code></pre></div>
+<p>This file should be saved as <code>src/Interest.js</code>. The corresponding PureScript module <code>Interest</code> will be saved in <code>src/Interest.purs</code> (these filenames are merely conventions, but are used by certain tools, such as the Pulp build tool), and will look like this:</p>
+<pre class="purescript"><code>module Interest where
+
+foreign import calculateInterest :: Number -&gt; Number</code></pre>
+<p>In the companion PureScript module, we simply assign a type to the exports of the foreign module by using a <code>foreign import</code> declaration. These values are then available to modules which <code>import</code> our PureScript module.</p>
+<h4 id="functions-of-multiple-arguments">Functions of Multiple Arguments</h4>
+<p>PureScript functions are curried by default, so Javascript functions of multiple arguments require special treatment.</p>
+<p>Suppose we wanted to modify our <code>calculateInterest</code> function to take a second argument:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="st">&quot;use strict&quot;</span><span class="op">;</span>
+
+<span class="co">// module Interest</span>
+
+<span class="va">exports</span>.<span class="at">calculateInterest</span> <span class="op">=</span> <span class="kw">function</span>(amount<span class="op">,</span> months) <span class="op">{</span>
+  <span class="cf">return</span> amount <span class="op">*</span> <span class="va">Math</span>.<span class="at">exp</span>(<span class="fl">0.1</span><span class="op">,</span> months)<span class="op">;</span>
+<span class="op">};</span></code></pre></div>
+<p>A correct <code>foreign import</code> declaration now should use a foreign type whose runtime representation correctly handles functions of multiple arguments. The <code>purescript-functions</code> package provides a collection of such types for function arities from 0 to 10:</p>
+<pre class="purescript"><code>module Interest where
+
+foreign import calculateInterest :: Fn2 Number Number Number</code></pre>
+<p>Here, the <code>Fn2</code> type constructor is used to wrap Javascript functions of two arguments. We can write a curried wrapper function in PureScript which will allow partial application:</p>
+<pre class="purescript"><code>calculateInterestCurried :: Number -&gt; Number -&gt; Number
+calculateInterestCurried = runFn2 calculateInterest</code></pre>
+<p>An alternative is to use curried functions in the native module, using multiple nested functions, each with a single argument, as the runtime representation of the function type constructor <code>(-&gt;)</code> dictates:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="st">&quot;use strict&quot;</span><span class="op">;</span>
+
+<span class="co">// module Interest</span>
+
+<span class="va">exports</span>.<span class="at">calculateInterest</span> <span class="op">=</span> <span class="kw">function</span>(amount) <span class="op">{</span>
+  <span class="cf">return</span> <span class="kw">function</span>(months) <span class="op">{</span>
+    <span class="cf">return</span> amount <span class="op">*</span> <span class="va">Math</span>.<span class="at">exp</span>(<span class="fl">0.1</span><span class="op">,</span> months)<span class="op">;</span>
+  <span class="op">};</span>
+<span class="op">};</span></code></pre></div>
+<p>This time, we can assign the curried function type directly:</p>
+<pre class="purescript"><code>foreign import calculateInterest :: Number -&gt; Number -&gt; Number</code></pre>
+<h4 id="handling-constrained-types">Handling Constrained Types</h4>
+<p>Another special case that you should be aware of when calling PureScript functions from Javascript is that values with constrained types (i.e. types which contain type class constraints) contain extra parameters which are used to pass type class dictionaries to the function.</p>
+<p>For example, let’s write a simple PureScript function with a constrained type, and look at the generated Javascript.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Test</span> <span class="kw">where</span>
+
+<span class="kw">import </span><span class="dt">Data.Tuple</span>
+
+<span class="ot">inOrder ::</span> forall a<span class="fu">.</span> (<span class="dt">Ord</span> a) <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Tuple</span> a a
+inOrder a1 a2 <span class="fu">|</span> a1 <span class="fu">&lt;</span> a2 <span class="fu">=</span> <span class="dt">Tuple</span> a1 a2
+inOrder a1 a2 <span class="fu">=</span> <span class="dt">Tuple</span> a2 a1</code></pre></div>
+<p>The generated Javascript looks like this:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> inOrder <span class="op">=</span> <span class="kw">function</span> (__dict_Ord_32) <span class="op">{</span>
+  <span class="cf">return</span> <span class="kw">function</span> (_1) <span class="op">{</span>
+    <span class="cf">return</span> <span class="kw">function</span> (_2) <span class="op">{</span>
+      <span class="cf">if</span> (Prelude[<span class="st">&quot;&lt;&quot;</span>](__dict_Ord_32)(_1)(_2)) <span class="op">{</span>
+        <span class="cf">return</span> <span class="va">Data_Tuple</span>.<span class="at">Tuple</span>(_1)(_2)<span class="op">;</span>
+      <span class="op">};</span>
+      <span class="cf">return</span> <span class="va">Data_Tuple</span>.<span class="at">Tuple</span>(_2)(_1)<span class="op">;</span>
+    <span class="op">};</span>
+  <span class="op">};</span>
+<span class="op">};</span></code></pre></div>
+<p>Notice that <code>inOrder</code> is a (curried) function of three arguments, not two. The first argument is the type class dictionary for the <code>Ord</code> constraint.</p>
+<p>We can call this function from Javascript by passing an explicit type class dictionary from the Prelude as the first parameter:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> test <span class="op">=</span> <span class="va">Test</span>.<span class="at">inOrder</span>(<span class="va">Prelude</span>.<span class="at">ordNumber</span>())(<span class="dv">20</span>)(<span class="dv">10</span>)<span class="op">;</span></code></pre></div>
+<h4 id="handling-side-effects">Handling Side Effects</h4>
+<p>Notice that the <code>calculateInterest</code> functions defined above were <em>pure</em>: they had no side-effects and produced the same result for the same input on every invocation.</p>
+<p>The PureScript function type <code>a -&gt; b</code> does not allow for side-effects, so it would be incorrect to assign a function type to a Javascript computation with side-effects. The correct approach in this case is to use the <code>Eff</code> type constructor, defined in the <code>purescript-eff</code> package, to assign a type to the computation.</p>
+<p>The <code>Eff</code> type constructor and its usage is documented <a href="https://github.com/purescript/purescript/wiki/Handling-Native-Effects-with-the-Eff-Monad">on the wiki</a>.</p>
+<h4 id="santizing-foreign-data-with-data.foreign">Santizing Foreign Data With Data.Foreign</h4>
+<p>Data returned from Javascript functions cannot generally be trusted to be defined and non-null. PureScript functions in the Prelude and common libraries generally assume that values will be neither <code>undefined</code> nor <code>null</code>, so it is important to sanitize data when working with values returned from Javascript functions using the FFI.</p>
+<p>The <code>Data.Foreign</code> module (available in the <code>purescript-foreign</code> package) defines a <code>Foreign</code> data type, and several helper functions for turning <code>Foreign</code> values into regular PureScript values, as well as support for handling <code>null</code> and <code>undefined</code> using the <code>Maybe</code> type constructor.</p>
+<h4 id="defining-foreign-data-types">Defining Foreign Data Types</h4>
+<p>It is often useful when wrapping Javascript APIs to create new types at a specific kind for use with the FFI.</p>
+<p>For example, suppose we have a Javascript library <code>frob</code> which defines the <code>Frob</code> data structure and associated functions. To give meaningful types to those functions, it might be useful to define a type <code>Frob</code> at kind <code>*</code>. We can do this as follows:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">foreign <span class="kw">import </span>data <span class="dt">Frob</span> :: *</code></pre></div>
+<p>The type <code>Frob</code> can now be used in other types, or in foreign import declarations:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">foreign <span class="kw">import </span>makeFrob :: <span class="dt">String</span> -&gt; <span class="dt">Frob</span></code></pre></div>
+<p>Developers who define their own foreign data types should take care to document their expected runtime representations.</p>
+<h4 id="conclusion">Conclusion</h4>
+<p>I have hopefully shown that interoperating with Javascript is simple in both directions, once a few small implementation details are understood. You should now be able to wrap your Javascript libraries for use in PureScript, and vice versa.</p>
+<p>The <a href="https://leanpub.com/purescript/read#leanpub-auto-the-foreign-function-interface">PureScript book</a> contains more information on the FFI, and plenty of examples and exercises for any interested readers.</p>
+</section>
+]]></summary>
+</entry>
+
+</feed>
