@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <title>PureScript.org</title>
-    <link href="http://purescript.org/rss.xml" rel="self" />
-    <link href="http://purescript.org" />
-    <id>http://purescript.org/rss.xml</id>
-    <author>
-        <name>PureScript Community</name>
-        <email></email>
-    </author>
-    <updated>2015-12-13T00:00:00Z</updated>
-    <entry>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>PureScript.org</title>
+        <link>http://purescript.org</link>
+        <description><![CDATA[Blog posts from the PureScript compiler developers]]></description>
+        <atom:link href="http://purescript.org/rss.xml" rel="self"
+                   type="application/rss+xml" />
+        <lastBuildDate>Sun, 13 Dec 2015 00:00:00 UT</lastBuildDate>
+        <item>
     <title>Getting Started with PureScript</title>
-    <link href="http://purescript.org/learn/getting-started/index.html" />
-    <id>http://purescript.org/learn/getting-started/index.html</id>
-    <published>2015-12-13T00:00:00Z</published>
-    <updated>2015-12-13T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<section class="article">
+    <link>http://purescript.org/learn/getting-started/index.html</link>
+    <description><![CDATA[<section class="article">
   <h2>Getting Started with PureScript</h2>
   <div class="meta">By Phil Freeman, published on December 13, 2015</div>
 
@@ -173,15 +169,15 @@ The answer is 233168</code></pre>
 <p>That’s all for this post. We’ve seen how to use enough of the basics of <code>psc</code> and PSCi to compile, execute and test simple PureScript programs. If you would like more information, the <a href="http://docs.purescript.org">PureScript documentation</a> lists all of the options for both <code>psc</code> and <code>psci</code>.</p>
 <p>Until next time…</p>
 </section>
-]]></summary>
-</entry>
-<entry>
+]]></description>
+    <pubDate>Sun, 13 Dec 2015 00:00:00 UT</pubDate>
+    <guid>http://purescript.org/learn/getting-started/index.html</guid>
+    <dc:creator>PureScript Community</dc:creator>
+</item>
+<item>
     <title>Generic Programming</title>
-    <link href="http://purescript.org/learn/generic/index.html" />
-    <id>http://purescript.org/learn/generic/index.html</id>
-    <published>2015-10-20T00:00:00Z</published>
-    <updated>2015-10-20T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<section class="article">
+    <link>http://purescript.org/learn/generic/index.html</link>
+    <description><![CDATA[<section class="article">
   <h2>Generic Programming</h2>
   <div class="meta">By Phil Freeman, published on October 20, 2015</div>
 
@@ -263,15 +259,15 @@ Right (Person { name: &quot;John Smith&quot;, location: Nothing })</code></pre>
 <p>Now consider the <code>gEq</code> function, used to define <code>Eq</code> instances. We might be able to determine that two records are <em>not</em> equal by comparing their first properties, for example. In this case, we only need to evaluate a small amount of the spine of each value, so the representation of <code>GenericSpine</code> uses laziness to avoid evaluating more of the spine than is necessary.</p>
 <p>In the case of <code>foreign-generic</code>, the performance cost is often an acceptable trade-off for our increase in productivity, since we rarely need to parse or generate JSON in performance-critical sections of code in many applications.</p>
 </section>
-]]></summary>
-</entry>
-<entry>
+]]></description>
+    <pubDate>Tue, 20 Oct 2015 00:00:00 UT</pubDate>
+    <guid>http://purescript.org/learn/generic/index.html</guid>
+    <dc:creator>PureScript Community</dc:creator>
+</item>
+<item>
     <title>Test your JavaScript with QuickCheck</title>
-    <link href="http://purescript.org/learn/quickcheck/index.html" />
-    <id>http://purescript.org/learn/quickcheck/index.html</id>
-    <published>2015-07-16T00:00:00Z</published>
-    <updated>2015-07-16T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<section class="article">
+    <link>http://purescript.org/learn/quickcheck/index.html</link>
+    <description><![CDATA[<section class="article">
   <h2>Test your JavaScript with QuickCheck</h2>
   <div class="meta">By Phil Freeman, published on July 16, 2015</div>
 
@@ -392,15 +388,15 @@ unit</code></pre>
 <h4 id="conclusion">Conclusion</h4>
 <p>Hopefully I’ve shown that QuickCheck can be a useful tool, whether you write your code in PureScript or not. Its strength is in its <em>type-directed</em> approach to data generation, which allows you to say <em>what</em> you want to test directly, rather than <em>how</em> to generate test data.</p>
 </section>
-]]></summary>
-</entry>
-<entry>
+]]></description>
+    <pubDate>Thu, 16 Jul 2015 00:00:00 UT</pubDate>
+    <guid>http://purescript.org/learn/quickcheck/index.html</guid>
+    <dc:creator>PureScript Community</dc:creator>
+</item>
+<item>
     <title>Handling Native Effects with the Eff Monad</title>
-    <link href="http://purescript.org/learn/eff/index.html" />
-    <id>http://purescript.org/learn/eff/index.html</id>
-    <published>2015-07-16T00:00:00Z</published>
-    <updated>2015-07-16T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<section class="article">
+    <link>http://purescript.org/learn/eff/index.html</link>
+    <description><![CDATA[<section class="article">
   <h2>Handling Native Effects with the Eff Monad</h2>
   <div class="meta">By Phil Freeman, published on July 16, 2015</div>
 
@@ -611,15 +607,15 @@ collatz n <span class="fu">=</span> pureST <span class="kw">do</span>
 <h4 id="conclusion">Conclusion</h4>
 <p>The <code>Eff</code> monad provides a way to use native effects in PureScript, in such a way that different types of effects can be interleaved, and such that the generated Javascript is relatively simple.</p>
 </section>
-]]></summary>
-</entry>
-<entry>
+]]></description>
+    <pubDate>Thu, 16 Jul 2015 00:00:00 UT</pubDate>
+    <guid>http://purescript.org/learn/eff/index.html</guid>
+    <dc:creator>PureScript Community</dc:creator>
+</item>
+<item>
     <title>The Foreign Function Interface</title>
-    <link href="http://purescript.org/learn/ffi/index.html" />
-    <id>http://purescript.org/learn/ffi/index.html</id>
-    <published>2015-07-15T00:00:00Z</published>
-    <updated>2015-07-15T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<section class="article">
+    <link>http://purescript.org/learn/ffi/index.html</link>
+    <description><![CDATA[<section class="article">
   <h2>The Foreign Function Interface</h2>
   <div class="meta">By Phil Freeman, published on July 15, 2015</div>
 
@@ -751,7 +747,11 @@ inOrder a1 a2 <span class="fu">=</span> <span class="dt">Tuple</span> a2 a1</cod
 <p>I have hopefully shown that interoperating with Javascript is simple in both directions, once a few small implementation details are understood. You should now be able to wrap your Javascript libraries for use in PureScript, and vice versa.</p>
 <p>The <a href="https://leanpub.com/purescript/read#leanpub-auto-the-foreign-function-interface">PureScript book</a> contains more information on the FFI, and plenty of examples and exercises for any interested readers.</p>
 </section>
-]]></summary>
-</entry>
+]]></description>
+    <pubDate>Wed, 15 Jul 2015 00:00:00 UT</pubDate>
+    <guid>http://purescript.org/learn/ffi/index.html</guid>
+    <dc:creator>PureScript Community</dc:creator>
+</item>
 
-</feed>
+    </channel>
+</rss>
