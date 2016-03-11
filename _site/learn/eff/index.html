@@ -90,7 +90,7 @@ bower install --save purescript-console purescript-random</code></pre>
 <pre><code>forall t. { firstName :: String, lastName :: String | t } -&gt; String </code></pre>
 <p>The readable version of this type is “<code>fullName</code> takes an object with <code>firstName</code> and <code>lastName</code> properties <em>and any other properties</em> and returns a <code>String</code>”.</p>
 <p>That is, <code>fullName</code> does not care if you pass an object with <em>more</em> properties, as long as the <code>firstName</code> and <code>lastName</code> properties are present:</p>
-<pre><code>&gt; firstName { firstName: &quot;Phil&quot;, lastName: &quot;Freeman&quot;, location: &quot;Los Angeles&quot; }
+<pre><code>&gt; fullName { firstName: &quot;Phil&quot;, lastName: &quot;Freeman&quot;, location: &quot;Los Angeles&quot; }
 Phil Freeman</code></pre>
 <p>Similarly, the type of <code>printRandom</code> above can be interpreted as follows: “<code>printRandom</code> is a side-effecting computation, which can be run in any environment which supports random number generation and console IO, <em>and any other types of side effect</em>, and which yields a value of type <code>Unit</code>”.</p>
 <p>This is the origin of the name “extensible effects”: we can always <em>extend</em> the set of side-effects, as long as we can support the set of effects that we need.</p>
