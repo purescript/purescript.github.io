@@ -22,6 +22,15 @@ main = hakyll $ do
     route idRoute
     compile (makeItem ("" :: String))
 
+  for_ [ ("atom.xml", renderAtom), ("rss.xml", renderRss) ] $ \(filename, render) ->
+    create [ filename ] $ do
+      route idRoute
+      compile $ do
+        let feedCtx = postCtx (Just "learn") <> bodyField "description"
+        posts <- fmap (take 10) . recentFirst =<<
+            loadAllSnapshots "learn/*/*.markdown" "content"
+        render myFeedConfiguration feedCtx posts
+
   match "index.html" $ do
     let ctx = field "body" (return . itemBody) <> baseCtx (Just "home")
     route idRoute
@@ -32,7 +41,7 @@ main = hakyll $ do
   for_ ["learn", "projects", "download"] $ \subsection -> do
     let ctx = baseCtx (Just subsection)
     match (fromGlob (subsection <> "/index.html")) $ do
-      route $ idRoute
+      route idRoute
       compile $ getResourceBody
         >>= loadAndApplyTemplate "templates/default.html" ctx
         >>= relativizeUrls
@@ -42,10 +51,21 @@ main = hakyll $ do
     route $ setExtension "html"
     compile $ pandocCompiler
       >>= loadAndApplyTemplate "templates/post.html"    ctx
+      >>= saveSnapshot "content"
       >>= loadAndApplyTemplate "templates/default.html" ctx
       >>= relativizeUrls
 
   match "templates/*" $ compile templateCompiler
+
+--------------------------------------------------------------------------------
+myFeedConfiguration :: FeedConfiguration
+myFeedConfiguration = FeedConfiguration
+    { feedTitle       = "PureScript.org"
+    , feedDescription = "Blog posts from the PureScript compiler developers"
+    , feedAuthorName  = "PureScript Community"
+    , feedAuthorEmail = ""
+    , feedRoot        = "http://purescript.org"
+    }
 
 --------------------------------------------------------------------------------
 navItems :: [ (String, String, String) ]
