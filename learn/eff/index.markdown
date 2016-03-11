@@ -86,7 +86,7 @@ The readable version of this type is "`fullName` takes an object with `firstName
 That is, `fullName` does not care if you pass an object with _more_ properties, as long as the `firstName` and `lastName` properties are present:
 
 ```
-> firstName { firstName: "Phil", lastName: "Freeman", location: "Los Angeles" }
+> fullName { firstName: "Phil", lastName: "Freeman", location: "Los Angeles" }
 Phil Freeman
 ```
 
