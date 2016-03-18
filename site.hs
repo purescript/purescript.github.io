@@ -29,7 +29,7 @@ main = hakyll $ do
       >>= loadAndApplyTemplate "templates/default.html" ctx
       >>= relativizeUrls
 
-  for_ ["learn", "projects", "download"] $ \subsection -> do
+  for_ ["community", "download", "learn", "projects"] $ \subsection -> do
     let ctx = baseCtx (Just subsection)
     match (fromGlob (subsection <> "/index.html")) $ do
       route $ idRoute
@@ -53,6 +53,7 @@ navItems =
   [ ("home", "Home", "/")
   , ("download", "Download", "/download/")
   , ("learn", "Learn", "/learn/")
+  , ("community", "Community", "/community/")
   , ("projects", "Projects", "/projects/")
   ]
 
