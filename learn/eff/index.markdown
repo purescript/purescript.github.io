@@ -24,7 +24,7 @@ And in the browser:
 
 #### The Eff Monad
 
-PureScript's `purescript-eff` package defines a monad called `Eff`, which is used to handle native effects. The goal of the `Eff` monad is to provide a typed API for effectful computations, while at the same time generating efficient Javascript.
+PureScript's [`purescript-eff`](https://pursuit.purescript.org/packages/purescript-eff/) package defines a monad called `Eff`, which is used to handle native effects. The goal of the `Eff` monad is to provide a typed API for effectful computations, while at the same time generating efficient Javascript.
 
 Let's start with an example:
 
@@ -42,7 +42,7 @@ printRandom = do
   print n
 ```
 
-This example requires the `purescript-console` and `purescript-random` dependencies to be installed:
+This example requires the [`purescript-console`](https://pursuit.purescript.org/packages/purescript-console/) and [`purescript-random`](https://pursuit.purescript.org/packages/purescript-random/) dependencies to be installed:
 
     pulp init
     bower install --save purescript-console purescript-random
@@ -149,7 +149,7 @@ Rows of effects can also appear on the left-hand side of a function arrow. This 
 
 While actions _add_ to the set of required effects, a handler `subtracts` effects from the set.
 
-Consider `catchException` from the `purescript-exceptions` package:
+Consider `catchException` from the [`purescript-exceptions`](https://pursuit.purescript.org/packages/purescript-exceptions/) package:
 
 ``` haskell
 catchException :: forall a e. (Error -> Eff e a) -> 
@@ -176,10 +176,10 @@ module ErrorsExample where
 
 import Prelude
 import Control.Monad.Eff
-import Control.Monad.Eff.Error
+import Control.Monad.Eff.Exception
 
 divide :: forall e. Int -> Int -> Eff (err :: EXCEPTION | e) Int
-divide _ 0 = throwError "Division by zero"
+divide _ 0 = throw "Division by zero"
 divide n m = return (n / m)
 ```
 
