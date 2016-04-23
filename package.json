@@ -1,12 +1,10 @@
 {
   "name": "purescript-site",
   "private": true,
-  "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-cli": "^0.1.13",
-    "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-compass": "^1.0.1",
-    "grunt-contrib-connect": "^0.8.0",
-    "grunt-contrib-watch": "^0.6.1"
+  "scripts": {
+    "sass": "echo require('fs').writeFileSync('_site/css/style.css', require('node-sass').renderSync({ file: 'sass/style.scss', outputStyle: 'compressed' }).css); | node"
+  },
+  "dependencies": {
+    "node-sass": "^3.5.3"
   }
 }
