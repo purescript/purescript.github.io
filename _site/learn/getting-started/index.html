@@ -39,10 +39,10 @@
   <div class="meta">By Phil Freeman, published on December 13, 2015</div>
 
   <p>Welcome to the PureScript community blog! In this first post, I’m going to walk through the basics of getting set up to use the PureScript compiler <code>psc</code>, and its interactive mode <code>psci</code>.</p>
-<p>I’ll start with the installation of the compiler, go through the basic commands of <code>psc</code> and <code>psci</code>, working towards a solution of problem 1 from <a href="http://projecteuler.net/problem=1">Project Euler</a>.</p>
+<p>I’ll start with the installation of the compiler and Pulp build tool, and then go through the basic usage of <code>psci</code>, working towards a solution of problem 1 from <a href="http://projecteuler.net/problem=1">Project Euler</a>.</p>
 <h4 id="installing-the-compiler">Installing the Compiler</h4>
 <p>You’ll need <a href="https://docs.npmjs.com/getting-started/installing-node">Node.js and npm</a> and to be <a href="https://docs.npmjs.com/getting-started/fixing-npm-permissions#option-1-change-the-permission-to-npm-s-default-directory">able to install global packages</a> to proceed.</p>
-<p>The Purescript compiler (psc) can be installed with npm:</p>
+<p>The Purescript compiler (<code>psc</code>) can be installed with npm:</p>
 <pre><code>npm install -g purescript</code></pre>
 <p>(It can also be installed from <a href="http://hackage.haskell.org/package/purescript">Hackage</a>, or by downloading the latest <a href="https://github.com/purescript/purescript/releases">binary bundle</a> for your OS. If you do so, make sure the <code>psc</code> executable is on your <code>$PATH</code>.)</p>
 <h4 id="setting-up-the-development-environment">Setting up the Development Environment</h4>
@@ -136,7 +136,7 @@ List Int</code></pre>
 <pre><code>&gt; :quit
 See ya!</code></pre>
 <h4 id="compiling-a-solution">Compiling a Solution</h4>
-<p>Now that we’ve seen how to use <code>psci</code> to reach the answer, let’s move our solution into a source file, and compile it using <code>psc</code>.</p>
+<p>Now that we’ve seen how to use <code>psci</code> to reach the answer, let’s move our solution into a source file and compile it.</p>
 <p>Create a new text file <code>src/Euler.purs</code> and copy the following code:</p>
 <pre class="purescript"><code>module Euler1 where
 
@@ -189,7 +189,7 @@ main = do
 * Build successful.
 The answer is 233168</code></pre>
 <h4 id="conclusion">Conclusion</h4>
-<p>That’s all for this post. We’ve seen how to use enough of the basics of <code>psc</code> and PSCi to compile, execute and test simple PureScript programs. If you would like more information, the <a href="http://docs.purescript.org">PureScript documentation</a> lists all of the options for both <code>psc</code> and <code>psci</code>.</p>
+<p>That’s all for this post. We’ve seen how to use enough of the basics of Pulp and <code>psci</code> to compile, execute and test simple PureScript programs.</p>
 <p>Until next time…</p>
 </section>
 

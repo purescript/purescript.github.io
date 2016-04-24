@@ -2,7 +2,7 @@
   "name": "purescript-site",
   "private": true,
   "scripts": {
-    "sass": "echo require('fs').writeFileSync('_site/css/style.css', require('node-sass').renderSync({ file: 'sass/style.scss', outputStyle: 'compressed' }).css); | node"
+    "sass": "echo require('fs').writeFileSync('css/style.css', require('node-sass').renderSync({ file: 'sass/style.scss', outputStyle: 'compressed' }).css); | node"
   },
   "dependencies": {
     "node-sass": "^3.5.3"
