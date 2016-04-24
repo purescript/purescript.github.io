@@ -15,7 +15,8 @@ The site is generated using [Hakyll](https://jaspervdj.be/hakyll/). To
 regenerate it, run the following:
 
 ```
-$ grunt
+$ npm install
+$ npm run sass
 $ stack build
 $ stack exec site rebuild
 ```

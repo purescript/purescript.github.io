@@ -1,6 +1,4 @@
 @import "normalize-3.0.1";
-@import "compass/css3/columns";
-@import "compass/typography/lists/inline-list";
 
 $link-colour: #c4953a;
 
@@ -213,7 +211,9 @@ main section {
     }
   }
 
-  > pre, > blockquote {
+  > pre,
+  > blockquote,
+  > div.sourceCode > pre {
     background: #fff;
     padding: 20px;
   }
@@ -556,7 +556,9 @@ footer {
   }
 
   main section.features ul {
-    @include column-count(2);
+    -moz-column-count: 2;
+    -webkit-column-count: 2;
+    column-count: 2;
   }
 
   .hasJS main section.example {
@@ -619,7 +621,8 @@ footer {
     }
 
     > pre,
-    > blockquote {
+    > blockquote,
+    > div.sourceCode > pre {
       padding: 20px calc((100% - 600px) / 2);
     }
   }
@@ -628,7 +631,9 @@ footer {
 @media (min-width: 700px) {
 
   main section.features ul {
-    @include column-count(3);
+    -moz-column-count: 3;
+    -webkit-column-count: 3;
+    column-count: 3;
   }
 
   ul.cards li {
