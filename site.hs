@@ -8,12 +8,18 @@ import Data.String (fromString)
 import Data.List (intersperse)
 import Data.Maybe (maybeToList)
 import qualified Data.Map as Map
+import qualified GHC.IO.Encoding as E
 import Hakyll
 
 
   --------------------------------------------------------------------------------
 main :: IO ()
-main = hakyll $ do
+main = do
+  E.setLocaleEncoding E.utf8
+  site
+
+site :: IO ()
+site = hakyll $ do
   match ("img/**" .||. "js/**" .||. "css/**" .||. "CNAME") $ do
     route idRoute
     compile copyFileCompiler
