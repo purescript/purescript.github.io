@@ -6,14 +6,14 @@ published: 2015-12-13
 
 Welcome to the PureScript community blog! In this first post, I'm going to walk through the basics of getting set up to use the PureScript compiler `psc`, and its interactive mode `psci`.
 
-I'll start with the installation of the compiler, go through the basic commands of `psc` and `psci`, working towards a solution of problem 1 from [Project Euler](http://projecteuler.net/problem=1).
+I'll start with the installation of the compiler and Pulp build tool, and then go through the basic usage of `psci`, working towards a solution of problem 1 from [Project Euler](http://projecteuler.net/problem=1).
 
 
 #### Installing the Compiler
 
 You'll need [Node.js and npm](https://docs.npmjs.com/getting-started/installing-node) and to be [able to install global packages](https://docs.npmjs.com/getting-started/fixing-npm-permissions#option-1-change-the-permission-to-npm-s-default-directory) to proceed.
 
-The Purescript compiler (psc) can be installed with npm:
+The Purescript compiler (`psc`) can be installed with npm:
 
     npm install -g purescript
 
@@ -155,7 +155,7 @@ When you have finished using PSCi, type `:quit` to quit:
 
 #### Compiling a Solution
 
-Now that we've seen how to use `psci` to reach the answer, let's move our solution into a source file, and compile it using `psc`.
+Now that we've seen how to use `psci` to reach the answer, let's move our solution into a source file and compile it.
 
 Create a new text file `src/Euler.purs` and copy the following code:
 
@@ -235,6 +235,6 @@ The `pulp run` command can be used to compile and run the `Main` module:
 
 #### Conclusion
 
-That's all for this post. We've seen how to use enough of the basics of `psc` and PSCi to compile, execute and test simple PureScript programs. If you would like more information, the [PureScript documentation](http://docs.purescript.org) lists all of the options for both `psc` and `psci`.
+That's all for this post. We've seen how to use enough of the basics of Pulp and `psci` to compile, execute and test simple PureScript programs.
 
 Until next time...
