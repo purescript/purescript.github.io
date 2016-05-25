@@ -1,13 +1,12 @@
 ---
 title: Getting Started with PureScript
 author: Phil Freeman
-published: 2015-12-13
+published: 2016-05-24
 ---
 
 Welcome to the PureScript community blog! In this first post, I'm going to walk through the basics of getting set up to use the PureScript compiler `psc`, and its interactive mode `psci`.
 
 I'll start with the installation of the compiler and Pulp build tool, and then go through the basic usage of `psci`, working towards a solution of problem 1 from [Project Euler](http://projecteuler.net/problem=1).
-
 
 #### Installing the Compiler
 
@@ -18,7 +17,6 @@ The Purescript compiler (`psc`) can be installed with npm:
     npm install -g purescript
 
 (It can also be installed from [Hackage](http://hackage.haskell.org/package/purescript), or by downloading the latest [binary bundle](https://github.com/purescript/purescript/releases) for your OS. If you do so, make sure the `psc` executable is on your `$PATH`.)
-
 
 #### Setting up the Development Environment
 
@@ -65,14 +63,8 @@ PSCi is the interactive mode of PureScript. It is useful for working with pure c
 
 Open PSCi by typing `pulp psci` at the command line. Pulp will create a file in your directory called `.psci`, which contains instructions to PSCi to load your modules and dependencies. If you invoke the PSCi executable directly, you would need to load these files by hand.
 
-     ____                 ____            _       _   
-    |  _ \ _   _ _ __ ___/ ___|  ___ _ __(_)_ __ | |_ 
-    | |_) | | | | '__/ _ \___ \ / __| '__| | '_ \| __|
-    |  __/| |_| | | |  __/___) | (__| |  | | |_) | |_ 
-    |_|    \__,_|_|  \___|____/ \___|_|  |_| .__/ \__|
-                                           |_|        
-    
-    :? shows help
+    PSCi, version 0.9.0
+    Type :? for help
     >
 
 As the introduction indicates, you can type `:?` to see a list of commands:
@@ -83,8 +75,6 @@ As the introduction indicates, you can type `:?` to see a list of commands:
     :quit                     Quit PSCi
     :reset                    Discard all imported modules and declared bindings
     :browse      <module>     See all functions in <module>
-    :load        <file>       Load <file> for importing
-    :foreign     <file>       Load foreign module <file>
     :type        <expr>       Show the type of <expr>
     :kind        <type>       Show the kind of <type>
     :show        import       Show all imported modules
@@ -97,14 +87,17 @@ We will use a selection of these commands during this tutorial.
 
 Start by pressing the Tab key to use the autocompletion feature. You will see a collection of names of functions from the Prelude which are available to use.
 
-To see the type of one of these values, use the `:type` command, followed by a space, followed by the name of the value:
+To see the type of one of these values, first import the appropriate module using the `import` command. Then, use the `:type` command, followed by a space, followed by the name of the value:
 
-    > :type Prelude.map
+    > import Prelude
+    > :type map
     forall a b f. (Prelude.Functor f) => (a -> b) -> f a -> f b
-    > :type Data.List.zip
+
+    > import Data.List
+    > :type zip
     forall a b. Data.List.List a -> Data.List.List b -> Data.List.List (Data.Tuple.Tuple a b)
 
-We will be using some of the functions from the `Prelude` and `Data.List` modules, so import those by using the `import` keyword:
+We will be using some of the functions from the `Prelude` and `Data.List` modules, so make sure you have imported those by using the `import` keyword:
 
     import Prelude
     import Data.List
@@ -114,7 +107,7 @@ Note that using `Tab` to autocomplete names can be a useful time-saving device i
 #### Solving Project Euler #1
 
 The following problem is taken from [Project Euler](http://projecteuler.net/problem=1):
- 
+
 > If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.
 >
 > Find the sum of all the multiples of 3 or 5 below 1000.
@@ -160,7 +153,7 @@ Now that we've seen how to use `psci` to reach the answer, let's move our soluti
 Create a new text file `src/Euler.purs` and copy the following code:
 
 ```purescript
-module Euler1 where
+module Euler where
 
 import Prelude
 
@@ -177,7 +170,8 @@ answer = sum multiples
 It is possible to load this file directly into PSCi and to continue working:
 
     pulp psci
-    > Euler1.answer
+    > import Euler
+    > answer
     233168
     > :quit
     See ya!
@@ -200,7 +194,8 @@ Modify the `test/Main.purs` file, and add the following code:
 module Test.Main where
 
 import Prelude
-import Euler1 (answer)
+
+import Euler (answer)
 import Test.Assert (assert)
 
 main = do
@@ -219,17 +214,18 @@ We can modify the `main` function in the `src/Main.purs` module to print our res
 module Main where
 
 import Prelude
-import Euler1
-import Control.Monad.Eff.Console
+
+import Euler (answer)
+import Control.Monad.Eff.Console (log)
 
 main = do
-  log ("The answer is " ++ show answer)
+  log ("The answer is " <> show answer)
 ```
 
 The `pulp run` command can be used to compile and run the `Main` module:
 
     > pulp run
-    * Building project in /Users/paf31/Documents/Code/purescript/pulp-test
+    * Building project in pulp-test
     * Build successful.
     The answer is 233168
 

@@ -13,8 +13,8 @@ PureScript's generics are supported by the `purescript-generics` library, and in
 ``` haskell
 class Generic a where
   toSignature :: Proxy a -> GenericSignature
-  toSpine :: a -> GenericSpine
-  fromSpine :: GenericSpine -> Maybe a
+  toSpine     :: a -> GenericSpine
+  fromSpine   :: GenericSpine -> Maybe a
 ```
 
 `Generic` defines three functions:
@@ -80,7 +80,7 @@ This is not too bad, but real-world records often contain many more fields. Let'
 The `purescript-foreign-generic` library defines a function `readGeneric`, with the following type:
 
 ``` haskell
-readGeneric :: forall a. (Generic a) => Options -> Foreign -> F a
+readGeneric :: forall a. Generic a => Options -> Foreign -> F a
 ```
 
 The `Options` type here is based on the options record from Haskell's `aeson` library. For our purposes, the default options will work, but we need to turn on the `unwrapNewtypes` option, so that our `newtype` constructor gets ignored during serialization:
