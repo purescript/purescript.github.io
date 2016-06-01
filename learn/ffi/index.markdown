@@ -19,6 +19,8 @@ Let's take the following simple module as an example:
 ``` haskell
 module Test where
 
+import Prelude
+
 gcd :: Int -> Int -> Int
 gcd n m | n == 0 = m
 gcd n m | m == 0 = n
@@ -72,18 +74,6 @@ generates the following Javascript:
 var example$prime = 100;
 ```
 
-This scheme also applies to names of infix operators:
-
-``` haskell
-(%) a b = ...
-```
-
-generates
-
-``` javascript
-var $percent = function(a) { ... }
-```
-
 #### Calling Javascript from PureScript
 
 Javascript values and functions can be used from PureScript by using the FFI. The problem becomes how to choose suitable types for values originating in Javascript.
@@ -94,7 +84,7 @@ The general rule regarding types is that you can enforce as little or as much ty
 
 In PureScript, JavaScript code is wrapped using a _foreign module_. A foreign module is just a CommonJS module which is associated with a PureScript module. Foreign modules are required to adhere to certain conventions:
 
-- The module must contain a comment of the form `// module ModuleName`, which associates the foreign module with its companion PureScript module. 
+- The name of the foreign module must be the same as its companion PureScript module, with its extension changed to `.js`. This associates the foreign module with the PureScript module.
 - All exports must be of the form `exports.name = value;`, specified at the top level.
 
 Here is an example, where we export a function which computes interest amounts from a foreign module:
@@ -102,14 +92,12 @@ Here is an example, where we export a function which computes interest amounts f
 ```javascript
 "use strict";
 
-// module Interest
-
 exports.calculateInterest = function(amount) {
   return amount * 0.1;
 };
 ```
 
-This file should be saved as `src/Interest.js`. The corresponding PureScript module `Interest` will be saved in `src/Interest.purs` (these filenames are merely conventions, but are used by certain tools, such as the Pulp build tool), and will look like this:
+This file should be saved as `src/Interest.js`. The corresponding PureScript module `Interest` will be saved in `src/Interest.purs`, and will look like this:
 
 ```purescript
 module Interest where
@@ -128,17 +116,17 @@ Suppose we wanted to modify our `calculateInterest` function to take a second ar
 ```javascript
 "use strict";
 
-// module Interest
-
 exports.calculateInterest = function(amount, months) {
   return amount * Math.exp(0.1, months);
 };
 ```
 
-A correct `foreign import` declaration now should use a foreign type whose runtime representation correctly handles functions of multiple arguments. The `purescript-functions` package provides a collection of such types for function arities from 0 to 10: 
+A correct `foreign import` declaration now should use a foreign type whose runtime representation correctly handles functions of multiple arguments. The `purescript-functions` package provides a collection of such types for function arities from 0 to 10:
 
 ```purescript
 module Interest where
+
+import Data.Function (Fn2)
 
 foreign import calculateInterest :: Fn2 Number Number Number
 ```
@@ -154,8 +142,6 @@ An alternative is to use curried functions in the native module, using multiple 
 
 ```javascript
 "use strict";
-
-// module Interest
 
 exports.calculateInterest = function(amount) {
   return function(months) {
@@ -179,9 +165,10 @@ For example, let's write a simple PureScript function with a constrained type, a
 ``` haskell
 module Test where
 
-import Data.Tuple
+import Prelude
+import Data.Tuple (Tuple(..))
 
-inOrder :: forall a. (Ord a) => a -> a -> Tuple a a
+inOrder :: forall a. Ord a => a -> a -> Tuple a a
 inOrder a1 a2 | a1 < a2 = Tuple a1 a2
 inOrder a1 a2 = Tuple a2 a1
 ```

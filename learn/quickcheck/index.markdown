@@ -35,7 +35,7 @@ The `quickCheck` function takes one argument: the property you would like to tes
 
 ```
 > quickCheck \n -> n + 1 == 1 + n
-``` 
+```
 
 If everything worked, you should see the following result:
 
@@ -51,7 +51,7 @@ This indicates 100 successful random test runs.
 Let's see what happens when we try testing a broken property:
 
 ```
-> quickCheck \n -> n + 1 == n 
+> quickCheck \n -> n + 1 == n
 ```
 
 You should see an exception printed to the console:
@@ -64,27 +64,27 @@ Failed: Test returned false
 That's not a very helpful error, so let's improve it:
 
 ```
-> quickCheck \n -> n + 1 == n <?> "Test failed for input " ++ show n
-``` 
+> quickCheck \n -> n + 1 == n <?> "Test failed for input " <> show n
+```
 
 This time you should see the following failure message:
 
 ```
-Error: Test 1 failed: 
+Error: Test 1 failed:
 Test failed for input -654791
 ```
 
 Alternatively, we could use the `===` operator, which provides a better error message:
 
 ```
-> quickCheck \n -> n + 1 === n 
-Error: Test 1 failed: 
+> quickCheck \n -> n + 1 === n
+Error: Test 1 failed:
 -663820 /= -663821
 ```
 
 #### Example 1 - GCD Function
 
-Let's write an implementation of the _greatest common divisor_ function in PSCi (you will need to enable multiline mode):
+Let's write an implementation of the _greatest common divisor_ function in PSCi (you will need to enable multiline mode by restarting PSCi with `--multi-line-mode`):
 
 ```
 > let
@@ -102,7 +102,7 @@ Now let's assert some basic properties that we expect to hold of the `gcd` funct
 > quickCheck \n -> gcd n 1 === 1
 ```
 
-This test should pass, but will take a while, because the standard random generator for integers which comes bundled with `purescript-quickcheck` generates integers in the range -1000000 to 1000000.
+This test should pass, but might take a while, because the standard random generator for integers which comes bundled with `purescript-quickcheck` generates integers in the range -1000000 to 1000000.
 
 We can modify our test to only consider small integers:
 
@@ -118,6 +118,7 @@ Create a new file `src/SmallInt.purs` and paste the following code:
 module SmallInt where
 
 import Prelude
+
 import Test.QuickCheck
 import Test.QuickCheck.Arbitrary
 
@@ -127,7 +128,7 @@ runInt :: SmallInt -> Int
 runInt (SmallInt i) = i
 
 instance arbSmallInt :: Arbitrary SmallInt where
-  arbitrary = (/ 1000) <$> arbitrary
+  arbitrary = map (_ / 1000) arbitrary
 ```
 
 Back in PSCi, we can now test properties without having to explicitly define how to generate our random data:
@@ -151,8 +152,8 @@ The first functor law says that if you map a function which does not modify its 
 ```
 > import Data.Array
 
-> let 
-    firstFunctorLaw :: [Int] -> Boolean
+> let
+    firstFunctorLaw :: Array Int -> Boolean
     firstFunctorLaw arr = map id arr == arr
 
 > quickCheck firstFunctorLaw
@@ -165,9 +166,9 @@ The second functor law says that mapping two functions over a structure one-by-o
 
 ```
 > let
-    secondFunctorLaw :: (Int -> Int) -> (Int -> Int) -> [Int] -> Boolean
+    secondFunctorLaw :: (Int -> Int) -> (Int -> Int) -> Array Int -> Boolean
     secondFunctorLaw f g arr = map f (map g arr) == map (f <<< g) arr
-  
+
 > quickCheck secondFunctorLaw
 
 100/100 test(s) passed.
@@ -189,10 +190,10 @@ Copy the contents of that file into `src/UnderscoreFFI.purs`, and reload PSCi wi
 The `UnderscoreFFI` module defines a wrapper for the `sortBy` function. Let's test that the function is idempotent:
 
 ```
-> let 
-    sortIsIdempotent :: [Int] -> Boolean
+> let
+    sortIsIdempotent :: Array Int -> Boolean
     sortIsIdempotent arr = sortBy id (sortBy id arr) == sortBy id arr
-  
+
 > quickCheck sortIsIdempotent
 
 100/100 test(s) passed.
@@ -202,10 +203,10 @@ unit
 In fact, we don't need to sort by the identity function. Since QuickCheck supports higher-order functions, we can test with a randomly-generated sorting function:
 
 ```
-> let 
+> let
     sortIsIdempotent' :: (Int -> Int) -> [Int] -> Boolean
     sortIsIdempotent' f arr = sortBy f (sortBy f arr) == sortBy f arr
-  
+
 > quickCheck sortIsIdempotent
 
 100/100 test(s) passed.
