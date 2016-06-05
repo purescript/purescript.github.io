@@ -29,15 +29,28 @@ brew install purescript
 
   <h2>Stack</h2>
 
-  <p><a href="https://www.haskell.org/ghc/">GHC</a> 7.10.1 or newer is required to compile from source. The easiest way is to use <a href="https://github.com/commercialhaskell/stack">Stack</a>:</p>
+  <p><a href="https://www.haskell.org/ghc/">GHC</a> 7.10.1 or newer is required to compile from source. The easiest way is to use <a href="https://github.com/commercialhaskell/stack">Stack</a>.</p>
+
+  <p>Update the Hackage package index:</p>
   <pre>
-stack install purescript --resolver=nightly
-</pre>
+stack update</pre>
+
+  <p>Download the latest source distribution and place it into a new directory in the current directory:</p>
+  <pre>
+stack unpack purescript</pre>
+
+  <p>Compile and install PureScript:</p>
+  <pre>
+cd purescript-x.y.z   # (replace x.y.z with whichever version you just downloaded)
+stack install</pre>
 
   <p>This will copy the compiler and utilities into <code>~/.local/bin</code>.</p>
 
   <p>If you don't have Stack installed, there are install instructions <a href="https://github.com/commercialhaskell/stack/blob/master/doc/install_and_upgrade.md">here</a>.</p>
 
+  <p>You can also install a specific version by specifying it in the <code>stack unpack</code> step. For example, to install 0.8.5, use:</p>
+  <pre>
+  stack unpack purescript-0.8.5</pre>
 </section>
 
 <section>
