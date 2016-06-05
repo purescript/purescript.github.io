@@ -43,8 +43,8 @@
 <p>PureScript’s generics are supported by the <code>purescript-generics</code> library, and in particular, the <code>Data.Generic.Generic</code> type class:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Generic</span> a <span class="kw">where</span>
 <span class="ot">  toSignature ::</span> <span class="dt">Proxy</span> a <span class="ot">-&gt;</span> <span class="dt">GenericSignature</span>
-<span class="ot">  toSpine ::</span> a <span class="ot">-&gt;</span> <span class="dt">GenericSpine</span>
-<span class="ot">  fromSpine ::</span> <span class="dt">GenericSpine</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a</code></pre></div>
+<span class="ot">  toSpine     ::</span> a <span class="ot">-&gt;</span> <span class="dt">GenericSpine</span>
+<span class="ot">  fromSpine   ::</span> <span class="dt">GenericSpine</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a</code></pre></div>
 <p><code>Generic</code> defines three functions:</p>
 <ul>
 <li><code>toSignature</code> creates a generic <em>signature</em> for a type. We can think of this as a representation of a type at runtime.</li>
@@ -85,7 +85,7 @@ derive <span class="kw">instance</span><span class="ot"> genericPerson ::</span>
     return <span class="fu">$</span> <span class="dt">Person</span> { name, location }</code></pre></div>
 <p>This is not too bad, but real-world records often contain many more fields. Let’s see how to verify the same data using <code>Generic</code>.</p>
 <p>The <code>purescript-foreign-generic</code> library defines a function <code>readGeneric</code>, with the following type:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">readGeneric ::</span> forall a<span class="fu">.</span> (<span class="dt">Generic</span> a) <span class="ot">=&gt;</span> <span class="dt">Options</span> <span class="ot">-&gt;</span> <span class="dt">Foreign</span> <span class="ot">-&gt;</span> <span class="dt">F</span> a</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">readGeneric ::</span> forall a<span class="fu">.</span> <span class="dt">Generic</span> a <span class="ot">=&gt;</span> <span class="dt">Options</span> <span class="ot">-&gt;</span> <span class="dt">Foreign</span> <span class="ot">-&gt;</span> <span class="dt">F</span> a</code></pre></div>
 <p>The <code>Options</code> type here is based on the options record from Haskell’s <code>aeson</code> library. For our purposes, the default options will work, but we need to turn on the <code>unwrapNewtypes</code> option, so that our <code>newtype</code> constructor gets ignored during serialization:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">myOptions ::</span> <span class="dt">Options</span>
 myOptions <span class="fu">=</span> defaultOptions { unwrapNewtypes <span class="fu">=</span> true }</code></pre></div>

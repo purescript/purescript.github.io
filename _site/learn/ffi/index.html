@@ -46,6 +46,8 @@
 <p>Let’s take the following simple module as an example:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Test</span> <span class="kw">where</span>
 
+<span class="kw">import </span><span class="dt">Prelude</span>
+
 gcd<span class="ot"> ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
 gcd n m <span class="fu">|</span> n <span class="fu">==</span> <span class="dv">0</span> <span class="fu">=</span> m
 gcd n m <span class="fu">|</span> m <span class="fu">==</span> <span class="dv">0</span> <span class="fu">=</span> n
@@ -69,28 +71,22 @@ gcd n m <span class="fu">=</span> gcd (m <span class="fu">-</span> n) n</code></
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">example' <span class="fu">=</span> <span class="dv">100</span></code></pre></div>
 <p>generates the following Javascript:</p>
 <div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> example$prime <span class="op">=</span> <span class="dv">100</span><span class="op">;</span></code></pre></div>
-<p>This scheme also applies to names of infix operators:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">(<span class="fu">%</span>) a b <span class="fu">=</span> <span class="fu">...</span></code></pre></div>
-<p>generates</p>
-<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> $percent <span class="op">=</span> <span class="kw">function</span>(a) <span class="op">{</span> ... <span class="op">}</span></code></pre></div>
 <h4 id="calling-javascript-from-purescript">Calling Javascript from PureScript</h4>
 <p>Javascript values and functions can be used from PureScript by using the FFI. The problem becomes how to choose suitable types for values originating in Javascript.</p>
 <p>The general rule regarding types is that you can enforce as little or as much type safety as you like when using the FFI, but you should be careful to avoid common pitfalls when dealing with Javascript values, like the possibility of null or undefined values being returned from a Javascript function. Functions defined in the Prelude and core libraries tend to err on the side of type safety where possible.</p>
 <h4 id="foreign-modules">Foreign Modules</h4>
 <p>In PureScript, JavaScript code is wrapped using a <em>foreign module</em>. A foreign module is just a CommonJS module which is associated with a PureScript module. Foreign modules are required to adhere to certain conventions:</p>
 <ul>
-<li>The module must contain a comment of the form <code>// module ModuleName</code>, which associates the foreign module with its companion PureScript module.</li>
+<li>The name of the foreign module must be the same as its companion PureScript module, with its extension changed to <code>.js</code>. This associates the foreign module with the PureScript module.</li>
 <li>All exports must be of the form <code>exports.name = value;</code>, specified at the top level.</li>
 </ul>
 <p>Here is an example, where we export a function which computes interest amounts from a foreign module:</p>
 <div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="st">&quot;use strict&quot;</span><span class="op">;</span>
 
-<span class="co">// module Interest</span>
-
 <span class="va">exports</span>.<span class="at">calculateInterest</span> <span class="op">=</span> <span class="kw">function</span>(amount) <span class="op">{</span>
   <span class="cf">return</span> amount <span class="op">*</span> <span class="fl">0.1</span><span class="op">;</span>
 <span class="op">};</span></code></pre></div>
-<p>This file should be saved as <code>src/Interest.js</code>. The corresponding PureScript module <code>Interest</code> will be saved in <code>src/Interest.purs</code> (these filenames are merely conventions, but are used by certain tools, such as the Pulp build tool), and will look like this:</p>
+<p>This file should be saved as <code>src/Interest.js</code>. The corresponding PureScript module <code>Interest</code> will be saved in <code>src/Interest.purs</code>, and will look like this:</p>
 <pre class="purescript"><code>module Interest where
 
 foreign import calculateInterest :: Number -&gt; Number</code></pre>
@@ -100,13 +96,13 @@ foreign import calculateInterest :: Number -&gt; Number</code></pre>
 <p>Suppose we wanted to modify our <code>calculateInterest</code> function to take a second argument:</p>
 <div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="st">&quot;use strict&quot;</span><span class="op">;</span>
 
-<span class="co">// module Interest</span>
-
 <span class="va">exports</span>.<span class="at">calculateInterest</span> <span class="op">=</span> <span class="kw">function</span>(amount<span class="op">,</span> months) <span class="op">{</span>
   <span class="cf">return</span> amount <span class="op">*</span> <span class="va">Math</span>.<span class="at">exp</span>(<span class="fl">0.1</span><span class="op">,</span> months)<span class="op">;</span>
 <span class="op">};</span></code></pre></div>
 <p>A correct <code>foreign import</code> declaration now should use a foreign type whose runtime representation correctly handles functions of multiple arguments. The <code>purescript-functions</code> package provides a collection of such types for function arities from 0 to 10:</p>
 <pre class="purescript"><code>module Interest where
+
+import Data.Function (Fn2)
 
 foreign import calculateInterest :: Fn2 Number Number Number</code></pre>
 <p>Here, the <code>Fn2</code> type constructor is used to wrap Javascript functions of two arguments. We can write a curried wrapper function in PureScript which will allow partial application:</p>
@@ -114,8 +110,6 @@ foreign import calculateInterest :: Fn2 Number Number Number</code></pre>
 calculateInterestCurried = runFn2 calculateInterest</code></pre>
 <p>An alternative is to use curried functions in the native module, using multiple nested functions, each with a single argument, as the runtime representation of the function type constructor <code>(-&gt;)</code> dictates:</p>
 <div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="st">&quot;use strict&quot;</span><span class="op">;</span>
-
-<span class="co">// module Interest</span>
 
 <span class="va">exports</span>.<span class="at">calculateInterest</span> <span class="op">=</span> <span class="kw">function</span>(amount) <span class="op">{</span>
   <span class="cf">return</span> <span class="kw">function</span>(months) <span class="op">{</span>
@@ -129,9 +123,10 @@ calculateInterestCurried = runFn2 calculateInterest</code></pre>
 <p>For example, let’s write a simple PureScript function with a constrained type, and look at the generated Javascript.</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Test</span> <span class="kw">where</span>
 
-<span class="kw">import </span><span class="dt">Data.Tuple</span>
+<span class="kw">import </span><span class="dt">Prelude</span>
+<span class="kw">import </span><span class="dt">Data.Tuple</span> (<span class="dt">Tuple</span>(..))
 
-<span class="ot">inOrder ::</span> forall a<span class="fu">.</span> (<span class="dt">Ord</span> a) <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Tuple</span> a a
+<span class="ot">inOrder ::</span> forall a<span class="fu">.</span> <span class="dt">Ord</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Tuple</span> a a
 inOrder a1 a2 <span class="fu">|</span> a1 <span class="fu">&lt;</span> a2 <span class="fu">=</span> <span class="dt">Tuple</span> a1 a2
 inOrder a1 a2 <span class="fu">=</span> <span class="dt">Tuple</span> a2 a1</code></pre></div>
 <p>The generated Javascript looks like this:</p>

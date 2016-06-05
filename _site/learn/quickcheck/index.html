@@ -59,21 +59,21 @@ unit</code></pre>
 <p>This indicates 100 successful random test runs.</p>
 <h4 id="error-messages">Error Messages</h4>
 <p>Let’s see what happens when we try testing a broken property:</p>
-<pre><code>&gt; quickCheck \n -&gt; n + 1 == n </code></pre>
+<pre><code>&gt; quickCheck \n -&gt; n + 1 == n</code></pre>
 <p>You should see an exception printed to the console:</p>
 <pre><code>Error: Test 1 failed:
 Failed: Test returned false</code></pre>
 <p>That’s not a very helpful error, so let’s improve it:</p>
-<pre><code>&gt; quickCheck \n -&gt; n + 1 == n &lt;?&gt; &quot;Test failed for input &quot; ++ show n</code></pre>
+<pre><code>&gt; quickCheck \n -&gt; n + 1 == n &lt;?&gt; &quot;Test failed for input &quot; &lt;&gt; show n</code></pre>
 <p>This time you should see the following failure message:</p>
-<pre><code>Error: Test 1 failed: 
+<pre><code>Error: Test 1 failed:
 Test failed for input -654791</code></pre>
 <p>Alternatively, we could use the <code>===</code> operator, which provides a better error message:</p>
-<pre><code>&gt; quickCheck \n -&gt; n + 1 === n 
-Error: Test 1 failed: 
+<pre><code>&gt; quickCheck \n -&gt; n + 1 === n
+Error: Test 1 failed:
 -663820 /= -663821</code></pre>
 <h4 id="example-1---gcd-function">Example 1 - GCD Function</h4>
-<p>Let’s write an implementation of the <em>greatest common divisor</em> function in PSCi (you will need to enable multiline mode):</p>
+<p>Let’s write an implementation of the <em>greatest common divisor</em> function in PSCi (you will need to enable multiline mode by restarting PSCi with <code>--multi-line-mode</code>):</p>
 <pre><code>&gt; let
     gcd 0 n = n
     gcd n 0 = n
@@ -83,7 +83,7 @@ Error: Test 1 failed:
     gcd n m = gcd n (m - n)</code></pre>
 <p>Now let’s assert some basic properties that we expect to hold of the <code>gcd</code> function.</p>
 <pre><code>&gt; quickCheck \n -&gt; gcd n 1 === 1</code></pre>
-<p>This test should pass, but will take a while, because the standard random generator for integers which comes bundled with <code>purescript-quickcheck</code> generates integers in the range -1000000 to 1000000.</p>
+<p>This test should pass, but might take a while, because the standard random generator for integers which comes bundled with <code>purescript-quickcheck</code> generates integers in the range -1000000 to 1000000.</p>
 <p>We can modify our test to only consider small integers:</p>
 <pre><code>&gt; quickCheck \n -&gt; gcd (n / 1000) 1 === 1</code></pre>
 <p>This time, the test should complete quickly. However, we’ve coupled the generation of our data (<code>/ 1000</code>) with the property we’re testing, which is against the spirit of QuickCheck. A better approach is to define a <code>newtype</code> which can be used to generate small integers.</p>
@@ -91,6 +91,7 @@ Error: Test 1 failed:
 <pre><code>module SmallInt where
 
 import Prelude
+
 import Test.QuickCheck
 import Test.QuickCheck.Arbitrary
 
@@ -100,7 +101,7 @@ runInt :: SmallInt -&gt; Int
 runInt (SmallInt i) = i
 
 instance arbSmallInt :: Arbitrary SmallInt where
-  arbitrary = (/ 1000) &lt;$&gt; arbitrary</code></pre>
+  arbitrary = map (_ / 1000) arbitrary</code></pre>
 <p>Back in PSCi, we can now test properties without having to explicitly define how to generate our random data:</p>
 <pre><code>&gt; quickCheck \(SmallInt n) (SmallInt m) -&gt; gcd n m == gcd m n</code></pre>
 <p>The idea is that the particular scheme that is chosen to generate data should be indicated by the types of our function arguments, so <code>newtype</code>s can be quite useful when defining multiple data generation schemes for a single type.</p>
@@ -111,8 +112,8 @@ instance arbSmallInt :: Arbitrary SmallInt where
 <p>The first functor law says that if you map a function which does not modify its argument (the identity function) over a structure, then the structure should not be modified either.</p>
 <pre><code>&gt; import Data.Array
 
-&gt; let 
-    firstFunctorLaw :: [Int] -&gt; Boolean
+&gt; let
+    firstFunctorLaw :: Array Int -&gt; Boolean
     firstFunctorLaw arr = map id arr == arr
 
 &gt; quickCheck firstFunctorLaw
@@ -121,9 +122,9 @@ instance arbSmallInt :: Arbitrary SmallInt where
 unit</code></pre>
 <p>The second functor law says that mapping two functions over a structure one-by-one is equivalent to mapping their composition over the structure:</p>
 <pre><code>&gt; let
-    secondFunctorLaw :: (Int -&gt; Int) -&gt; (Int -&gt; Int) -&gt; [Int] -&gt; Boolean
+    secondFunctorLaw :: (Int -&gt; Int) -&gt; (Int -&gt; Int) -&gt; Array Int -&gt; Boolean
     secondFunctorLaw f g arr = map f (map g arr) == map (f &lt;&lt;&lt; g) arr
-  
+
 &gt; quickCheck secondFunctorLaw
 
 100/100 test(s) passed.
@@ -134,19 +135,19 @@ unit</code></pre>
 <p>Copy the contents of that file into <code>src/UnderscoreFFI.purs</code>, and reload PSCi with that module loaded:</p>
 <pre><code>&gt; import UnderscoreFFI</code></pre>
 <p>The <code>UnderscoreFFI</code> module defines a wrapper for the <code>sortBy</code> function. Let’s test that the function is idempotent:</p>
-<pre><code>&gt; let 
-    sortIsIdempotent :: [Int] -&gt; Boolean
+<pre><code>&gt; let
+    sortIsIdempotent :: Array Int -&gt; Boolean
     sortIsIdempotent arr = sortBy id (sortBy id arr) == sortBy id arr
-  
+
 &gt; quickCheck sortIsIdempotent
 
 100/100 test(s) passed.
 unit</code></pre>
 <p>In fact, we don’t need to sort by the identity function. Since QuickCheck supports higher-order functions, we can test with a randomly-generated sorting function:</p>
-<pre><code>&gt; let 
+<pre><code>&gt; let
     sortIsIdempotent' :: (Int -&gt; Int) -&gt; [Int] -&gt; Boolean
     sortIsIdempotent' f arr = sortBy f (sortBy f arr) == sortBy f arr
-  
+
 &gt; quickCheck sortIsIdempotent
 
 100/100 test(s) passed.

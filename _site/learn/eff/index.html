@@ -36,7 +36,7 @@
   <main>
   <section class="article">
   <h2>Handling Native Effects with the Eff Monad</h2>
-  <div class="meta">By Phil Freeman, published on July 16, 2015</div>
+  <div class="meta">By Phil Freeman, published on May 24, 2016</div>
 
   <p>In this post, I’m going to talk about PureScript’s hybrid approach to handling side-effects.</p>
 <p>As in Haskell, values in PureScript do not have side-effects by default, and there are a number of techniques for handling “non-native” side-effects. Such techniques include the use of things like monoids, monads, applicative functors and arrows, but I’m not going to talk about those here. I’m going to talk about how PureScript handles “native” effects, i.e. effects which are provided by the runtime system, and which cannot be emulated by pure functions.</p>
@@ -63,15 +63,15 @@
 
 <span class="kw">import </span><span class="dt">Control.Monad.Eff</span>
 <span class="kw">import </span><span class="dt">Control.Monad.Eff.Random</span> (random)
-<span class="kw">import </span><span class="dt">Control.Monad.Eff.Console</span> (print)
+<span class="kw">import </span><span class="dt">Control.Monad.Eff.Console</span> (logShow)
 
 printRandom <span class="fu">=</span> <span class="kw">do</span>
   n <span class="ot">&lt;-</span> random
-  print n</code></pre></div>
+  logShow n</code></pre></div>
 <p>This example requires the <a href="https://pursuit.purescript.org/packages/purescript-console/"><code>purescript-console</code></a> and <a href="https://pursuit.purescript.org/packages/purescript-random/"><code>purescript-random</code></a> dependencies to be installed:</p>
 <pre><code>pulp init
 bower install --save purescript-console purescript-random</code></pre>
-<p>If you save this file as <code>RandomExample.purs</code>, you will be able to compile and run it using PSCi:</p>
+<p>If you save this file as <code>src/RandomExample.purs</code>, you will be able to compile and run it using PSCi:</p>
 <pre><code>pulp psci
 
 &gt; import RandomExample
@@ -81,19 +81,20 @@ bower install --save purescript-console purescript-random</code></pre>
 <p>This program uses <code>do</code>-notation to combine two types of native effects provided by the Javascript runtime: random number generation and console IO.</p>
 <h4 id="extensible-records-and-extensible-effects">Extensible Records and Extensible Effects</h4>
 <p>We can inspect the type of <code>printRandom</code> by using the <code>:type command</code></p>
-<pre><code>&gt; :type RandomExample.main</code></pre>
+<pre><code>&gt; import RandomExample
+&gt; :type main</code></pre>
 <p>The type of <code>main</code> will be printed to the console. You should see a type which looks like this:</p>
 <pre><code>forall e. Eff (console :: CONSOLE, random :: RANDOM | e) Unit</code></pre>
 <p>This type looks quite complicated, but is easily explained by analogy with PureScript’s extensible records system.</p>
 <p>Consider a simple function which uses extensible records:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fullName person <span class="fu">=</span> person<span class="fu">.</span>firstName <span class="fu">++</span> <span class="st">&quot; &quot;</span> <span class="fu">++</span> person<span class="fu">.</span>lastName</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fullName person <span class="fu">=</span> person<span class="fu">.</span>firstName <span class="fu">&lt;&gt;</span> <span class="st">&quot; &quot;</span> <span class="fu">&lt;&gt;</span> person<span class="fu">.</span>lastName</code></pre></div>
 <p>This function creates a full name string from an object containing <code>firstName</code> and <code>lastName</code> properties. If you find the type of this function in PSCi as before, you will see this:</p>
-<pre><code>forall t. { firstName :: String, lastName :: String | t } -&gt; String </code></pre>
+<pre><code>forall t. { firstName :: String, lastName :: String | t } -&gt; String</code></pre>
 <p>The readable version of this type is “<code>fullName</code> takes an object with <code>firstName</code> and <code>lastName</code> properties <em>and any other properties</em> and returns a <code>String</code>”.</p>
 <p>That is, <code>fullName</code> does not care if you pass an object with <em>more</em> properties, as long as the <code>firstName</code> and <code>lastName</code> properties are present:</p>
 <pre><code>&gt; fullName { firstName: &quot;Phil&quot;, lastName: &quot;Freeman&quot;, location: &quot;Los Angeles&quot; }
 Phil Freeman</code></pre>
-<p>Similarly, the type of <code>printRandom</code> above can be interpreted as follows: “<code>printRandom</code> is a side-effecting computation, which can be run in any environment which supports random number generation and console IO, <em>and any other types of side effect</em>, and which yields a value of type <code>Unit</code>”.</p>
+<p>Similarly, the type of <code>printRandom</code> above can be interpreted as follows: “<code>printRandom</code> is an effectful computation, which can be run in any environment which supports random number generation and console IO, <em>and any other types of side effect</em>, and which yields a value of type <code>Unit</code>”.</p>
 <p>This is the origin of the name “extensible effects”: we can always <em>extend</em> the set of side-effects, as long as we can support the set of effects that we need.</p>
 <h4 id="interleaving-effects">Interleaving Effects</h4>
 <p>This extensibility allows code in the <code>Eff</code> monad to <em>interleave</em> different types of effects.</p>
@@ -101,10 +102,10 @@ Phil Freeman</code></pre>
 <pre><code>forall e1. Eff (random :: RANDOM | e1) Number</code></pre>
 <p>which is <em>not</em> the same as the type of <code>main</code>.</p>
 <p>However, we can instantiate the polymorphic type variable in such a way that the types do match. If we choose <code>e1 ~ (console :: CONSOLE | e)</code>, then the two rows are equal, up to reordering.</p>
-<p>Similarly, <code>print</code> has a type which can be instantiated to match the type of <code>printRandom</code>:</p>
-<pre><code>forall a e2. (Show a) =&gt; a -&gt; Eff (console :: CONSOLE | e2) Unit</code></pre>
+<p>Similarly, <code>logShow</code> has a type which can be instantiated to match the type of <code>printRandom</code>:</p>
+<pre><code>forall a e2. Show a =&gt; a -&gt; Eff (console :: CONSOLE | e2) Unit</code></pre>
 <p>This time we have to choose <code>e2 ~ random :: RANDOM | e</code>.</p>
-<p>The key is that we don’t have to give a type for <code>printRandom</code> in order to be able to find these substitutions. <code>psc</code> will find a most general type for <code>printRandom</code> given the polymorphic types of <code>random</code> and <code>print</code>.</p>
+<p>The key is that we don’t have to give a type for <code>printRandom</code> in order to be able to find these substitutions. <code>psc</code> will find a most general type for <code>printRandom</code> given the polymorphic types of <code>random</code> and <code>logShow</code>.</p>
 <h4 id="aside-the-kind-of-eff">Aside: The Kind of Eff</h4>
 <p>Looking at the <a href="https://github.com/purescript/purescript-eff/blob/master/src/Control/Monad/Eff.purs">source code</a>, you will see the following definition for <code>Eff</code>:</p>
 <pre><code>foreign import Eff :: # ! -&gt; * -&gt; *</code></pre>
@@ -117,32 +118,34 @@ Phil Freeman</code></pre>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">Eff</span> (<span class="ot">console ::</span> <span class="dt">CONSOLE</span>,<span class="ot"> random ::</span> <span class="dt">RANDOM</span>) <span class="dt">Unit</span>
 main <span class="fu">=</span> <span class="kw">do</span>
   n <span class="ot">&lt;-</span> random
-  print n</code></pre></div>
+  logShow n</code></pre></div>
 <p>(note the lack of a type variable here), then we cannot accidentally include a subcomputation which makes use of a different type of effect. This is an advantage of <code>Eff</code> over Haskell’s more coarsely-grained <code>IO</code> monad.</p>
 <h4 id="handlers-and-actions">Handlers and Actions</h4>
-<p>Rows of effects can also appear on the left-hand side of a function arrow. This is what differentiates actions like <code>print</code> and <code>random</code> from effect <em>handlers</em>.</p>
+<p>Rows of effects can also appear on the left-hand side of a function arrow. This is what differentiates actions like <code>logShow</code> and <code>random</code> from effect <em>handlers</em>.</p>
 <p>While actions <em>add</em> to the set of required effects, a handler <code>subtracts</code> effects from the set.</p>
 <p>Consider <code>catchException</code> from the <a href="https://pursuit.purescript.org/packages/purescript-exceptions/"><code>purescript-exceptions</code></a> package:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">catchException ::</span> forall a e<span class="fu">.</span> (<span class="dt">Error</span> <span class="ot">-&gt;</span> <span class="dt">Eff</span> e a) <span class="ot">-&gt;</span> 
-                              <span class="dt">Eff</span> (<span class="ot">err ::</span> <span class="dt">EXCEPTION</span> <span class="fu">|</span> e) a <span class="ot">-&gt;</span> 
-                              <span class="dt">Eff</span> e a</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">catchException
+<span class="ot">  ::</span> forall a e
+   <span class="fu">.</span> (<span class="dt">Error</span> <span class="ot">-&gt;</span> <span class="dt">Eff</span> e a)
+  <span class="ot">-&gt;</span> <span class="dt">Eff</span> (<span class="ot">err ::</span> <span class="dt">EXCEPTION</span> <span class="fu">|</span> e) a
+  <span class="ot">-&gt;</span> <span class="dt">Eff</span> e a</code></pre></div>
 <p>Note that the type of the effect on the right of the final function arrow requires <em>fewer</em> effects than the effect to its left. Namely, <code>catchException</code> <em>removes</em> the <code>EXCEPTION</code> effect from the set of required effects.</p>
 <p>This is useful, because the type system can be used to delimit portions of code which require a particular effect, and then to wrap that code in a handler, embedding it inside a piece of code which does not use that effect.</p>
 <p>For example, we can write a piece of code which uses exceptions, then wrap that code using <code>catchException</code> to embed the computation in a piece of code which does not use exceptions.</p>
 <p><code>purescript-eff</code> also defines the handler <code>runPure</code>, which takes a computation with <em>no</em> side-effects, and safely evaluates it as a pure value:</p>
-<pre><code>type Pure a = forall e. Eff e a
+<pre><code>type Pure a = Eff () a
 
 runPure :: forall a. Pure a -&gt; a</code></pre>
 <p>For example, we can define a version of the division function for which division by zero results in an exception:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">ErrorsExample</span> <span class="kw">where</span>
 
 <span class="kw">import </span><span class="dt">Prelude</span>
-<span class="kw">import </span><span class="dt">Control.Monad.Eff</span>
-<span class="kw">import </span><span class="dt">Control.Monad.Eff.Exception</span>
+<span class="kw">import </span><span class="dt">Control.Monad.Eff</span> (<span class="dt">Eff</span>)
+<span class="kw">import </span><span class="dt">Control.Monad.Eff.Exception</span> (<span class="dt">EXCEPTION</span>, throw)
 
 <span class="ot">divide ::</span> forall e<span class="fu">.</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Eff</span> (<span class="ot">err ::</span> <span class="dt">EXCEPTION</span> <span class="fu">|</span> e) <span class="dt">Int</span>
 divide _ <span class="dv">0</span> <span class="fu">=</span> throw <span class="st">&quot;Division by zero&quot;</span>
-divide n m <span class="fu">=</span> return (n <span class="fu">/</span> m)</code></pre></div>
+divide n m <span class="fu">=</span> pure (n <span class="fu">/</span> m)</code></pre></div>
 <p>If we have already defined this function, we can use the <code>runPure</code> and <code>catchException</code> handlers to define a version of <code>divide</code> which reports its errors using <code>Either</code>:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Either</span>
 
@@ -169,32 +172,32 @@ dividePure n m <span class="fu">=</span> runPure (catchException (return <span c
   <span class="cf">return</span> f<span class="op">;</span>
 <span class="op">};</span></code></pre></div>
 <h4 id="the-eff-monad-is-magic">The Eff Monad is Magic</h4>
-<p>The <code>psc</code> compiler has special support for the <code>Eff</code> monad. Ordinarily, a chain of monadic binds might result in poor performance when executed in <code>nodejs</code> or in the browser. However, the compiler can generate code for the <code>Eff</code> monad without explicit calls to the monadic bind function <code>&gt;&gt;=</code>.</p>
+<p>The <code>psc</code> compiler has special support for the <code>Eff</code> monad. Ordinarily, a chain of monadic binds might result in poor performance when executed in Node or in the browser. However, the compiler can generate code for the <code>Eff</code> monad without explicit calls to the monadic bind function <code>&gt;&gt;=</code>.</p>
 <p>Take the random number generation from the start of the post. If we compile this example without optimizations, we end up the following Javascript:</p>
-<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> main <span class="op">=</span> 
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> main <span class="op">=</span>
   Prelude[<span class="st">&quot;&gt;&gt;=&quot;</span>]
     (<span class="va">Control_Monad_Eff</span>.<span class="at">monadEff</span>())
 	(<span class="va">Control_Monad_Eff_Random</span>.<span class="at">random</span>)
 	(<span class="kw">function</span> (n) <span class="op">{</span>
-      <span class="cf">return</span> <span class="va">Control_Monad_Eff_Console</span>.<span class="at">print</span>(<span class="va">Prelude</span>.<span class="at">showNumber</span>())(n)<span class="op">;</span>
+      <span class="cf">return</span> <span class="va">Control_Monad_Eff_Console</span>.<span class="at">logShow</span>(<span class="va">Prelude</span>.<span class="at">showNumber</span>())(n)<span class="op">;</span>
     <span class="op">}</span>)<span class="op">;</span></code></pre></div>
 <p>However, if we use the default optimizations, the calls to <code>Eff</code>’s monadic bind function are inlined, resulting the following tidier Javascript:</p>
 <div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> main <span class="op">=</span> <span class="kw">function</span> <span class="at">__do</span>() <span class="op">{</span>
   <span class="kw">var</span> n <span class="op">=</span> <span class="va">Control_Monad_Eff_Random</span>.<span class="at">random</span>()<span class="op">;</span>
-  <span class="cf">return</span> <span class="va">Control_Monad_Eff_Console</span>.<span class="at">print</span>(<span class="va">Prelude</span>.<span class="at">showNumber</span>())(n)()<span class="op">;</span>
+  <span class="cf">return</span> <span class="va">Control_Monad_Eff_Console</span>.<span class="at">logShow</span>(<span class="va">Prelude</span>.<span class="at">showNumber</span>())(n)()<span class="op">;</span>
 <span class="op">};</span></code></pre></div>
 <p>While this is a small improvement, the benefit is greater when using multiple nested calls to <code>&gt;&gt;=</code>.</p>
 <p>The improvement is even more marked when optimizations are used in conjunction with tail call elimination. Consider the following recursive program which prints an increasing sequence of numbers to the console:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">go n <span class="fu">=</span> <span class="kw">do</span>
-  print n
+  logShow n
   go (n <span class="fu">+</span> <span class="dv">1</span>)
 
 main <span class="fu">=</span> go <span class="dv">1</span></code></pre></div>
 <p>Without optimizations, the compiler generates the following Javascript, which fails after a few iterations with a stack overflow:</p>
-<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> go <span class="op">=</span> 
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> go <span class="op">=</span>
   Prelude[<span class="st">&quot;&gt;&gt;=&quot;</span>]
     (<span class="va">Control_Monad_Eff</span>.<span class="at">monadEff</span>())
-	(<span class="va">Control_Monad_Eff_Console</span>.<span class="at">print</span>(<span class="va">Prelude</span>.<span class="at">showNumber</span>())(n))
+	(<span class="va">Control_Monad_Eff_Console</span>.<span class="at">logShow</span>(<span class="va">Prelude</span>.<span class="at">showNumber</span>())(n))
 	(<span class="kw">function</span> (_) <span class="op">{</span>
       <span class="cf">return</span> <span class="at">go</span>(n <span class="op">+</span> <span class="dv">1</span>)<span class="op">;</span>
     <span class="op">}</span>)<span class="op">;</span></code></pre></div>
@@ -203,7 +206,7 @@ main <span class="fu">=</span> go <span class="dv">1</span></code></pre></div>
   <span class="cf">return</span> <span class="kw">function</span> <span class="at">__do</span>() <span class="op">{</span>
     <span class="kw">var</span> n <span class="op">=</span> __copy_n<span class="op">;</span>
     <span class="dt">tco</span><span class="op">:</span> <span class="cf">while</span> (<span class="kw">true</span>) <span class="op">{</span>
-      <span class="va">Control_Monad_Eff_Console</span>.<span class="at">print</span>(<span class="va">Prelude</span>.<span class="at">showNumber</span>())(n)()<span class="op">;</span>
+      <span class="va">Control_Monad_Eff_Console</span>.<span class="at">logShow</span>(<span class="va">Prelude</span>.<span class="at">showNumber</span>())(n)()<span class="op">;</span>
       <span class="kw">var</span> __tco_n <span class="op">=</span> n <span class="op">+</span> <span class="dv">1</span><span class="op">;</span>
       n <span class="op">=</span> __tco_n<span class="op">;</span>
       <span class="cf">continue</span> tco<span class="op">;</span>
@@ -217,11 +220,11 @@ main <span class="fu">=</span> go <span class="dv">1</span></code></pre></div>
 collatz n <span class="fu">=</span> pureST <span class="kw">do</span>
   r <span class="ot">&lt;-</span> newSTRef n
   count <span class="ot">&lt;-</span> newSTRef <span class="dv">0</span>
-  untilE <span class="fu">$</span> <span class="kw">do</span>
-    modifySTRef count <span class="fu">$</span> (<span class="fu">+</span>) <span class="dv">1</span>
+  untilE <span class="kw">do</span>
+    modifySTRef count (_ <span class="fu">+</span> <span class="dv">1</span>)
     m <span class="ot">&lt;-</span> readSTRef r
     writeSTRef r <span class="fu">$</span> <span class="kw">if</span> m <span class="ot">`mod`</span> <span class="dv">2</span> <span class="fu">==</span> <span class="dv">0</span> <span class="kw">then</span> m <span class="fu">/</span> <span class="dv">2</span> <span class="kw">else</span> <span class="dv">3</span> <span class="fu">*</span> m <span class="fu">+</span> <span class="dv">1</span>
-    return <span class="fu">$</span> m <span class="fu">==</span> <span class="dv">1</span>
+    pure (m <span class="fu">==</span> <span class="dv">1</span>)
   readSTRef count</code></pre></div>
 <p>In this case, <code>psc</code> notices that the mutable variables <code>r</code> and <code>count</code> are scoped by <code>runST</code> and so can safely be turned into local mutable variables.</p>
 <p>The resulting Javascript is surprisingly short:</p>
@@ -235,8 +238,7 @@ collatz n <span class="fu">=</span> pureST <span class="kw">do</span>
         <span class="kw">var</span> m <span class="op">=</span> r<span class="op">;</span>
         r <span class="op">=</span> (m <span class="op">%</span> <span class="dv">2</span> <span class="op">===</span> <span class="dv">0</span>) <span class="op">?</span> m / <span class="dv">2</span> : <span class="dv">3</span> <span class="op">*</span> m <span class="op">+</span> <span class="dv">1</span><span class="op">;</span>
         <span class="cf">return</span> m <span class="op">===</span> <span class="dv">1</span><span class="op">;</span>
-      <span class="op">}</span>)()) <span class="op">{</span>
-	  <span class="op">};</span>
+      <span class="op">}</span>)()) <span class="op">{</span> <span class="op">};</span>
       <span class="cf">return</span> <span class="op">{};</span>
     <span class="op">}</span>)()<span class="op">;</span>
     <span class="cf">return</span> count<span class="op">;</span>
