@@ -64,9 +64,9 @@ This program uses `do`-notation to combine two types of native effects provided 
 We can inspect the type of `printRandom` by using the `:type command`
 
     > import RandomExample
-    > :type main
+    > :type printRandom
 
-The type of `main` will be printed to the console. You should see a type which looks like this:
+The type of `printRandom` will be printed to the console. You should see a type which looks like this:
 
 	forall e. Eff (console :: CONSOLE, random :: RANDOM | e) Unit
 
