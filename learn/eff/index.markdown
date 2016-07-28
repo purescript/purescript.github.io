@@ -230,7 +230,7 @@ Note the type we give to `incrCounter`: we use a polymorphic type to make sure t
 Usually, we wouldn't write a handler for the `Counter` effect, since we have no way to guarantee that the `globalCounter` hasn't been modified. However, if we wanted to provide an unsafe "escape hatch" for `Counter`, we might do so as follows:
 
 ```purescript
-foreign import unsafeRunCounter :: forall e. Eff (counter :: COUNTER | e) a -> Eff e a
+foreign import unsafeRunCounter :: forall e a. Eff (counter :: COUNTER | e) a -> Eff e a
 ```
 
 And in JavaScript:
