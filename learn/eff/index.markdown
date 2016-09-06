@@ -192,7 +192,7 @@ If we have already defined this function, we can use the `runPure` and `catchExc
 import Data.Either
 
 dividePure :: Int -> Int -> Either String Int
-dividePure n m = runPure (catchException (return <<< Left) (Right <$> divide n m))
+dividePure n m = runPure (catchException (pure <<< Left <<< message) (Right <$> divide n m))
 ```
 
 Note that _after_ we use `catchException` to remove the `EXCEPTION` effect, there are no more effects remaining, so we can use `runPure` to evaluate the return value.
