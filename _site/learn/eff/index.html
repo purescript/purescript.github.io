@@ -82,8 +82,8 @@ bower install --save purescript-console purescript-random</code></pre>
 <h4 id="extensible-records-and-extensible-effects">Extensible Records and Extensible Effects</h4>
 <p>We can inspect the type of <code>printRandom</code> by using the <code>:type command</code></p>
 <pre><code>&gt; import RandomExample
-&gt; :type main</code></pre>
-<p>The type of <code>main</code> will be printed to the console. You should see a type which looks like this:</p>
+&gt; :type printRandom</code></pre>
+<p>The type of <code>printRandom</code> will be printed to the console. You should see a type which looks like this:</p>
 <pre><code>forall e. Eff (console :: CONSOLE, random :: RANDOM | e) Unit</code></pre>
 <p>This type looks quite complicated, but is easily explained by analogy with PureScript’s extensible records system.</p>
 <p>Consider a simple function which uses extensible records:</p>
@@ -150,7 +150,7 @@ divide n m <span class="fu">=</span> pure (n <span class="fu">/</span> m)</code>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Either</span>
 
 <span class="ot">dividePure ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">String</span> <span class="dt">Int</span>
-dividePure n m <span class="fu">=</span> runPure (catchException (return <span class="fu">&lt;&lt;&lt;</span> <span class="dt">Left</span>) (<span class="dt">Right</span> <span class="fu">&lt;$&gt;</span> divide n m))</code></pre></div>
+dividePure n m <span class="fu">=</span> runPure (catchException (pure <span class="fu">&lt;&lt;&lt;</span> <span class="dt">Left</span> <span class="fu">&lt;&lt;&lt;</span> message) (<span class="dt">Right</span> <span class="fu">&lt;$&gt;</span> divide n m))</code></pre></div>
 <p>Note that <em>after</em> we use <code>catchException</code> to remove the <code>EXCEPTION</code> effect, there are no more effects remaining, so we can use <code>runPure</code> to evaluate the return value.</p>
 <h4 id="defining-new-effect-types">Defining New Effect Types</h4>
 <p>New effects can be defined using <code>foreign import data</code> just as in the case of types.</p>
@@ -166,7 +166,7 @@ dividePure n m <span class="fu">=</span> runPure (catchException (return <span c
 <span class="op">};</span></code></pre></div>
 <p>Note the type we give to <code>incrCounter</code>: we use a polymorphic type to make sure that <code>Counter</code> can be interleaved with other effects.</p>
 <p>Usually, we wouldn’t write a handler for the <code>Counter</code> effect, since we have no way to guarantee that the <code>globalCounter</code> hasn’t been modified. However, if we wanted to provide an unsafe “escape hatch” for <code>Counter</code>, we might do so as follows:</p>
-<pre class="purescript"><code>foreign import unsafeRunCounter :: forall e. Eff (counter :: COUNTER | e) a -&gt; Eff e a</code></pre>
+<pre class="purescript"><code>foreign import unsafeRunCounter :: forall e a. Eff (counter :: COUNTER | e) a -&gt; Eff e a</code></pre>
 <p>And in JavaScript:</p>
 <div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">exports</span>.<span class="at">unsafeRunCounter</span> <span class="op">=</span> <span class="kw">function</span>(f) <span class="op">{</span>
   <span class="cf">return</span> f<span class="op">;</span>
