@@ -46,48 +46,52 @@
       <div class="current example">
         <h4>Modifying the DOM</h4>
         <p>PureScript’s expressive type system and lightweight syntax make it simple to define <a href="https://leanpub.com/purescript/read#leanpub-auto-domain-specific-languages">domain-specific languages</a>, which can be used to solve problems like templating the DOM. Bindings also exist for libraries such as React and Virtual DOM.</p>
+        <p>
+          You can <a href="http://try.purescript.org/?gist=297b324cca7fdd6a802a7365c2c5ea62&backend=flare">try this example</a> online.
+        </p>
 <pre>
 <span class="kr">import</span> <span class="nn">Flare</span>
 <span class="kr">import</span> <span class="nn">Flare.Smolder</span>
 &nbsp;
-<span class="nf">ui</span> :: UI _ H.Markup
 <span class="nf">ui</span> = greet <span class="kt">&lt;$&gt;</span> string <span class="s">"Name"</span> <span class="s">"World"</span>
   where
   <span class="nf">greet</span> name = h1 <span class="kt">$</span> text <span class="kt">$</span> <span class="s">"Hello, "</span> <span class="kt">&lt;&gt;</span> name <span class="kt">&lt;&gt;</span> <span class="s">"!"</span></pre>
       </div>
       <div class="example">
         <h4>HTML5 Canvas</h4>
-        <p>Higher-order functions allow the developer to write fluent, expressive code. Here, higher-order functions are being used to capture some common patterns when <a href="https://leanpub.com/purescript/read#leanpub-auto-canvas-graphics">working with HTML5 canvas</a>, such as closing and filling paths.</p>
+        <p>Higher-order functions allow the developer to write fluent, expressive code. Here, the higher-order function <code>thrice</code> is being used to simplify some code while <a href="https://leanpub.com/purescript/read#leanpub-auto-canvas-graphics">working with the canvas</a>.</p>
+        <p>
+          You can <a href="http://try.purescript.org/?gist=1c497b0533c1e1e4c21ebdbbd4195a79&backend=flare">try this example</a> online.
+        </p>
 <pre>
-<span class="kr">import</span> <span class="nn">Control.Apply</span>
-<span class="kr">import</span> <span class="nn">Graphics.Canvas.Free</span>
+<span class="kr">import</span> <span class="nn">import Flare</span>
+<span class="kr">import</span> <span class="nn">import Flare.Drawing</span>
 
-<span class="nf">scene</span> =
-  filled $ closed <span class="kr">do</span>
-    moveTo <span class="mi">0</span> <span class="mi">0</span>
-    lineTo <span class="mi">50</span> <span class="mi">0</span>
-    lineTo <span class="mi">25</span> <span class="mi">50</span>
-  <span class="kr">where</span>
-    <span class="nf">closed</span> path = beginPath *&gt; path &lt;* closePath
-    <span class="nf">filled</span> shape = shape &lt;* fill</pre>
+<span class="nf">thrice</span> f x = f (f (f x))
+
+<span class="nf">scene</span> = thrice subdivide
+      $ outlined (outlineColor black)
+      $ circle <span class="mi">0.0</span> <span class="mi">0.0</span> <span class="mi">1.0</span></pre>
       </div>
       <div class="example">
         <h4>Callback Hell</h4>
         <p>The problem of <a href="https://leanpub.com/purescript/read#leanpub-auto-callback-hell">callback hell</a> can be solved by using PureScript’s type system to capture complex control flow as functions in a safe way. Here, the continuation monad is used to hide the boilerplate code associated with handling callbacks.</p>
 <pre>
 <span class="kr">import</span> <span class="nn">Control.Monad.Aff</span>
-<span class="kr">import</span> <span class="nn">Control.Monad.Aff.Par</span>
 
 <span class="kr">data</span> <span class="kt">Model</span> = <span class="kt">Model</span> (<span class="kt">List Product</span>)
 
 <span class="nf">loadModel</span> = <span class="kr">do</span>
   popular <- get <span class="s">"/products/popular"</span>
-  products <- runPar $ for_ popular \product -> <span class="kt">Par</span> (get product.uri)
+  products <- parTraverse (\product -> get product.uri) popular
   pure (<span class="kt">Model</span> products)</pre>
       </div>
       <div class="example">
         <h4>Generative Testing</h4>
         <p>PureScript provides a form of ad-hoc polymorphism in the form of type classes, inspired by Haskell. Type classes are used in the QuickCheck and StrongCheck libraries to support <a href="https://leanpub.com/purescript/read#leanpub-auto-generative-testing">generative testing</a>, which separates test definitions from the generation of test cases.</p>
+        <p>
+          You can <a href="http://try.purescript.org/?gist=b291f5ce33b92885b8be069e6a6bddb8&backend=core">try this example</a> online.
+        </p>
 <pre>
 <span class="kr">import</span> <span class="nn">Test.QuickCheck</span>
 
