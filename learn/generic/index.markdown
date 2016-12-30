@@ -72,7 +72,7 @@ instance isForeignPerson :: IsForeign Person where
   read value = do
     name <- readProp "name" value
     location <- readProp "location" value
-    return $ Person { name, location }
+    pure $ Person { name, location }
 ```
 
 This is not too bad, but real-world records often contain many more fields. Let's see how to verify the same data using `Generic`.
