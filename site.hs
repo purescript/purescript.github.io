@@ -20,7 +20,7 @@ main = do
 
 site :: IO ()
 site = hakyll $ do
-  match ("img/**" .||. "js/**" .||. "css/**" .||. "CNAME") $ do
+  match ("img/**" .||. "js/**" .||. "css/**" .||. "CNAME" .||. "favicon.ico") $ do
     route idRoute
     compile copyFileCompiler
 
