@@ -3,9 +3,12 @@
   "private": true,
   "scripts": {
     "sass": "echo \"try{require('fs').mkdirSync('css');}catch(e){}; require('fs').writeFileSync('css/style.css', require('node-sass').renderSync({ file: 'sass/style.scss', outputStyle: 'compressed' }).css);\" | node",
-    "rebuild": "npm run sass && stack --stack-yaml stack.yaml exec site rebuild"
+    "hakyll": "stack --stack-yaml stack.yaml build && stack --stack-yaml stack.yaml exec site rebuild",
+    "copy": "ncp _site ..",
+    "build": "npm run sass && npm run hakyll && npm run copy"
   },
   "dependencies": {
-    "node-sass": "^3.5.3"
+    "node-sass": "^3.5.3",
+    "ncp": "^2.0.0"
   }
 }
