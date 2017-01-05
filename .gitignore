@@ -1,5 +1,0 @@
-.*
-!/.gitignore
-/node_modules
-/generator/_cache/
-/generator/_site/
