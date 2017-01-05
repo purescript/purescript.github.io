@@ -82,7 +82,7 @@ derive <span class="kw">instance</span><span class="ot"> genericPerson ::</span>
   read value <span class="fu">=</span> <span class="kw">do</span>
     name <span class="ot">&lt;-</span> readProp <span class="st">&quot;name&quot;</span> value
     location <span class="ot">&lt;-</span> readProp <span class="st">&quot;location&quot;</span> value
-    return <span class="fu">$</span> <span class="dt">Person</span> { name, location }</code></pre></div>
+    pure <span class="fu">$</span> <span class="dt">Person</span> { name, location }</code></pre></div>
 <p>This is not too bad, but real-world records often contain many more fields. Let’s see how to verify the same data using <code>Generic</code>.</p>
 <p>The <code>purescript-foreign-generic</code> library defines a function <code>readGeneric</code>, with the following type:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">readGeneric ::</span> forall a<span class="fu">.</span> <span class="dt">Generic</span> a <span class="ot">=&gt;</span> <span class="dt">Options</span> <span class="ot">-&gt;</span> <span class="dt">Foreign</span> <span class="ot">-&gt;</span> <span class="dt">F</span> a</code></pre></div>
