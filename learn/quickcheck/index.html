@@ -105,7 +105,7 @@ runInt :: SmallInt -&gt; Int
 runInt (SmallInt i) = i
 
 instance arbSmallInt :: Arbitrary SmallInt where
-  arbitrary = map (_ / 1000) arbitrary</code></pre>
+  arbitrary = map (SmallInt &lt;&lt;&lt; (_ / 1000)) arbitrary</code></pre>
 <p>Back in PSCi, we can now test properties without having to explicitly define how to generate our random data:</p>
 <pre><code>&gt; quickCheck \(SmallInt n) (SmallInt m) -&gt; gcd n m == gcd m n</code></pre>
 <p>The idea is that the particular scheme that is chosen to generate data should be indicated by the types of our function arguments, so <code>newtype</code>s can be quite useful when defining multiple data generation schemes for a single type.</p>
