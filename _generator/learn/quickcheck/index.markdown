@@ -128,7 +128,7 @@ runInt :: SmallInt -> Int
 runInt (SmallInt i) = i
 
 instance arbSmallInt :: Arbitrary SmallInt where
-  arbitrary = map (_ / 1000) arbitrary
+  arbitrary = map (SmallInt <<< (_ / 1000)) arbitrary
 ```
 
 Back in PSCi, we can now test properties without having to explicitly define how to generate our random data:
