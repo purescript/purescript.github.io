@@ -106,7 +106,7 @@ foreign import calculateInterest :: Number -&gt; Number</code></pre>
 <p>A correct <code>foreign import</code> declaration now should use a foreign type whose runtime representation correctly handles functions of multiple arguments. The <code>purescript-functions</code> package provides a collection of such types for function arities from 0 to 10:</p>
 <pre class="purescript"><code>module Interest where
 
-import Data.Function (Fn2)
+import Data.Function.Uncurried (Fn2)
 
 foreign import calculateInterest :: Fn2 Number Number Number</code></pre>
 <p>Here, the <code>Fn2</code> type constructor is used to wrap Javascript functions of two arguments. We can write a curried wrapper function in PureScript which will allow partial application:</p>
