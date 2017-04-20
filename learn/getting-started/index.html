@@ -72,7 +72,7 @@ You should add some tests.
 * Tests OK.</code></pre>
 <p>If everything was built successfully, and the tests ran without problems, then the last line should state “Tests OK”.</p>
 <h4 id="installing-dependencies">Installing Dependencies</h4>
-<p>Dependencies can be installed using Bower:</p>
+<p>You should install the dependencies needed in this guide with Bower:</p>
 <pre><code>bower install purescript-lists --save</code></pre>
 <h4 id="working-in-psci">Working in PSCI</h4>
 <p>PSCi is the interactive mode of PureScript. It is useful for working with pure computations, and for testing ideas.</p>
@@ -118,10 +118,10 @@ import Data.List</code></pre>
 <p>Let’s start by listing all of the natural numbers below 1000 as a list. We can do this using the <code>range</code> function from <code>Data.List</code>:</p>
 <pre><code>&gt; range 0 999</code></pre>
 <p>You should see a list with 1000 elements printed to the command line.</p>
-<p>This value can be given a name, using a <code>let</code> binding:</p>
-<pre><code>&gt; let ns = range 0 999</code></pre>
+<p>This value can be given a name:</p>
+<pre><code>&gt; ns = range 0 999</code></pre>
 <p>Now let’s filter out all of those elements which do not meet the criterion. We can use the <code>filter</code> function from <code>Data.List</code>, by providing a predicate function as its first argument:</p>
-<pre><code>&gt; let multiples = filter (\n -&gt; mod n 3 == 0 || mod n 5 == 0) ns</code></pre>
+<pre><code>&gt; multiples = filter (\n -&gt; mod n 3 == 0 || mod n 5 == 0) ns</code></pre>
 <p>You can see the result by evaluating <code>multiples</code> if you like, or even check its type:</p>
 <pre><code>&gt; multiples
 Cons 0 (Cons 3 (Cons 5 (Cons 6 (Cons ...
