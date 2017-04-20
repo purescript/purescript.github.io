@@ -124,7 +124,7 @@ import Data.List</code></pre>
 <pre><code>&gt; multiples = filter (\n -&gt; mod n 3 == 0 || mod n 5 == 0) ns</code></pre>
 <p>You can see the result by evaluating <code>multiples</code> if you like, or even check its type:</p>
 <pre><code>&gt; multiples
-Cons 0 (Cons 3 (Cons 5 (Cons 6 (Cons ...
+(0 : 3 : 5 : 6 : 9 : 10 : 12 : 15 : 18 : 20 :
 &gt; :type multiples
 List Int</code></pre>
 <p>Now we need to find the sum of the <code>multiples</code> array, to complete the solution. We can use the <code>sum</code> function from the <code>Data.Foldable</code> module.</p>

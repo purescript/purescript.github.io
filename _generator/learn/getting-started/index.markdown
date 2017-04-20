@@ -131,7 +131,7 @@ Now let's filter out all of those elements which do not meet the criterion. We c
 You can see the result by evaluating `multiples` if you like, or even check its type:
 
     > multiples
-    Cons 0 (Cons 3 (Cons 5 (Cons 6 (Cons ...
+    (0 : 3 : 5 : 6 : 9 : 10 : 12 : 15 : 18 : 20 :
     > :type multiples
     List Int
 
