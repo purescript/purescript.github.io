@@ -159,9 +159,10 @@
           <pre><span class="k">import</span> <span class="n">Prelude</span>
 <span class="k">import</span> <span class="n">Control.Monad.Eff.Console</span> (<span class="n">log</span>)
 
+<span class="n">greet</span> ∷ <span class="n">String</span> → <span class="n">String</span></span>
 <span class="n">greet</span> name = <span class="s">"Hello, "</span> <> name <> <span class="s">"!"</span>
 
-<span class="n">main</span> = greet <span class="s">"World"</span></pre>
+<span class="n">main</span> = log (greet <span class="s">"World"</span>)</pre>
         </div>
       </div>
     </div>
