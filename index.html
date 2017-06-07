@@ -5,9 +5,9 @@
 <head>
   <title>PureScript</title>
 
-  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,300,700" />
-  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,300,700" />
+  <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
   <link rel="icon" type="image/png" href="img/favicon_clear-16.png" sizes="16x16">
   <link rel="icon" type="image/png" href="img/favicon_clear-32.png" sizes="32x32">
@@ -25,7 +25,6 @@
 
     h1, h2, h3 {
       font-family: 'Roboto';
-      color: rgb(17, 17, 17);
     }
 
     h2 {
@@ -43,51 +42,58 @@
       letter-spacing: 2px;
       font-size: 15px;
       font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    ul {
+      padding: 0;
     }
 
     a, a:visited, a:active {
       color: #c4953a;
     }
 
+      a.button {
+        text-transform: uppercase;
+        padding: 10px 20px;
+        border: 1px solid;
+        color: white;
+        margin: 25px;
+        font-size: 1.2em;
+        font-weight: 300;
+      }
+
+        a.button:hover {
+          text-decoration: none;
+          background-color: rgba(255,255,255,0.1);
+        }
+
     pre {
-      border: 0;
-      border-radius: 0;
+      padding: 0;
+      line-height: inherit;
+      color: inherit;
+      background-color: inherit;
+      border: none;
     }
 
-    code {
+      span.k {
+        color: #91b4d3;
+        font-weight: bold;
+      }
+
+      span.s {
+        color: #ffe185;
+        font-weight: bold;
+      }
+
+      span.n {
+        color: #91d3c2;
+        font-weight: bold;
+      }
+
+    p > code {
       color: black;
       background-color: #f6f2eb;
-    }
-
-    pre {
-      background-color: white;
-    }
-
-    pre, code {
-      padding: 5px 10px;
-      font-family: DejaVu Sans Mono, Menlo, Consolas, monospace;
-      font-size: 12px;
-      line-height: 135%
-    }
-
-    pre .kr,pre .nn,pre .nf,pre .kt,pre .kw,pre .dt {
-        font-weight: bold
-    }
-
-    pre .nf {
-        color: #945277
-    }
-
-    pre .mi,pre .s,pre .st {
-        color: #c4953a
-    }
-
-    pre .nn,pre .kt,pre .dt {
-        color: #445588
-    }
-
-    .frame-ctr {
-      /*height: 220px;*/
     }
 
     .frame {
@@ -99,13 +105,9 @@
       padding: 25px 0;
     }
 
-    .very-dark {
+    .dark {
       background-color: #1d222d;
       color: white;
-    }
-
-    .dark {
-      background-color: rgba(0, 0, 0, 0.05);
     }
 
     header {
@@ -114,143 +116,60 @@
 
     header img {
       width: 350px;
-      float: left;
     }
 
-    header p {
-      font-size: 16px;
-      font-weight: 300;
-      color: #fff;
-      opacity: 0.75;
-      float: right;
-      margin-top: 22px;
+    footer a, footer a:visited, footer a:active {
+      color: #1d222d;
     }
 
-    footer a {
-      color: #fff;
+    footer a:hover {
+      color: #c4953a;
     }
   </style>
 </head>
 
 <body>
-  <header class="very-dark">
-    <div class="container">
+  <header>
+    <div class="container text-center">
       <img src="img/logo.svg" alt="PureScript">
-      <p>A strongly typed functional programming language that compiles to JavaScript.</p>
     </div>
+    <h2 class="text-center">A strongly-typed functional programming language that compiles to JavaScript</h2>
   </header>
-  <section>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-3">
-          <h2 class="text-center">Browser</h2>
-          <p class="text-center frame-ctr">
-            <a href="https://github.com/quephird/space-invaders-ps">
-              <img src="img/invaders.png" class="frame">
-            </a>
-          </p>
-          <p><small><a href="https://github.com/quephird/space-invaders-ps">space-invaders-ps</a> by @quephird</small></p>
-          <p>PureScript provides bindings to the web APIs available in the browser,
-          making it an excellent choice for developing part or all of a traditional
-          web application.</p>
-        </div>
-        <div class="col-md-3">
-          <h2 class="text-center">Server</h2>
-          <p class="text-center frame-ctr">
-            <a href="https://hyper.wickstrom.tech/">
-              <img src="img/hyper.png" class="frame">
-            </a>
-          </p>
-          <p><small><a href="https://hyper.wickstrom.tech/">Hyper</a> by @owickstrom</small></p>
-          <p>PureScript can run server-side on NodeJS, or in any JavaScript environment which supports the
-          CommonJS module standard. You can write both client and server in PureScript, and share code between the two.</p>
-        </div>
-        <div class="col-md-3">
-          <h2 class="text-center">Apps</h2>
-          <p class="text-center frame-ctr">
-            <a href="https://github.com/doolse/purescript-reactnative">
-              <img src="img/native.png" class="frame">
-            </a>
-          </p>
-          <p><small><a href="https://github.com/doolse/purescript-reactnative">React Native bindings</a> by @doolse</small></p>
-          <p>PureScript works well with JavaScript-based tools such as <a href="https://facebook.github.io/react-native/">React Native</a>
-          or <a href="https://electron.atom.io/">Electron</a>, which makes it possible to develop cross-platform applications using all of the expressive power
-          that comes with using PureScript.</p>
-        </div>
-        <div class="col-md-3">
-          <h2 class="text-center">And More!</h2>
-          <p class="text-center frame-ctr">
-            <a href="https://github.com/pure11/pure11/">
-              <img src="img/pure11.png" class="frame">
-            </a>
-          </p>
-          <p><small><a href="https://github.com/pure11/pure11/">pure11</a> by @andyarvanitis</small></p>
-          <p>PureScript is not limited to just JavaScript! Alternative backends exist for C++11 and Erlang,
-          and the PureScript compiler is built with extensibility in mind, so you can target your favorite language easily.</p>
-        </div>
-      </div>
-    </div>
-  </section>
   <section class="dark">
     <div class="container">
       <div class="row">
         <div class="col-md-6">
-          <h3>Hello, DOM!</h3>
+          <h3>Features</h3>
 
-          <p><a href="http://try.purescript.org/?gist=297b324cca7fdd6a802a7365c2c5ea62&backend=flare">Try this example now</a></p>
-          <p>PureScript's expressive type system and lightweight syntax make it simple to define domain-specific languages, which can be used to solve problems like templating the DOM. Bindings also exist for libraries such as React and Virtual DOM.</p>
-
-          <pre><span class="kr">import</span> <span class="nn">Flare</span>
-<span class="kr">import</span> <span class="nn">Flare.Smolder</span>
-&nbsp;
-<span class="nf">ui</span> = greet <span class="kt">&lt;$&gt;</span> string <span class="s">"Name"</span> <span class="s">"World"</span>
-  where
-  <span class="nf">greet</span> name = h1 <span class="kt">$</span> text <span class="kt">$</span> <span class="s">"Hello, "</span> <span class="kt">&lt;&gt;</span> name <span class="kt">&lt;&gt;</span> <span class="s">"!"</span></pre>
+          <ul>
+            <li>Algebraic data types and pattern matching</li>
+            <li>Row polymorphism</li>
+            <li>Higher kinded types</li>
+            <li>Type classes with functional dependencies</li>
+            <li>Rank-N types</li>
+            <li>Straightforward generated code with a simple FFI</li>
+            <li>No runtime dependencies</li>
+            <li>A rich package ecosystem and developer community</li>
+            <li>Full-featured editor support with instant rebuilds</li>
+          </ul>
         </div>
         <div class="col-md-6">
-          <h3>Higher-order Functions</h3>
+          <h3>Hello, PureScript!</h3>
 
-          <p><a href="http://try.purescript.org/?gist=297b324cca7fdd6a802a7365c2c5ea62&backend=flare">Try this example now</a></p>
-          <p>Higher-order functions allow the developer to write fluent, expressive code. Here, the higher-order function <code>thrice</code> is being used to simplify some code while working with the canvas.</p>
+          <pre><span class="k">import</span> <span class="n">Prelude</span>
+<span class="k">import</span> <span class="n">Control.Monad.Eff.Console</span> (<span class="n">log</span>)
 
-          <pre><span class="kr">import</span> <span class="nn">Flare</span>
-<span class="kr">import</span> <span class="nn">Flare.Drawing</span>
+<span class="n">greet</span> name = <span class="s">"Hello, "</span> <> name <> <span class="s">"!"</span>
 
-<span class="nf">thrice</span> f x = f (f (f x))
-
-<span class="nf">scene</span> = thrice subdivide
-      $ outlined (outlineColor black)
-      $ frame <span class="mi">0.0</span> <span class="mi">0.0</span> <span class="mi">1.0</span></pre>
+<span class="n">main</span> = greet <span class="s">"World"</span></pre>
         </div>
       </div>
+    </div>
+    <div class="container">
       <div class="row">
-        <div class="col-md-6">
-          <h3>Callback Hell</h3>
-
-          <p><a href="">Try this example now</a></p>
-          <p>The problem of callback hell can be solved by using PureScript’s type system to capture complex control flow as functions in a safe way. Here, the continuation monad is used to hide the boilerplate code associated with handling callbacks.</p>
-
-          <pre><span class="kr">import</span> <span class="nn">Control.Monad.Aff</span>
-
-<span class="kr">data</span> <span class="kt">Model</span> = <span class="kt">Model</span> (<span class="kt">List Product</span>)
-
-<span class="nf">loadModel</span> = <span class="kr">do</span>
-  popular &lt;- get <span class="s">"/products/popular"</span>
-  products &lt;- parTraverse (\product -&gt; get product.uri) popular
-  pure (<span class="kt">Model</span> products)</pre>
-        </div>
-        <div class="col-md-6">
-          <h3>Testing</h3>
-          <p><a href="http://try.purescript.org/?gist=b291f5ce33b92885b8be069e6a6bddb8&backend=core">Try this example now</a></p>
-          <p>PureScript provides a form of ad-hoc polymorphism in the form of type classes, inspired by Haskell. Type classes are used in the QuickCheck and StrongCheck libraries to support generative testing, which separates test definitions from the generation of test cases.</p>
-
-          <pre><span class="kr">import</span> <span class="nn">Test.QuickCheck</span>
-
-<span class="nf">main</span> = <span class="kr">do</span>
-  quickCheck <span class="nf">\</span>xs ys -&gt;
-    isSorted $ merge (sort xs) (sort ys)
-  quickCheck <span class="nf">\</span>xs ys -&gt;
-    xs `isSubarrayOf` merge xs ys</pre>
+        <div class="col-md-12 text-center">
+          <a href="http://try.purescript.org" class="button">Try PureScript</a>
+          <a href="https://github.com/purescript/documentation/blob/master/guides/Getting-Started.md" class="button">Quick Start Guide</a>
         </div>
       </div>
     </div>
@@ -269,26 +188,28 @@
 
           <h3>Tools</h3>
           <p>The recommended build tool for beginners is Pulp, which can be installed using NPM:</p>
-          <p><code>npm install -g pulp</code></p>
+          <p><code>npm install -g pulp bower</code></p>
+          <p>You might like to install some of these
+            <a href="https://github.com/purescript/documentation/blob/master/ecosystem/Editor-and-tool-support.md">additional tools and editor plugins</a>.</p>
         </div>
 
         <div class="col-md-6">
-          <h2 class="text-center">Or try it online now!</h2>
-          <p class="text-center frame-ctr"><a href="http://try.purescript.org/"><img class="frame" src="img/try.png"></a></p>
-          <p class="text-center"><small>You can <a href="http://try.purescript.org/">try many PureScript libraries</a> in your browser without installing anything on your machine.</small></p>
+          <h2>Learn more</h2>
+
+          <h3>Libraries</h3>
+          <p>The <a href="https://pursuit.purescript.org">Pursuit package database</a> hosts searchable documentation for PureScript packages.</p>
+
+          <h3>Documentation</h3>
+          <p>Visit the <a href="https://github.com/purescript/documentation">documentation repository</a> on GitHub, where you can find articles,
+            tutorials, and more.</p>
+
+          <h3>Book</h3>
+          <p>The free <a href="https://leanpub.com/purescript/">PureScript By Example</a> book contains several practical projects for PureScript beginners.</p>
         </div>
       </div>
     </div>
   </section>
-  <section class="dark">
-    <div class="container">
-      <h2 class="text-center">Learn more</h2>
-
-      <p class="text-center">To learn more about the PureScript language and community, visit the <a href="https://github.com/purescript/documentation">documentation repository</a> on GitHub, where you can find articles,
-      tutorials, and more.</p>
-    </div>
-  </section>
-  <footer class="very-dark">
+  <footer>
     <h2 class="text-center">
       <a href="https://github.com/purescript/purescript"><i class="fa fa-github-square"></i></a>
       <a href="https://twitter.com/purescript"><i class="fa fa-twitter-square"></i></a>
